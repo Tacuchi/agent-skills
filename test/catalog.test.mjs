@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
-import { mkdtempSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { mkdtempSync, mkdirSync, readFileSync, rmSync, symlinkSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { checkCatalog, render } from '../scripts/catalog.mjs';
@@ -55,7 +55,7 @@ function fixture(t) {
     },
     tagged(entry) {
       const base = dirname(entry.path);
-      write(root, entry.path, `# ${entry.name}\n`);
+      write(root, entry.path, `---\nname: ${entry.id}\ndescription: ${entry.name}\n---\n\n# ${entry.name}\n`);
       write(root, `${base}/CHANGELOG.md`, '## v1.0.0\n');
       write(root, `${base}/RELEASE_NOTES.md`, 'Notas v1.0.0\n');
       git(root, 'add', '.');
@@ -108,6 +108,46 @@ test('una propia retirada conserva el tag histórico aunque se retire su directo
   f.publish({ schema_version: 1, revision: 2, entries: [{ ...entry, status: 'retired', retirement_reason: 'Sustituida' }] });
   assert.match(readFileSync(join(f.root, 'README.md'), 'utf8'), /Sustituida/);
   assert.equal(checkCatalog(f.root).entries[0].ref, entry.ref);
+});
+
+test('rechaza SKILL.md enlazado en checkout aunque el tag tenga un archivo regular', (t) => {
+  const f = fixture(t);
+  const entry = own('programacion', 'alpha');
+  f.tagged(entry);
+  rmSync(join(f.root, entry.path));
+  symlinkSync('CHANGELOG.md', join(f.root, entry.path));
+  f.publish({ schema_version: 1, revision: 2, entries: [entry] });
+  assert.throws(() => checkCatalog(f.root), /SKILL\.md.*archivo regular/);
+});
+
+test('rechaza SKILL.md enlazado en el tag aunque el checkout tenga un archivo regular', (t) => {
+  const f = fixture(t);
+  const entry = own('programacion', 'alpha');
+  f.tagged(entry);
+  git(f.root, 'tag', '-d', entry.ref);
+  rmSync(join(f.root, entry.path));
+  symlinkSync('CHANGELOG.md', join(f.root, entry.path));
+  git(f.root, 'add', '.');
+  git(f.root, 'commit', '-qm', 'skill enlazada en tag');
+  git(f.root, 'tag', entry.ref);
+  rmSync(join(f.root, entry.path));
+  write(f.root, entry.path, `---\nname: alpha\ndescription: Skill alpha\n---\n`);
+  f.publish({ schema_version: 1, revision: 2, entries: [entry] });
+  assert.throws(() => checkCatalog(f.root), /tag .*SKILL\.md.*blob 100644/);
+});
+
+test('rechaza SKILL.md sin name y description en el tag', (t) => {
+  const f = fixture(t);
+  const entry = own('programacion', 'alpha');
+  f.tagged(entry);
+  git(f.root, 'tag', '-d', entry.ref);
+  write(f.root, entry.path, '# Skill sin frontmatter\n');
+  git(f.root, 'add', '.');
+  git(f.root, 'commit', '-qm', 'skill sin frontmatter');
+  git(f.root, 'tag', entry.ref);
+  write(f.root, entry.path, `---\nname: alpha\ndescription: Skill alpha\n---\n`);
+  f.publish({ schema_version: 1, revision: 2, entries: [entry] });
+  assert.throws(() => checkCatalog(f.root), /tag .*SKILL\.md.*frontmatter/);
 });
 
 test('la comprobación tras el commit compara la revisión con el padre', (t) => {
@@ -168,10 +208,29 @@ test('una referencia externa no se apropia del lifecycle ni acepta ref móvil', 
   assert.throws(() => checkCatalog(f.root), /ref externa/);
 });
 
-test('una afirmación verificada requiere procedencia HTTPS', (t) => {
+test('una afirmación verificada requiere evidencia anclada al commit o tag de la oferta', (t) => {
   const f = fixture(t);
   const upstream = external();
-  upstream.data_permissions = { status: 'verified', summary: 'sin acceso a red', evidence_url: 'https://github.com/other/skills/blob/v2.3.0/SKILL.md' };
+  upstream.data_permissions = { status: 'verified', summary: 'sin acceso a red', evidence_url: `https://github.com/other/skills/blob/${'a'.repeat(40)}/SKILL.md` };
   f.publish({ schema_version: 1, revision: 2, entries: [upstream] });
   assert.match(render(checkCatalog(f.root)), /sin acceso a red/);
+  upstream.data_permissions.evidence_url = 'https://github.com/other/skills/blob/main/SKILL.md';
+  f.publish({ schema_version: 1, revision: 2, entries: [upstream] });
+  assert.throws(() => checkCatalog(f.root), /evidencia.*ref inmutable/);
+  upstream.data_permissions.evidence_url = 'https://example.com/info';
+  f.publish({ schema_version: 1, revision: 2, entries: [upstream] });
+  assert.throws(() => checkCatalog(f.root), /evidencia.*ref inmutable/);
+  upstream.ref = 'abcdef0';
+  upstream.data_permissions.evidence_url = 'https://github.com/other/skills/blob/abcdef0/SKILL.md';
+  f.publish({ schema_version: 1, revision: 2, entries: [upstream] });
+  assert.throws(() => checkCatalog(f.root), /evidencia.*ref inmutable/);
+});
+
+test('una oferta propia puede anclar la evidencia al tag individual', (t) => {
+  const f = fixture(t);
+  const entry = own('programacion', 'alpha');
+  f.tagged(entry);
+  entry.data_permissions = { status: 'verified', summary: 'sin acceso a red', evidence_url: `https://github.com/Tacuchi/agent-skills/blob/${entry.ref}/skills/programacion/alpha/SKILL.md` };
+  f.publish({ schema_version: 1, revision: 2, entries: [entry] });
+  assert.equal(checkCatalog(f.root).entries[0].id, 'alpha');
 });

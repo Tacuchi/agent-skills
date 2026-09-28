@@ -1,5 +1,5 @@
 import { execFileSync } from 'node:child_process';
-import { readFileSync, writeFileSync, existsSync } from 'node:fs';
+import { readFileSync, writeFileSync, existsSync, lstatSync } from 'node:fs';
 import { join, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -45,6 +45,24 @@ function file(root, path, label) {
   assert(existsSync(absolute) && readFileSync(absolute, 'utf8').trim().length > 0, `${label}: falta ${path}`);
 }
 
+function skillFrontmatter(content, label) {
+  const frontmatter = /^---\r?\n([\s\S]*?)\r?\n---(?:\r?\n|$)/.exec(content)?.[1];
+  assert(frontmatter && ['name', 'description'].every((key) => {
+    const value = new RegExp(`^${key}:[ \t]*(.+)$`, 'm').exec(frontmatter)?.[1].trim();
+    return value && value !== "''" && value !== '""';
+  }), `${label}: SKILL.md sin frontmatter con name y description`);
+}
+
+function immutableEvidence(entry) {
+  const evidence = new URL(entry.data_permissions.evidence_url);
+  const source = new URL(entry.source_url);
+  const path = decodeURIComponent(evidence.pathname);
+  const commit = /\/(?:blob|tree)\/[a-f0-9]{40}(?:\/|$)|\/commit\/[a-f0-9]{40}(?:\/|$)/.test(path);
+  const offerTag = TAG.test(entry.ref) || /^v\d+\.\d+\.\d+(?:-[a-zA-Z0-9.-]+)?$/.test(entry.ref);
+  const tagged = offerTag && evidence.origin === source.origin && path.startsWith(`${source.pathname.replace(/\/$/, '')}/blob/${entry.ref}/`);
+  assert(commit || tagged, `${entry.id}: evidencia debe estar anclada a una ref inmutable (commit SHA o tag de la oferta)`);
+}
+
 function validateEntry(root, entry, ids, slugs) {
   assert(entry && typeof entry === 'object' && !Array.isArray(entry), 'entrada inválida');
   const id = text(entry.id, 'id');
@@ -63,8 +81,10 @@ function validateEntry(root, entry, ids, slugs) {
   assert(info && typeof info === 'object' && !Array.isArray(info), `${id}: datos/permisos obligatorios`);
   assert(['verified', 'unverified'].includes(info.status), `${id}: estado de datos/permisos inválido`);
   text(info.summary, `${id}: datos/permisos`);
-  if (info.status === 'verified') url(info.evidence_url, `${id}: procedencia de verificación`);
-  else {
+  if (info.status === 'verified') {
+    url(info.evidence_url, `${id}: procedencia de verificación`);
+    immutableEvidence(entry);
+  } else {
     assert(info.summary === 'no verificados' && info.evidence_url === undefined, `${id}: no verificados no puede afirmar evidencia`);
   }
   if (entry.status === 'retired') text(entry.retirement_reason, `${id}: motivo de retiro`);
@@ -90,11 +110,21 @@ function validateEntry(root, entry, ids, slugs) {
   assert(entry.license === 'root' || entry.license === `${base}/LICENSE`, `${id}: licencia aplicable debe ser root o propia`);
   assert(entry.changelog === `${base}/CHANGELOG.md` && entry.release_notes === `${base}/RELEASE_NOTES.md`, `${id}: historial y notas individuales obligatorios`);
   const files = [path, entry.changelog, entry.release_notes, entry.license === 'root' ? 'LICENSE' : entry.license];
-  if (entry.status === 'active') for (const item of files) file(root, item, id);
+  if (entry.status === 'active') {
+    for (const item of files) {
+      if (item === path) {
+        const absolute = inside(root, path);
+        assert(existsSync(absolute) && lstatSync(absolute).isFile(), `${id}: ${path} debe ser un archivo regular en el checkout`);
+      }
+      file(root, item, id);
+    }
+  }
   assert(git(root, ['rev-parse', '--verify', `refs/tags/${entry.ref}^{commit}`]), `${id}: tag ${entry.ref} inexistente`);
+  assert(/^100644 blob [a-f0-9]+\t/.test(git(root, ['ls-tree', entry.ref, '--', path]) ?? ''), `${id}: tag ${entry.ref} requiere ${path} como blob 100644`);
   for (const item of files) {
     assert(git(root, ['show', `${entry.ref}:${item}`]), `${id}: tag ${entry.ref} no contiene ${item} con contenido`);
   }
+  skillFrontmatter(git(root, ['show', `${entry.ref}:${path}`]), `${id}: tag ${entry.ref} ${path}`);
 }
 
 function markdown(value) {
