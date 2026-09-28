@@ -12,6 +12,12 @@ Un cambio de oferta (alta, actualización de ref o estado, retiro, metadatos vis
 
 Una referencia externa identifica proyecto, URL/ref y responsable del lifecycle upstream; no recibe tag, licencia ni release local de este repositorio. Comprueba en origen los datos/permisos que afirmes como verificados. Si una oferta se retira, conserva en el índice su fuente y ref histórica con `retirement_reason`, sube la revisión y regenera README. Retirar o actualizar una fila sólo cambia la oferta editorial: no modifica instalaciones existentes ni sincroniza catálogos ajenos.
 
+## Campos del índice
+
+`schema_version` identifica el formato y `revision` comienza en 1. `entries` empieza vacío. Cada entrada usa `id`, `name`, `domain`, `type` (`own` o `external`), `source_url`, `path` hasta un `SKILL.md`, `ref` fija, `lifecycle_owner`, `status` (`active` o `retired`) y `data_permissions` con `status` (`unverified` o `verified`), `summary` y, sólo cuando se afirma verificación, `evidence_url` HTTPS. Sin verificación, `summary` es literalmente `no verificados`. Las retiradas agregan `retirement_reason` y retienen fuente y ref históricas.
+
+Una propia agrega `license: "root"` para heredar expresamente la MIT raíz (o la ruta `skills/<dominio>/<slug>/LICENSE`), `changelog` a su `CHANGELOG.md` y `release_notes` a su `RELEASE_NOTES.md`. Su `ref` debe ser el tag `skill/<slug>/vX.Y.Z`. Una externa usa una ref upstream fija de versión `vX.Y.Z` o commit hexadecimal y una ruta de skill del upstream; no se le agregan los campos de release propios. El comprobador local inspecciona el árbol Git etiquetado de las propias vigentes y retiradas, pero no consulta GitHub Releases ni valida la adquisición real por un host: ambos requieren el pase operativo de la iniciativa de contenido.
+
 ## Canal de adquisición
 
 Consulta el índice y el `SKILL.md` de la ruta concreta antes de elegir. Adquiere únicamente esa ruta mediante las herramientas del host que acepten esa fuente y esa ref; verifica los requisitos de dicho host. Usa `skills.sh` sólo después de demostrar que acepta la ruta individual; no se presupone esa compatibilidad. La adquisición y cualquier desinstalación son decisiones expresas de la persona y del gestor de su host.
