@@ -45,6 +45,24 @@ test('cada oferta se adquiere sola con sus enlaces, titular, historia y licencia
   }
 });
 
+test('tres rutas y nombres propios no colisionan al adquirir una oferta en hosts aislados', (t) => {
+  const fixture = mkdtempSync(join(tmpdir(), 'skills-hosts-'));
+  t.after(() => rmSync(fixture, { recursive: true, force: true }));
+  for (const host of ['claude', 'codex', 'oz', 'crush']) {
+    const targetRoot = join(fixture, host, 'skills');
+    mkdirSync(targetRoot, { recursive: true });
+    for (const [domain, slug] of offers) {
+      const target = join(targetRoot, slug);
+      mkdirSync(target);
+      copyFileSync(join(root, 'skills', domain, slug, 'SKILL.md'), join(target, 'SKILL.md'));
+      assert.match(readFileSync(join(target, 'SKILL.md'), 'utf8'), new RegExp(`^name: ${slug}$`, 'm'));
+    }
+    assert.deepEqual(readdirSync(targetRoot).sort(), offers.map(([, slug]) => slug).sort());
+    assert.equal(existsSync(join(targetRoot, 'w')), false);
+    assert.equal(existsSync(join(targetRoot, 'design')), false);
+  }
+});
+
 test('la UI exige destino aprobado y protege fuentes sensibles; los diagramas no envían datos por defecto; SQL no ejecuta mutaciones por ningún canal', (t) => {
   const ui = copyOffer(t, ...offers[0]).skill;
   const diagrams = copyOffer(t, ...offers[1]).skill;

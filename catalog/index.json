@@ -1,5 +1,51 @@
 {
   "schema_version": 1,
-  "revision": 1,
-  "entries": []
+  "revision": 2,
+  "entries": [
+    {
+      "id": "ui-authoring",
+      "name": "UI authoring",
+      "domain": "design",
+      "type": "own",
+      "source_url": "https://github.com/Tacuchi/agent-skills",
+      "path": "skills/design/ui-authoring/SKILL.md",
+      "ref": "skill/ui-authoring/v1.0.0",
+      "lifecycle_owner": "Tacuchi",
+      "status": "active",
+      "data_permissions": { "status": "unverified", "summary": "no verificados" },
+      "license": "skills/design/ui-authoring/LICENSE",
+      "changelog": "skills/design/ui-authoring/CHANGELOG.md",
+      "release_notes": "skills/design/ui-authoring/RELEASE_NOTES.md"
+    },
+    {
+      "id": "system-diagrams",
+      "name": "System diagrams",
+      "domain": "architecture",
+      "type": "own",
+      "source_url": "https://github.com/Tacuchi/agent-skills",
+      "path": "skills/architecture/system-diagrams/SKILL.md",
+      "ref": "skill/system-diagrams/v1.0.0",
+      "lifecycle_owner": "Tacuchi",
+      "status": "active",
+      "data_permissions": { "status": "unverified", "summary": "no verificados" },
+      "license": "skills/architecture/system-diagrams/LICENSE",
+      "changelog": "skills/architecture/system-diagrams/CHANGELOG.md",
+      "release_notes": "skills/architecture/system-diagrams/RELEASE_NOTES.md"
+    },
+    {
+      "id": "sql-authoring",
+      "name": "SQL authoring",
+      "domain": "data",
+      "type": "own",
+      "source_url": "https://github.com/Tacuchi/agent-skills",
+      "path": "skills/data/sql-authoring/SKILL.md",
+      "ref": "skill/sql-authoring/v1.0.0",
+      "lifecycle_owner": "Tacuchi",
+      "status": "active",
+      "data_permissions": { "status": "unverified", "summary": "no verificados" },
+      "license": "skills/data/sql-authoring/LICENSE",
+      "changelog": "skills/data/sql-authoring/CHANGELOG.md",
+      "release_notes": "skills/data/sql-authoring/RELEASE_NOTES.md"
+    }
+  ]
 }
