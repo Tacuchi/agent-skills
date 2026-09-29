@@ -88,7 +88,7 @@ function validateEntry(root, entry, ids, slugs) {
     url(info.evidence_url, `${id}: verification provenance`);
     immutableEvidence(entry);
   } else {
-    assert(info.summary === 'no verificados' && info.evidence_url === undefined, `${id}: an unverified entry cannot claim evidence`);
+    assert(info.summary === 'not verified' && info.evidence_url === undefined, `${id}: an unverified entry cannot claim evidence`);
   }
   if (entry.status === 'retired') text(entry.retirement_reason, `${id}: retirement reason`);
   else assert(entry.retirement_reason === undefined, `${id}: an active offer has no retirement reason`);

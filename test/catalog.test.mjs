@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
-import { mkdtempSync, mkdirSync, readFileSync, rmSync, symlinkSync, writeFileSync } from 'node:fs';
+import { mkdtempSync, mkdirSync, readdirSync, readFileSync, rmSync, symlinkSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { checkCatalog, render } from '../scripts/catalog.mjs';
@@ -23,7 +23,7 @@ function own(domain, slug) {
     source_url: 'https://github.com/Tacuchi/agent-skills',
     path: `${base}/SKILL.md`, ref: `skill/${slug}/v1.0.0`,
     lifecycle_owner: 'Tacuchi', status: 'active',
-    data_permissions: { status: 'unverified', summary: 'no verificados' },
+    data_permissions: { status: 'unverified', summary: 'not verified' },
     license: 'root', changelog: `${base}/CHANGELOG.md`, release_notes: `${base}/RELEASE_NOTES.md`,
   };
 }
@@ -32,7 +32,7 @@ const external = () => ({
   id: 'upstream', name: 'Skill upstream', domain: 'testing', type: 'external',
   source_url: 'https://github.com/other/skills', path: 'packages/quality/SKILL.md',
   ref: 'v2.3.0', lifecycle_owner: 'Other Maintainers', status: 'active',
-  data_permissions: { status: 'unverified', summary: 'no verificados' },
+  data_permissions: { status: 'unverified', summary: 'not verified' },
 });
 
 function fixture(t) {
@@ -246,4 +246,21 @@ test('an own offer can anchor its evidence to its individual tag', (t) => {
   entry.data_permissions = { status: 'verified', summary: 'no network access', evidence_url: `https://github.com/Tacuchi/agent-skills/blob/${entry.ref}/skills/programming/alpha/SKILL.md` };
   f.publish({ schema_version: 1, revision: 2, entries: [entry] });
   assert.equal(checkCatalog(f.root).entries[0].id, 'alpha');
+});
+
+test('every offer directory has its active row, on the version its changelog announces and a tag whose tree is the checkout', () => {
+  const repo = join(import.meta.dirname, '..');
+  const index = JSON.parse(readFileSync(join(repo, 'catalog', 'index.json'), 'utf8'));
+  const active = new Map(index.entries.filter((entry) => entry.status === 'active').map((entry) => [entry.path, entry]));
+  const dirs = readdirSync(join(repo, 'skills')).flatMap((domain) =>
+    readdirSync(join(repo, 'skills', domain)).map((slug) => `skills/${domain}/${slug}`));
+  assert.deepEqual([...active.keys()].map(dirname).sort(), dirs.sort());
+  for (const dir of dirs) {
+    const entry = active.get(`${dir}/SKILL.md`);
+    const version = /^## \[(\d+\.\d+\.\d+)\]/m.exec(readFileSync(join(repo, dir, 'CHANGELOG.md'), 'utf8'))[1];
+    assert.equal(entry.ref, `skill/${entry.id}/v${version}`, `${entry.id}: row points to its latest version`);
+    assert.doesNotThrow(() => git(repo, 'merge-base', '--is-ancestor', entry.ref, 'HEAD'), `${entry.id}: tag is an ancestor of HEAD`);
+    assert.doesNotThrow(() => git(repo, 'diff', '--quiet', entry.ref, '--', dir), `${entry.id}: tagged tree equals the working tree`);
+    assert.equal(git(repo, 'ls-files', '--others', '--exclude-standard', '--', dir), '', `${entry.id}: no untracked files outside the tag`);
+  }
 });

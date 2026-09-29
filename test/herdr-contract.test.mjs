@@ -69,17 +69,18 @@ test('permission, quota, commit, publication and irreversibility go back to the 
   assert.match(skill, /With the written answer "No", relay "No", read the screen again/);
 });
 
-test('the Herdr row points to an existing tag of this offer on the working branch', () => {
+test('the Herdr row points to the tag of its latest version, whose tree is the checkout', () => {
   const current = JSON.parse(readFileSync(join(root, 'catalog', 'index.json'), 'utf8'));
-  assert.deepEqual(current.entries.map(({ id }) => id), ['ui-authoring', 'system-diagrams', 'sql-authoring', 'herdr-coordination']);
-  const entry = current.entries.at(-1);
-  assert.equal(entry.id, 'herdr-coordination');
+  const entry = current.entries.find(({ id }) => id === 'herdr-coordination');
+  assert.ok(entry, 'herdr-coordination has a catalog row');
   assert.equal(entry.path, 'skills/orchestration/herdr-coordination/SKILL.md');
-  assert.match(entry.ref, /^skill\/herdr-coordination\/v\d+\.\d+\.\d+$/);
+  assert.equal(entry.ref, `skill/herdr-coordination/v${version}`);
   assert.equal(entry.type, 'own');
   assert.equal(entry.data_permissions.status, 'unverified');
   assert.doesNotThrow(() => git('merge-base', '--is-ancestor', entry.ref, 'HEAD'));
-  assert.match(git('show', `${entry.ref}:${entry.path}`), /^name: herdr-coordination$/m);
+  for (const file of ['SKILL.md', 'LICENSE', 'CHANGELOG.md', 'RELEASE_NOTES.md']) {
+    assert.equal(git('show', `${entry.ref}:skills/orchestration/herdr-coordination/${file}`), readFileSync(join(offer, file), 'utf8').trim());
+  }
 });
 
 test('fixtures of eight host families acquire only Herdr and read its metadata without a harness', (t) => {
