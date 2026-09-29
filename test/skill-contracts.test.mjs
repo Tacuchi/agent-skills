@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { copyFileSync, existsSync, mkdtempSync, mkdirSync, readFileSync, readdirSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
-import { join, resolve } from 'node:path';
+import { isAbsolute, join, relative, resolve } from 'node:path';
 import test from 'node:test';
 
 const root = resolve(import.meta.dirname, '..');
@@ -10,6 +10,11 @@ const offers = [
   ['architecture', 'system-diagrams'],
   ['data', 'sql-authoring'],
 ];
+const referenceBySlug = {
+  'ui-authoring': 'recorridos-y-pantallas.md',
+  'system-diagrams': 'c4-y-motores.md',
+  'sql-authoring': 'dialecto-y-migraciones.md',
+};
 
 function copyOffer(t, domain, slug) {
   const fixture = mkdtempSync(join(tmpdir(), `${slug}-isolated-`));
@@ -24,7 +29,28 @@ function copyOffer(t, domain, slug) {
   for (const name of readdirSync(join(source, 'assets'))) {
     copyFileSync(join(source, 'assets', name), join(target, 'assets', name));
   }
+  if (existsSync(join(source, 'references'))) {
+    mkdirSync(join(target, 'references'));
+    for (const name of readdirSync(join(source, 'references'))) {
+      copyFileSync(join(source, 'references', name), join(target, 'references', name));
+    }
+  }
   return { fixture, target, skill: readFileSync(join(target, 'SKILL.md'), 'utf8') };
+}
+
+function checkLocalLinks(markdown, location, target) {
+  let links = 0;
+  for (const [, href] of markdown.matchAll(/\]\(([^)]+)\)/g)) {
+    if (/^[a-z]+:\/\//i.test(href)) continue;
+    const path = href.split('#', 1)[0];
+    assert.ok(path && !isAbsolute(path), `enlace local relativo: ${href}`);
+    const linked = resolve(location, path);
+    const within = relative(target, linked);
+    assert.ok(within && !within.startsWith('..') && !isAbsolute(within), `enlace dentro de la oferta: ${href}`);
+    assert.ok(existsSync(linked), `enlace existente: ${href}`);
+    links++;
+  }
+  return links;
 }
 
 test('cada oferta se adquiere sola con sus enlaces, titular, historia y licencia', async (t) => {
@@ -34,15 +60,35 @@ test('cada oferta se adquiere sola con sus enlaces, titular, historia y licencia
       assert.deepEqual(readdirSync(fixture), [slug]);
       assert.match(skill, new RegExp(`^---\nname: ${slug}\ndescription: .+\n---`, 'm'));
       assert.doesNotMatch(skill, /\baw\b|\.workflow\/|skills\/(?:design\/ui-authoring|architecture\/system-diagrams|data\/sql-authoring)\/SKILL\.md/);
-      for (const [, link] of skill.matchAll(/\]\((assets\/[^)]+)\)/g)) {
-        assert.ok(existsSync(join(target, link)), `${slug}: enlace local ${link}`);
-        assert.equal(resolve(target, link).startsWith(`${target}/`), true);
-      }
+      const reference = referenceBySlug[slug];
+      assert.deepEqual(readdirSync(join(target, 'references')), [reference]);
+      assert.ok(skill.includes(`](references/${reference})`), `${slug}: referencia alcanzable desde SKILL.md`);
+      assert.ok(checkLocalLinks(skill, target, target) >= 2, `${slug}: enlaces locales verificados`);
+      const details = readFileSync(join(target, 'references', reference), 'utf8');
+      assert.doesNotMatch(details, /\bWorkline\b|\baw\b|\.workflow\/|docs\/(?:designs|diagrams|scripts)\/|\bQTC\b/i);
+      checkLocalLinks(details, join(target, 'references'), target);
       assert.match(readFileSync(join(target, 'LICENSE'), 'utf8'), /MIT License[\s\S]*Tacuchi/);
-      assert.match(readFileSync(join(target, 'CHANGELOG.md'), 'utf8'), /1\.0\.0/);
-      assert.match(readFileSync(join(target, 'RELEASE_NOTES.md'), 'utf8'), new RegExp(`skill/${slug}/v1\\.0\\.0`));
+      assert.match(readFileSync(join(target, 'CHANGELOG.md'), 'utf8'), /## \[1\.1\.0\][\s\S]*## \[1\.0\.0\]/);
+      assert.match(readFileSync(join(target, 'RELEASE_NOTES.md'), 'utf8'), new RegExp(`skill/${slug}/v1\\.1\\.0`));
     });
   }
+});
+
+test('las referencias contienen técnica concreta de cada dominio y conservan sus límites', (t) => {
+  const ui = copyOffer(t, ...offers[0]);
+  const diagrams = copyOffer(t, ...offers[1]);
+  const sql = copyOffer(t, ...offers[2]);
+  const uiDetails = readFileSync(join(ui.target, 'references', referenceBySlug['ui-authoring']), 'utf8');
+  const c4Details = readFileSync(join(diagrams.target, 'references', referenceBySlug['system-diagrams']), 'utf8');
+  const sqlDetails = readFileSync(join(sql.target, 'references', referenceBySlug['sql-authoring']), 'utf8');
+  assert.match(uiDetails, /recorrido[\s\S]*pantalla[\s\S]*estado/i);
+  assert.match(uiDetails, /foco[\s\S]*teclado|teclado[\s\S]*foco/i);
+  assert.match(c4Details, /C4Context[\s\S]*C4Container[\s\S]*C4Component/);
+  assert.match(c4Details, /Structurizr DSL[\s\S]*workspace\s+"/);
+  assert.match(c4Details, /mermaid\.ink[\s\S]*consentimiento explícito/i);
+  assert.match(sqlDetails, /PostgreSQL[\s\S]*MySQL[\s\S]*SQLite/);
+  assert.match(sqlDetails, /rollback[\s\S]*dependencias[\s\S]*bloqueos/i);
+  assert.match(sqlDetails, /Nunca ejecutes DML\/DDL por \*\*ningún canal\*\*/);
 });
 
 test('tres rutas y nombres propios no colisionan al adquirir una oferta en hosts aislados', (t) => {

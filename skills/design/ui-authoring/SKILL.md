@@ -18,6 +18,7 @@ Convierte el objetivo de la persona en una especificación de interfaz que otro 
 - Identifica la tarea principal, punto de entrada, salida exitosa y caminos de abandono o recuperación. Explicita decisiones abiertas en vez de inventar reglas de negocio.
 - Enumera pantallas y transiciones: qué acción cambia qué estado, qué se muestra mientras espera, al quedar vacío, al fallar y al volver a intentar. Describe navegación por teclado, foco, etiquetas, mensajes comprensibles y contraste sin prometer conformidad que no se haya comprobado.
 - Describe datos mostrados y recogidos, validación, permisos y privacidad; usa ejemplos ficticios en cualquier captura o maqueta. Si una decisión afecta al resultado funcional, indica su motivo y cómo se comprobará.
+- Para especificar recorridos, pantallas, jerarquía visual, adaptación, estados y criterios de revisión con suficiente detalle, consulta la [guía de recorridos y pantallas](references/recorridos-y-pantallas.md) según la interfaz solicitada.
 - Entrega en el destino aprobado un documento legible con objetivo, recorrido, pantallas, estados y casos de fallo; enlaza assets locales con rutas relativas. Usa el [ejemplo neutro](assets/ejemplo-recorrido.md) como punto de partida, no como plantilla obligatoria.
 - Revisa cada ruta y cada estado con la persona: distingue decisiones confirmadas de hipótesis y deja preguntas concretas para las no resueltas.
 

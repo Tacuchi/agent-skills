@@ -18,6 +18,7 @@ Prepara scripts para revisión y aplicación ajena; esta skill no ejecuta cambio
 1. Declara dialecto y supuestos, precondiciones y resultado esperado. Si no conoces el esquema, solicita su definición en vez de deducir columnas.
 2. Prepara el script de avance y un reverso en orden compatible con dependencias. Si el cambio no puede revertirse sin perder datos, dilo y especifica restauración o copia previa como condición de aplicación, nunca prometas rollback ficticio.
 3. Señala puntos de transacción, bloqueos, idempotencia y riesgos de volumen según el motor. Usa parámetros para valores externos y marca placeholders que otra persona deba resolver.
+   Consulta la [guía de dialectos y migraciones](references/dialecto-y-migraciones.md) para elegir sintaxis, ordenar dependencias y preparar un reverso honesto sin ejecutar sentencias.
 4. Entrega los dos scripts, un ejemplo de parámetros y una lista de verificaciones **para el aplicador**, sin correr DML/DDL ni siquiera como prueba. El [ejemplo ficticio](assets/ejemplo-parametros.md) ilustra los límites; no lo ejecutes.
 
 ## Salida

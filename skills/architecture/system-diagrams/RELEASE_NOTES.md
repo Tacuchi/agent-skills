@@ -1,5 +1,5 @@
-# system-diagrams 1.0.0
+# system-diagrams 1.1.0
 
-Adquiere sólo `skills/architecture/system-diagrams/SKILL.md` de `Tacuchi/agent-skills` en la ref `skill/system-diagrams/v1.0.0`, mediante un host que acepte esa ruta y ref. Puede entregar una fuente de diagrama sin renderizador ni otro arnés. Incluye un ejemplo textual en `assets/ejemplo-flujo.md`.
+La versión 1.1.0 incorpora `references/c4-y-motores.md`: niveles C4 1–3, plantillas Mermaid y Structurizr DSL y selección de motor. El render local sigue siendo predeterminado; una vista remota requiere consentimiento explícito. Adquiere el directorio de `system-diagrams` completo (incluidos `references/` y `assets/`) de `Tacuchi/agent-skills` cuando exista la ref `skill/system-diagrams/v1.1.0`. Funciona sin otro arnés ni renderizador instalado.
 
-Responsable: Tacuchi. Licencia: MIT del archivo `LICENSE` en este directorio. La publicación remota y la comprobación del canal de adquisición son pasos posteriores a la creación de la ref.
+Responsable: Tacuchi. Licencia: MIT del archivo `LICENSE` en este directorio. La ref y su publicación remota se crean después de este cambio.

@@ -1,5 +1,5 @@
-# sql-authoring 1.0.0
+# sql-authoring 1.1.0
 
-Adquiere sólo `skills/data/sql-authoring/SKILL.md` de `Tacuchi/agent-skills` en la ref `skill/sql-authoring/v1.0.0`, mediante un host que acepte esa ruta y ref. Redacta SQL con parámetros y reversos para aplicación ajena; no ejecuta DML/DDL mediante ningún canal. Incluye un ejemplo ficticio en `assets/ejemplo-parametros.md`.
+La versión 1.1.0 incorpora `references/dialecto-y-migraciones.md`: diferencias de PostgreSQL, MySQL y SQLite, parámetros, dependencias, reversos, idempotencia, transacciones, bloqueos y volumen. Adquiere el directorio de `sql-authoring` completo (incluidos `references/` y `assets/`) de `Tacuchi/agent-skills` cuando exista la ref `skill/sql-authoring/v1.1.0`. Sigue sin ejecutar DML/DDL mediante ningún canal.
 
-Responsable: Tacuchi. Licencia: MIT del archivo `LICENSE` en este directorio. La publicación remota y la comprobación del canal de adquisición son pasos posteriores a la creación de la ref.
+Responsable: Tacuchi. Licencia: MIT del archivo `LICENSE` en este directorio. La ref y su publicación remota se crean después de este cambio.

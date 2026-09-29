@@ -15,7 +15,7 @@ Produce un diagrama que se pueda revisar junto a sus fuentes, aun si no hay rend
 
 ## Método
 
-1. Elige el nivel que responde la pregunta: contexto para límites, componentes para responsabilidades, secuencia para llamadas, flujo para transformaciones. Escoge notación según el público y herramientas locales disponibles; no impongas un estándar.
+1. Elige el nivel que responde la pregunta: contexto para límites, contenedores para aplicaciones y almacenes, componentes para responsabilidades internas, secuencia para llamadas, flujo para transformaciones. Para arquitectura C4, usa Mermaid C4 embebido por defecto o Structurizr DSL si hace falta un dossier formal; consulta la [guía de C4 y motores](references/c4-y-motores.md) para plantillas, selección y convenciones.
 2. Extrae actores, límites y relaciones comprobables de la evidencia disponible. Minimiza detalles secretos (tokens, hosts internos, identificadores personales) y conserva referencias relativas a archivos cuando sea posible.
 3. Redacta una fuente editable y una leyenda con evidencia, supuestos y fecha. El [ejemplo local](assets/ejemplo-flujo.md) muestra una representación mínima y autocontenida.
 4. Si existe un renderizador local, renderiza sin red y revisa legibilidad, direcciones y etiquetas. Si no existe, entrega la fuente legible y los pasos necesarios para renderizar localmente; no uses un servicio remoto como fallback.
