@@ -51,6 +51,9 @@ function skillFrontmatter(content, label) {
     const value = new RegExp(`^${key}:[ \t]*(.+)$`, 'm').exec(frontmatter)?.[1].trim();
     return value && value !== "''" && value !== '""';
   }), `${label}: SKILL.md sin frontmatter con name y description`);
+  // Un escalar plano con `: ` o ` #` es YAML inválido o truncado: los instaladores estrictos omiten la skill.
+  const plain = [...frontmatter.matchAll(/^[\w-]+:[ \t]*([^'"|>\s].*)$/gm)].find(([, value]) => /: |\s#/.test(value));
+  assert(!plain, `${label}: SKILL.md con frontmatter YAML inválido; entrecomilla «${plain?.[0].split(':')[0]}»`);
 }
 
 function immutableEvidence(entry) {

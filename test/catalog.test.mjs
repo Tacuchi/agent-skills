@@ -150,6 +150,19 @@ test('rechaza SKILL.md sin name y description en el tag', (t) => {
   assert.throws(() => checkCatalog(f.root), /tag .*SKILL\.md.*frontmatter/);
 });
 
+test('rechaza SKILL.md con un escalar plano que no es YAML válido en el tag', (t) => {
+  const f = fixture(t);
+  const entry = own('programacion', 'alpha');
+  f.tagged(entry);
+  git(f.root, 'tag', '-d', entry.ref);
+  write(f.root, entry.path, `---\nname: alpha\ndescription: Coordina agentes: delega tareas\n---\n`);
+  git(f.root, 'add', '.');
+  git(f.root, 'commit', '-qm', 'skill con yaml inválido');
+  git(f.root, 'tag', entry.ref);
+  f.publish({ schema_version: 1, revision: 2, entries: [entry] });
+  assert.throws(() => checkCatalog(f.root), /tag .*SKILL\.md.*YAML inválido.*description/);
+});
+
 test('la comprobación tras el commit compara la revisión con el padre', (t) => {
   const f = fixture(t);
   f.publish({ schema_version: 1, revision: 1, entries: [external()] });

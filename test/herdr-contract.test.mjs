@@ -8,6 +8,7 @@ import test from 'node:test';
 const root = resolve(import.meta.dirname, '..');
 const offer = join(root, 'skills', 'orchestration', 'herdr-coordination');
 const skill = readFileSync(join(offer, 'SKILL.md'), 'utf8');
+const version = /^## \[(\d+\.\d+\.\d+)\]/m.exec(readFileSync(join(offer, 'CHANGELOG.md'), 'utf8'))[1];
 const git = (...args) => execFileSync('git', ['-C', root, ...args], { encoding: 'utf8' }).trim();
 
 test('una instalación aislada conserva identidad, licencia, historia y alcance autónomo', (t) => {
@@ -19,12 +20,12 @@ test('una instalación aislada conserva identidad, licencia, historia y alcance 
     copyFileSync(join(offer, file), join(target, file));
   }
   assert.deepEqual(readdirSync(join(fixture, 'skills')), ['herdr-coordination']);
-  assert.match(skill, /^---\nname: herdr-coordination\ndescription: .+\n---/);
+  assert.match(skill, /^---\nname: herdr-coordination\ndescription: "[^"]+"\n---/);
   assert.doesNotMatch(skill, /\baw\b|\.workflow\/|Workline|scratchpad|\/Users\/|w\d+:p\w+|OPENCODE_CONFIG/);
   assert.match(skill, /Si `herdr` falta.*no atribuyas tareas iniciadas ni resultados/s);
   assert.match(readFileSync(join(target, 'LICENSE'), 'utf8'), /MIT License[\s\S]*Tacuchi/);
   assert.match(readFileSync(join(target, 'CHANGELOG.md'), 'utf8'), /## \[1\.0\.0\]/);
-  assert.match(readFileSync(join(target, 'RELEASE_NOTES.md'), 'utf8'), /skill\/herdr-coordination\/v1\.0\.0/);
+  assert.ok(readFileSync(join(target, 'RELEASE_NOTES.md'), 'utf8').includes(`skill/herdr-coordination/v${version}`));
 });
 
 test('trazas inventadas no convierten estado, envío ni cambio pendiente en un éxito', () => {
@@ -63,20 +64,16 @@ test('permiso, cuota, commit, publicación e irreversibilidad vuelven a la perso
   assert.match(skill, /Con respuesta escrita «No», transmite «No», relee la pantalla/);
 });
 
-test('la cuarta oferta sube una revisión y conserva exactamente las tres anteriores', () => {
+test('Herdr es la cuarta oferta y apunta a la ref de su última versión', () => {
   const current = JSON.parse(readFileSync(join(root, 'catalog', 'index.json'), 'utf8'));
-  const head = JSON.parse(git('show', 'HEAD:catalog/index.json'));
-  const previous = JSON.parse(git('show', JSON.stringify(head) === JSON.stringify(current) ? 'HEAD^:catalog/index.json' : 'HEAD:catalog/index.json'));
-  assert.equal(previous.entries.length, 3);
-  assert.equal(current.revision, previous.revision + 1);
-  assert.deepEqual(current.entries.slice(0, previous.entries.length), previous.entries);
+  assert.deepEqual(current.entries.map(({ id }) => id), ['ui-authoring', 'system-diagrams', 'sql-authoring', 'herdr-coordination']);
   const entry = current.entries.at(-1);
   assert.equal(entry.id, 'herdr-coordination');
   assert.equal(entry.path, 'skills/orchestration/herdr-coordination/SKILL.md');
-  assert.equal(entry.ref, 'skill/herdr-coordination/v1.0.0');
+  assert.equal(entry.ref, `skill/herdr-coordination/v${version}`);
   assert.equal(entry.type, 'own');
   assert.equal(entry.data_permissions.status, 'unverified');
-  assert.doesNotThrow(() => git('merge-base', '--is-ancestor', 'skill/herdr-coordination/v1.0.0', 'HEAD'));
+  assert.doesNotThrow(() => git('merge-base', '--is-ancestor', entry.ref, 'HEAD'));
   for (const file of ['SKILL.md', 'LICENSE', 'CHANGELOG.md', 'RELEASE_NOTES.md']) {
     assert.equal(git('show', `${entry.ref}:skills/orchestration/herdr-coordination/${file}`), readFileSync(join(offer, file), 'utf8').trim());
   }

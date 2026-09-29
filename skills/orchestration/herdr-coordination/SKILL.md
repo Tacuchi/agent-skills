@@ -1,6 +1,6 @@
 ---
 name: herdr-coordination
-description: Coordina agentes de código en paneles Herdr: delega tareas delimitadas, verifica modelo y esfuerzo efectivos, sigue estados y preguntas y recupera sesiones sin suplantar autorizaciones humanas. Úsala cuando la persona pida coordinar agentes mediante Herdr.
+description: "Coordina agentes de código en paneles Herdr: delega tareas delimitadas, verifica modelo y esfuerzo efectivos, sigue estados y preguntas y recupera sesiones sin suplantar autorizaciones humanas. Úsala cuando la persona pida coordinar agentes mediante Herdr."
 ---
 
 # Coordinación de agentes en Herdr
