@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { execFileSync } from 'node:child_process';
 import { copyFileSync, mkdtempSync, mkdirSync, readFileSync, readdirSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
@@ -7,6 +8,7 @@ import test from 'node:test';
 const root = resolve(import.meta.dirname, '..');
 const offer = join(root, 'skills', 'orchestration', 'herdr-coordination');
 const skill = readFileSync(join(offer, 'SKILL.md'), 'utf8');
+const git = (...args) => execFileSync('git', ['-C', root, ...args], { encoding: 'utf8' }).trim();
 
 test('una instalación aislada conserva identidad, licencia, historia y alcance autónomo', (t) => {
   const fixture = mkdtempSync(join(tmpdir(), 'herdr-only-'));
@@ -59,4 +61,44 @@ test('permiso, cuota, commit, publicación e irreversibilidad vuelven a la perso
   assert.match(skill, /`herdr agent prompt` rechaza envíos a un agente ya bloqueado/);
   assert.match(skill, /si no se confirma recepción, conserva la pregunta pendiente/);
   assert.match(skill, /Con respuesta escrita «No», transmite «No», relee la pantalla/);
+});
+
+test('la cuarta oferta sube una revisión y conserva exactamente las tres anteriores', () => {
+  const current = JSON.parse(readFileSync(join(root, 'catalog', 'index.json'), 'utf8'));
+  const head = JSON.parse(git('show', 'HEAD:catalog/index.json'));
+  const previous = JSON.parse(git('show', JSON.stringify(head) === JSON.stringify(current) ? 'HEAD^:catalog/index.json' : 'HEAD:catalog/index.json'));
+  assert.equal(previous.entries.length, 3);
+  assert.equal(current.revision, previous.revision + 1);
+  assert.deepEqual(current.entries.slice(0, previous.entries.length), previous.entries);
+  const entry = current.entries.at(-1);
+  assert.equal(entry.id, 'herdr-coordination');
+  assert.equal(entry.path, 'skills/orchestration/herdr-coordination/SKILL.md');
+  assert.equal(entry.ref, 'skill/herdr-coordination/v1.0.0');
+  assert.equal(entry.type, 'own');
+  assert.equal(entry.data_permissions.status, 'unverified');
+  assert.doesNotThrow(() => git('merge-base', '--is-ancestor', 'skill/herdr-coordination/v1.0.0', 'HEAD'));
+  for (const file of ['SKILL.md', 'LICENSE', 'CHANGELOG.md', 'RELEASE_NOTES.md']) {
+    assert.equal(git('show', `${entry.ref}:skills/orchestration/herdr-coordination/${file}`), readFileSync(join(offer, file), 'utf8').trim());
+  }
+});
+
+test('fixtures de ocho familias de host adquieren sólo Herdr y leen su metadata sin arnés', (t) => {
+  const fixture = mkdtempSync(join(tmpdir(), 'herdr-host-matrix-'));
+  t.after(() => rmSync(fixture, { recursive: true, force: true }));
+  const hosts = new Map([
+    ['claude', '.claude/skills'], ['codex', '.codex/skills'], ['warp', '.warp/skills'],
+    ['oz', '.agents/skills'], ['gemini/agy', '.gemini/skills'], ['opencode', '.agents/skills'],
+    ['crush', '.config/crush/skills'], ['kimi', '.kimi-code/skills'],
+  ]);
+  for (const [host, location] of hosts) {
+    const skills = join(fixture, host, location);
+    const target = join(skills, 'herdr-coordination');
+    mkdirSync(target, { recursive: true });
+    copyFileSync(join(offer, 'SKILL.md'), join(target, 'SKILL.md'));
+    assert.deepEqual(readdirSync(skills), ['herdr-coordination'], `${host}: sin ofertas hermanas`);
+    const installed = readFileSync(join(target, 'SKILL.md'), 'utf8');
+    assert.match(installed, /^name: herdr-coordination$/m, `${host}: selección por nombre`);
+    assert.match(installed, /^description: .+Herdr.+$/m, `${host}: selección por descripción`);
+    assert.doesNotMatch(installed, /\baw\b|\.workflow\/|Workline/);
+  }
 });
