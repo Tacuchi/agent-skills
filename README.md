@@ -7,15 +7,15 @@ Consulta la fuente, la ref y los datos/permisos de cada oferta antes de decidir.
 ## Catálogo
 
 <!-- catalog:start -->
-Revisión del índice: **2** (esquema 1).
+Revisión del índice: **3** (esquema 1).
 
 ### Ofertas vigentes
 
 | Skill | Dominio | Tipo | Fuente | Ruta | Ref | Lifecycle | Datos/permisos |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| UI authoring | design | propia | https://github.com/Tacuchi/agent-skills | skills/design/ui-authoring/SKILL.md | skill/ui-authoring/v1.0.0 | Tacuchi | no verificados |
-| System diagrams | architecture | propia | https://github.com/Tacuchi/agent-skills | skills/architecture/system-diagrams/SKILL.md | skill/system-diagrams/v1.0.0 | Tacuchi | no verificados |
-| SQL authoring | data | propia | https://github.com/Tacuchi/agent-skills | skills/data/sql-authoring/SKILL.md | skill/sql-authoring/v1.0.0 | Tacuchi | no verificados |
+| UI authoring | design | propia | https://github.com/Tacuchi/agent-skills | skills/design/ui-authoring/SKILL.md | skill/ui-authoring/v1.1.0 | Tacuchi | no verificados |
+| System diagrams | architecture | propia | https://github.com/Tacuchi/agent-skills | skills/architecture/system-diagrams/SKILL.md | skill/system-diagrams/v1.1.0 | Tacuchi | no verificados |
+| SQL authoring | data | propia | https://github.com/Tacuchi/agent-skills | skills/data/sql-authoring/SKILL.md | skill/sql-authoring/v1.1.0 | Tacuchi | no verificados |
 
 ### Ofertas retiradas
 

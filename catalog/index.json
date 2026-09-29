@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "revision": 2,
+  "revision": 3,
   "entries": [
     {
       "id": "ui-authoring",
@@ -9,7 +9,7 @@
       "type": "own",
       "source_url": "https://github.com/Tacuchi/agent-skills",
       "path": "skills/design/ui-authoring/SKILL.md",
-      "ref": "skill/ui-authoring/v1.0.0",
+      "ref": "skill/ui-authoring/v1.1.0",
       "lifecycle_owner": "Tacuchi",
       "status": "active",
       "data_permissions": { "status": "unverified", "summary": "no verificados" },
@@ -24,7 +24,7 @@
       "type": "own",
       "source_url": "https://github.com/Tacuchi/agent-skills",
       "path": "skills/architecture/system-diagrams/SKILL.md",
-      "ref": "skill/system-diagrams/v1.0.0",
+      "ref": "skill/system-diagrams/v1.1.0",
       "lifecycle_owner": "Tacuchi",
       "status": "active",
       "data_permissions": { "status": "unverified", "summary": "no verificados" },
@@ -39,7 +39,7 @@
       "type": "own",
       "source_url": "https://github.com/Tacuchi/agent-skills",
       "path": "skills/data/sql-authoring/SKILL.md",
-      "ref": "skill/sql-authoring/v1.0.0",
+      "ref": "skill/sql-authoring/v1.1.0",
       "lifecycle_owner": "Tacuchi",
       "status": "active",
       "data_permissions": { "status": "unverified", "summary": "no verificados" },
