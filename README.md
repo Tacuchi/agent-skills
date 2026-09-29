@@ -7,7 +7,7 @@ Consulta la fuente, la ref y los datos/permisos de cada oferta antes de decidir.
 ## Catálogo
 
 <!-- catalog:start -->
-Revisión del índice: **4** (esquema 1).
+Revisión del índice: **5** (esquema 1).
 
 ### Ofertas vigentes
 
@@ -16,7 +16,7 @@ Revisión del índice: **4** (esquema 1).
 | UI authoring | design | propia | https://github.com/Tacuchi/agent-skills | skills/design/ui-authoring/SKILL.md | skill/ui-authoring/v1.1.0 | Tacuchi | no verificados |
 | System diagrams | architecture | propia | https://github.com/Tacuchi/agent-skills | skills/architecture/system-diagrams/SKILL.md | skill/system-diagrams/v1.1.0 | Tacuchi | no verificados |
 | SQL authoring | data | propia | https://github.com/Tacuchi/agent-skills | skills/data/sql-authoring/SKILL.md | skill/sql-authoring/v1.1.0 | Tacuchi | no verificados |
-| Herdr coordination | orchestration | propia | https://github.com/Tacuchi/agent-skills | skills/orchestration/herdr-coordination/SKILL.md | skill/herdr-coordination/v1.0.0 | Tacuchi | no verificados |
+| Herdr coordination | orchestration | propia | https://github.com/Tacuchi/agent-skills | skills/orchestration/herdr-coordination/SKILL.md | skill/herdr-coordination/v1.0.1 | Tacuchi | no verificados |
 
 ### Ofertas retiradas
 
@@ -34,7 +34,7 @@ Elige **una sola** ruta del repositorio `https://github.com/Tacuchi/agent-skills
 - [ui-authoring](skills/design/ui-authoring/SKILL.md): `skills/design/ui-authoring/SKILL.md` en `skill/ui-authoring/v1.0.0`; decisiones de recorrido, pantallas y accesibilidad. [Notas individuales](skills/design/ui-authoring/RELEASE_NOTES.md).
 - [system-diagrams](skills/architecture/system-diagrams/SKILL.md): `skills/architecture/system-diagrams/SKILL.md` en `skill/system-diagrams/v1.0.0`; diagramas con evidencia y render local. [Notas individuales](skills/architecture/system-diagrams/RELEASE_NOTES.md).
 - [sql-authoring](skills/data/sql-authoring/SKILL.md): `skills/data/sql-authoring/SKILL.md` en `skill/sql-authoring/v1.0.0`; scripts parametrizados y reversos para aplicación ajena. [Notas individuales](skills/data/sql-authoring/RELEASE_NOTES.md).
-- [herdr-coordination](skills/orchestration/herdr-coordination/SKILL.md): `skills/orchestration/herdr-coordination/SKILL.md` en `skill/herdr-coordination/v1.0.0`; coordinación verificable de paneles y autorizaciones humanas. [Notas individuales](skills/orchestration/herdr-coordination/RELEASE_NOTES.md).
+- [herdr-coordination](skills/orchestration/herdr-coordination/SKILL.md): `skills/orchestration/herdr-coordination/SKILL.md` en `skill/herdr-coordination/v1.0.1`; coordinación verificable de paneles y autorizaciones humanas. [Notas individuales](skills/orchestration/herdr-coordination/RELEASE_NOTES.md).
 
 Estas rutas comparten repo, pero cada oferta se adquiere por separado y declara su propia licencia e historial. La persona crea los tags; después de validar cada árbol etiquetado se prepara una GitHub Release **por tag** con sus propias notas. El catálogo local sólo acredita refs existentes en este checkout: comprobar la publicación remota y adquirir desde un host compatible son pasos operativos posteriores.
 
