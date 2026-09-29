@@ -1,5 +1,7 @@
-# ui-authoring 1.1.0
+# ui-authoring 2.0.0
 
-La versión 1.1.0 incorpora `references/recorridos-y-pantallas.md`: técnica para recorridos, estructura de pantalla, estados, interacción, jerarquía, accesibilidad y revisión. Adquiere el directorio de `ui-authoring` completo (incluidos `references/` y `assets/`) de `Tacuchi/agent-skills` cuando exista la ref `skill/ui-authoring/v1.1.0`. No requiere otra skill ni un CLI particular. Pide un destino aprobado; sin él entrega el borrador en la conversación.
+Version 2.0.0 publishes the skill in English. Its `description` changes, and so does the text a host matches to activate it; that is why it is a major version. The rules are the same as in 1.1.0. The guide is now `references/journeys-and-screens.md` and the example `assets/example-journey.md`.
 
-Responsable: Tacuchi. Licencia: MIT del archivo `LICENSE` en este directorio. La ref y su publicación remota se crean después de este cambio.
+Acquire the whole `ui-authoring` directory (including `references/` and `assets/`) from `Tacuchi/agent-skills` once the ref `skill/ui-authoring/v2.0.0` exists. It needs no other skill and no particular CLI. It asks for an approved destination; without one it delivers the draft in the conversation.
+
+Owner: Tacuchi. License: MIT, in the `LICENSE` file of this directory. The ref and its remote publication are created after this change.

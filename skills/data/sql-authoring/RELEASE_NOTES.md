@@ -1,5 +1,9 @@
-# sql-authoring 1.1.0
+# sql-authoring 2.0.0
 
-La versión 1.1.0 incorpora `references/dialecto-y-migraciones.md`: diferencias de PostgreSQL, MySQL y SQLite, parámetros, dependencias, reversos, idempotencia, transacciones, bloqueos y volumen. Adquiere el directorio de `sql-authoring` completo (incluidos `references/` y `assets/`) de `Tacuchi/agent-skills` cuando exista la ref `skill/sql-authoring/v1.1.0`. Sigue sin ejecutar DML/DDL mediante ningún canal.
+Version 2.0.0 publishes the skill in English. Its `description` changes, and so does the text a host matches to activate it; that is why it is a major version. The guide is now `references/dialect-and-migrations.md` and the example `assets/example-parameters.md`.
 
-Responsable: Tacuchi. Licencia: MIT del archivo `LICENSE` en este directorio. La ref y su publicación remota se crean después de este cambio.
+It also adds generic PostgreSQL rules to the guide: idempotent forms, explicit schema, CTEs, a short header, a bundle in five ordered categories with coupled and global rollbacks, backups before `UPDATE`/`DELETE`, grants and ownership as part of the bundle, derived target sets and offline parsing with `pglast`. The existing limits hold: it runs no DML or DDL through any channel, and it states transaction points per operation instead of imposing a universal `BEGIN`/`COMMIT`.
+
+Acquire the whole `sql-authoring` directory (including `references/` and `assets/`) from `Tacuchi/agent-skills` once the ref `skill/sql-authoring/v2.0.0` exists.
+
+Owner: Tacuchi. License: MIT, in the `LICENSE` file of this directory. The ref and its remote publication are created after this change.

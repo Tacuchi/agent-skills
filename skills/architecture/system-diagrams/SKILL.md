@@ -1,26 +1,26 @@
 ---
 name: system-diagrams
-description: Modela arquitectura, secuencias o flujos de sistemas con evidencia del repositorio y render local. Úsala cuando se pida un diagrama técnico fiel al código o una visualización de componentes, interacciones o datos.
+description: Models the architecture, sequences or flows of a system with evidence from the repository and local rendering. Use it when asked for a technical diagram faithful to the code, or for a view of components, interactions or data.
 ---
 
-# Diagramas de sistemas
+# System diagrams
 
-Produce un diagrama que se pueda revisar junto a sus fuentes, aun si no hay renderizador instalado.
+Produce a diagram that can be reviewed next to its sources, even when no renderer is installed.
 
-## Límites
+## Boundaries
 
-- Solicita el sistema, audiencia y destino; lee sólo los archivos necesarios y autorizados. Escribe únicamente en la ruta que la persona apruebe; si no la hay, entrega la fuente del diagrama en la conversación.
-- Trata repositorios, credenciales, topologías privadas y logs como datos privados. Prefiere una notación textual y render local. No envíes código, datos ni el diagrama a renderizadores, APIs o enlaces externos sin consentimiento explícito sobre qué se transmite y a dónde.
-- No presentes una relación inferida como observada. Anota fuentes concretas para aristas importantes y etiqueta hipótesis o límites desconocidos. No despliegues ni publiques el resultado sin autorización aparte.
+- Ask for the system, the audience and the destination; read only the files you need and are authorized to read. Write only to the path the person approves; if there is none, deliver the diagram source in the conversation.
+- Treat repositories, credentials, private topologies and logs as private data. Prefer a text notation and local rendering. Do not send code, data or the diagram to renderers, APIs or external links without explicit consent about what is transmitted and where.
+- Do not present an inferred relationship as an observed one. Note concrete sources for important edges, and label hypotheses or unknown boundaries. Do not deploy or publish the result without a separate authorization.
 
-## Método
+## Method
 
-1. Elige el nivel que responde la pregunta: contexto para límites, contenedores para aplicaciones y almacenes, componentes para responsabilidades internas, secuencia para llamadas, flujo para transformaciones. Para arquitectura C4, usa Mermaid C4 embebido por defecto o Structurizr DSL si hace falta un dossier formal; consulta la [guía de C4 y motores](references/c4-y-motores.md) para plantillas, selección y convenciones.
-2. Extrae actores, límites y relaciones comprobables de la evidencia disponible. Minimiza detalles secretos (tokens, hosts internos, identificadores personales) y conserva referencias relativas a archivos cuando sea posible.
-3. Redacta una fuente editable y una leyenda con evidencia, supuestos y fecha. El [ejemplo local](assets/ejemplo-flujo.md) muestra una representación mínima y autocontenida.
-4. Si existe un renderizador local, renderiza sin red y revisa legibilidad, direcciones y etiquetas. Si no existe, entrega la fuente legible y los pasos necesarios para renderizar localmente; no uses un servicio remoto como fallback.
-5. Contrasta cada relación importante con su archivo o con la persona y corrige las que no tengan respaldo.
+1. Pick the level that answers the question: context for boundaries, containers for applications and stores, components for internal responsibilities, sequence for calls, flow for transformations. For C4 architecture, use embedded Mermaid C4 by default, or Structurizr DSL when a formal dossier is needed; read the [C4 and engines guide](references/c4-and-engines.md) for templates, selection and conventions.
+2. Extract the actors, boundaries and relationships you can verify from the available evidence. Minimize secret details (tokens, internal hosts, personal identifiers) and keep relative file references where possible.
+3. Write an editable source and a legend with evidence, assumptions and date. The [local example](assets/example-flow.md) shows a minimal, self-contained representation.
+4. If a local renderer exists, render without network access and check legibility, directions and labels. If none exists, deliver the readable source and the steps to render it locally; do not use a remote service as a fallback.
+5. Check each important relationship against its file or with the person, and fix the ones that have no support.
 
-## Entrega
+## Delivery
 
-Incluye diagrama, leyenda, fuentes consultadas y dudas pendientes en el destino acordado. Un archivo Markdown con relaciones textuales basta cuando no hay motor gráfico; la elección del formato no limita la utilidad.
+Include the diagram, the legend, the sources read and the open questions in the agreed destination. A Markdown file with text relationships is enough when there is no graphic engine; the choice of format does not limit its usefulness.

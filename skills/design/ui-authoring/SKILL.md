@@ -1,27 +1,27 @@
 ---
 name: ui-authoring
-description: Define recorridos, pantallas, estados, accesibilidad y fallos de una interfaz a partir de necesidades de usuario. Úsala cuando se pida diseñar o especificar el comportamiento visible de una UI, incluso sin código ni framework elegido.
+description: Defines the journeys, screens, states, accessibility and failures of an interface from user needs. Use it when asked to design or specify the visible behavior of a UI, even with no code and no framework chosen.
 ---
 
-# Autoría de interfaces
+# Authoring interfaces
 
-Convierte el objetivo de la persona en una especificación de interfaz que otro equipo pueda implementar y comprobar. No presupongas un sistema de diseño ni un framework.
+Turn the person's goal into an interface specification that another team can implement and verify. Do not assume a design system or a framework.
 
-## Alcance y destino
+## Scope and destination
 
-1. Pregunta por usuarios, objetivo, dispositivos y restricciones que no se deduzcan de las fuentes disponibles. Lee sólo las fuentes necesarias que la persona haya autorizado; no busques perfiles, credenciales ni datos de producción por defecto.
-2. Acuerda la ruta de salida antes de crear o modificar archivos. Si no hay destino aprobado, presenta el borrador en la conversación. Mantén los cambios dentro de ese destino y no publiques ni copies datos personales, secretos o pantallas internas a servicios externos.
-3. Cualquier despliegue, publicación o escritura irreversible requiere autorización separada. La skill sólo redacta artefactos; no instala herramientas ni modifica el entorno del host.
+1. Ask about users, goal, devices and constraints that cannot be inferred from the available sources. Read only the sources you need and the person has authorized; do not search for profiles, credentials or production data by default.
+2. Agree on the output path before creating or changing files. With no approved destination, present the draft in the conversation. Keep changes inside that destination, and do not publish or copy personal data, secrets or internal screens to external services.
+3. Any deployment, publication or irreversible write needs a separate authorization. The skill only drafts artifacts; it does not install tools or change the host environment.
 
-## Proceso
+## Process
 
-- Identifica la tarea principal, punto de entrada, salida exitosa y caminos de abandono o recuperación. Explicita decisiones abiertas en vez de inventar reglas de negocio.
-- Enumera pantallas y transiciones: qué acción cambia qué estado, qué se muestra mientras espera, al quedar vacío, al fallar y al volver a intentar. Describe navegación por teclado, foco, etiquetas, mensajes comprensibles y contraste sin prometer conformidad que no se haya comprobado.
-- Describe datos mostrados y recogidos, validación, permisos y privacidad; usa ejemplos ficticios en cualquier captura o maqueta. Si una decisión afecta al resultado funcional, indica su motivo y cómo se comprobará.
-- Para especificar recorridos, pantallas, jerarquía visual, adaptación, estados y criterios de revisión con suficiente detalle, consulta la [guía de recorridos y pantallas](references/recorridos-y-pantallas.md) según la interfaz solicitada.
-- Entrega en el destino aprobado un documento legible con objetivo, recorrido, pantallas, estados y casos de fallo; enlaza assets locales con rutas relativas. Usa el [ejemplo neutro](assets/ejemplo-recorrido.md) como punto de partida, no como plantilla obligatoria.
-- Revisa cada ruta y cada estado con la persona: distingue decisiones confirmadas de hipótesis y deja preguntas concretas para las no resueltas.
+- Identify the main task, the entry point, the successful exit and the paths of abandonment or recovery. State open decisions instead of inventing business rules.
+- List screens and transitions: which action changes which state, and what is shown while waiting, when empty, on failure and on retry. Describe keyboard navigation, focus, labels, understandable messages and contrast, without promising conformance that has not been checked.
+- Describe the data shown and collected, validation, permissions and privacy; use fictional examples in any screenshot or mockup. If a decision affects the functional result, give its reason and how it will be checked.
+- To specify journeys, screens, visual hierarchy, adaptation, states and review criteria in enough detail, read the [journeys and screens guide](references/journeys-and-screens.md) as the requested interface needs.
+- Deliver in the approved destination a readable document with goal, journey, screens, states and failure cases; link local assets with relative paths. Use the [neutral example](assets/example-journey.md) as a starting point, not as a mandatory template.
+- Review each path and each state with the person: tell confirmed decisions from hypotheses, and leave concrete questions for the unresolved ones.
 
-## Resultado mínimo
+## Minimum result
 
-Una tabla o lista de pantallas con acción, estado resultante y retroalimentación observable, más un recorrido principal y uno de error. Si no hay acceso a código, esa especificación sigue siendo útil sin dependencias adicionales.
+A table or list of screens with action, resulting state and observable feedback, plus one main journey and one error journey. With no access to code, that specification is still useful with no extra dependencies.

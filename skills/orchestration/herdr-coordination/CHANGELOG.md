@@ -1,15 +1,19 @@
-# Historial de herdr-coordination
+# herdr-coordination changelog
+
+## [2.0.0] — 2026-09-29
+
+- The skill and its history are now in English. The `description` the host uses to activate it changes, so this is a major version. The rules are unchanged.
 
 ## [1.1.0] — 2026-09-29
 
-- Reparto parejo de un tab entre N agentes (`--ratio` en 1/N, `pane layout`, `pane resize`) y lectura del banner con el reparto corregido o con zoom.
-- Los diálogos de varias pestañas se leen enteros sin elegir, releyendo tras cada tecla, y se envían sólo con la revisión completa.
-- Una autorización general previa no responde a una solicitud concreta; si el host bloquea el envío al diálogo de otro agente, la persona contesta en su panel.
+- Even split of a tab between N agents (`--ratio` at 1/N, `pane layout`, `pane resize`), and reading the banner with the layout fixed or with zoom.
+- Dialogs with several tabs are read in full without choosing, reading again after each key, and are sent only with the review complete.
+- An earlier general authorization does not answer a specific request; if the host blocks sending to another agent's dialog, the person answers in their pane.
 
 ## [1.0.1] — 2026-09-29
 
-- Entrecomilla la `description` del frontmatter: el `: ` sin comillas era YAML inválido y los instaladores estrictos (`skills` CLI) omitían la skill.
+- Quotes the frontmatter `description`: the unquoted `: ` was invalid YAML, and strict installers (the `skills` CLI) skipped the skill.
 
 ## [1.0.0] — 2026-09-29
 
-- Primera guía autónoma de coordinación de agentes Herdr: panel como fuente de verdad, delegación verificable, recuperación y autorizaciones humanas explícitas.
+- First standalone guide to coordinating Herdr agents: the pane as the source of truth, verifiable delegation, recovery and explicit human authorizations.

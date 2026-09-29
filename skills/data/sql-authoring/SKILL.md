@@ -1,26 +1,26 @@
 ---
 name: sql-authoring
-description: Redacta scripts SQL revisables con dialecto, parámetros y rollback para aplicación por otra persona. Úsala al preparar consultas, migraciones o cambios de esquema sin ejecutarlos en ninguna base.
+description: Drafts reviewable SQL scripts with dialect, parameters and rollback for another person to apply, including PostgreSQL migration bundles with grants and ownership. Use it when preparing queries, migrations or schema changes without running them against any database.
 ---
 
-# Autoría de SQL
+# Authoring SQL
 
-Prepara scripts para revisión y aplicación ajena; esta skill no ejecuta cambios de datos o esquema.
+Prepare scripts for review and for someone else to apply; this skill does not run data or schema changes.
 
-## Frontera de seguridad
+## Safety boundary
 
-- Pide motor y versión, esquema conocido, intención, restricciones, datos sensibles y destino autorizado. Lee sólo fuentes permitidas. Si falta un destino aprobado, presenta los scripts en la conversación sin escribir archivos.
-- No ejecutes DML ni DDL por **ningún canal**: shell, MCP, driver, cliente, consola, migrador, test contra base real ni petición indirecta a otra herramienta. Esto incluye `INSERT`, `UPDATE`, `DELETE`, `MERGE`, `CREATE`, `ALTER`, `DROP` y equivalentes. La aplicación queda a cargo de otra persona o proceso con autorización propia.
-- No interpolar entradas en sentencias. Usa parámetros según el dialecto y separa valores de la fuente SQL. No coloques secretos ni volcados personales en ejemplos o artefactos; cualquier consulta remota requiere consentimiento y permisos de lectura explícitos.
+- Ask for engine and version, known schema, intent, constraints, sensitive data and authorized destination. Read only permitted sources. Without an approved destination, present the scripts in the conversation without writing files.
+- Do not run DML or DDL through **any channel**: shell, MCP, driver, client, console, migrator, a test against a real database, or an indirect request to another tool. This includes `INSERT`, `UPDATE`, `DELETE`, `MERGE`, `CREATE`, `ALTER`, `DROP` and their equivalents. Applying them is up to another person or process with its own authorization.
+- Do not interpolate inputs into statements. Use parameters as the dialect allows and keep values apart from the SQL source. Do not put secrets or personal dumps in examples or artifacts; any remote query needs consent and explicit read permissions.
 
-## Redacción
+## Drafting
 
-1. Declara dialecto y supuestos, precondiciones y resultado esperado. Si no conoces el esquema, solicita su definición en vez de deducir columnas.
-2. Prepara el script de avance y un reverso en orden compatible con dependencias. Si el cambio no puede revertirse sin perder datos, dilo y especifica restauración o copia previa como condición de aplicación, nunca prometas rollback ficticio.
-3. Señala puntos de transacción, bloqueos, idempotencia y riesgos de volumen según el motor. Usa parámetros para valores externos y marca placeholders que otra persona deba resolver.
-   Consulta la [guía de dialectos y migraciones](references/dialecto-y-migraciones.md) para elegir sintaxis, ordenar dependencias y preparar un reverso honesto sin ejecutar sentencias.
-4. Entrega los dos scripts, un ejemplo de parámetros y una lista de verificaciones **para el aplicador**, sin correr DML/DDL ni siquiera como prueba. El [ejemplo ficticio](assets/ejemplo-parametros.md) ilustra los límites; no lo ejecutes.
+1. State the dialect and assumptions, preconditions and expected result. If you do not know the schema, ask for its definition instead of guessing columns.
+2. Prepare the forward script and a rollback in an order compatible with dependencies. If the change cannot be reversed without losing data, say so and require a restore or a prior backup as a condition for applying it; never promise a fictional rollback.
+3. Point out transaction points, locks, idempotency and volume risks for the engine. Use parameters for external values and mark placeholders another person has to resolve.
+   Read the [dialects and migrations guide](references/dialect-and-migrations.md) to choose syntax, order dependencies and prepare an honest rollback without running statements. For PostgreSQL, its PostgreSQL section adds the bundle layout, the coupled rollbacks, grants and ownership, derived target sets and offline parsing.
+4. Deliver both scripts, an example of parameters and a checklist **for the applier**, without running DML/DDL even as a test. The [fictional example](assets/example-parameters.md) shows the limits; do not run it.
 
-## Salida
+## Output
 
-Un par forward/rollback y sus supuestos, con dialecto, orden y responsable de ejecución indicados. Revisa sintaxis estáticamente cuando sea posible; no confundas una revisión textual con una ejecución exitosa.
+A forward/rollback pair and its assumptions, with dialect, order and who runs it stated. Check syntax statically when possible; do not mistake a textual review for a successful run.
