@@ -49,6 +49,8 @@ test('trazas inventadas no convierten estado, envío ni cambio pendiente en un �
   assert.match(skill, /Si la recepción es incierta, inspecciona antes de reenviar/);
   assert.match(skill, /después de identificar la instancia y el último encargo/);
   assert.match(skill, /espera a que se actualice, vuelve a leer la pantalla/);
+  assert.match(skill, /Comprueba el reparto con `herdr pane layout` y corrígelo con `herdr pane resize/);
+  assert.match(skill, /envía sólo cuando la pantalla de revisión muestre todas las respuestas/);
 });
 
 test('permiso, cuota, commit, publicación e irreversibilidad vuelven a la persona', () => {
@@ -58,6 +60,8 @@ test('permiso, cuota, commit, publicación e irreversibilidad vuelven a la perso
   assert.match(boundary, /literalmente a la persona/);
   assert.match(boundary, /respuesta escrita explícita para \*\*esa\*\* solicitud/);
   assert.match(boundary, /Sólo transmite la opción que haya autorizado y comprueba su recepción/);
+  assert.match(boundary, /autorización general dada antes .* no es la respuesta a \*\*esa\*\* solicitud/);
+  assert.match(boundary, /si el host bloquea el envío .* no busques otra vía; .*deja que conteste en su panel/);
   assert.match(skill, /No ejecutes `herdr agent send-keys`.*hasta recibir la elección explícita/);
   assert.match(skill, /`herdr agent prompt` rechaza envíos a un agente ya bloqueado/);
   assert.match(skill, /si no se confirma recepción, conserva la pregunta pendiente/);
