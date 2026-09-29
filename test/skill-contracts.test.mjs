@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { spawnSync } from 'node:child_process';
 import { copyFileSync, existsSync, mkdtempSync, mkdirSync, readFileSync, readdirSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { isAbsolute, join, relative, resolve } from 'node:path';
@@ -150,4 +151,107 @@ test('sql-authoring 2.0.0 carries the generic PostgreSQL rules without a univers
   const entry = /## \[2\.0\.0\][\s\S]*?(?=\n## \[)/.exec(readFileSync(join(target, 'CHANGELOG.md'), 'utf8'))[0];
   assert.match(entry, /PostgreSQL rules/);
   assert.match(readFileSync(join(target, 'RELEASE_NOTES.md'), 'utf8'), /generic PostgreSQL rules/);
+});
+
+// Generic contract for every offer directory, whether or not the catalog lists it yet.
+const OFFER_DIRS = readdirSync(join(root, 'skills')).flatMap((domain) =>
+  readdirSync(join(root, 'skills', domain)).map((slug) => ({ domain, slug, dir: join(root, 'skills', domain, slug) })));
+const SLUGS = new Set(OFFER_DIRS.map(({ slug }) => slug));
+const FORBIDDEN = [
+  /\bQTC\b/, /qtc-/i, /\bRespBase\b/, /\bReqBase\b/, /\bApiService\b/, /tb_maestra/, /\b(?:esq|tb|seq|fn|sp)_[a-z]/,
+  /\bWorkline\b/i, /\/w:/, /\baw\b/, /\.workflow\//, /structured-choice/, /worktree unit/i,
+  /\b(?:code-review|sql-database-standards|receiving-code-review)\b/, /(?:the |`)(?:testing|writing)`? skill\b/,
+  // Host-native slash commands never stand in for an offer.
+  /(?:^|[\s(`])\/(?:review|code-review|security-review|ultrareview|init|simplify)\b/m,
+  // No offer requires another: a mention is optional.
+  /\b(?:load|requires?|must use)\b[^.\n]*`[a-z0-9-]+` skill/i,
+];
+// Built-in commands, skills and subcommands of the eight hosts. Provenance per host: `local` = read
+// from the installed CLI's `--help` on 2026-09-29; `documented` = the host's documented built-ins,
+// not verifiable from local help (kept as not checked, never assumed free).
+const NATIVE_NAMES = {
+  'claude-code (documented; local --help lists subcommands only)': ['review', 'code-review', 'security-review', 'ultrareview', 'init', 'compact', 'clear', 'config', 'context', 'cost', 'doctor', 'memory', 'agents', 'hooks', 'mcp', 'plugin', 'plugins', 'permissions', 'model', 'resume', 'help', 'status', 'login', 'logout', 'bug', 'simplify', 'batch', 'loop', 'debug', 'export', 'rewind', 'sandbox', 'add-dir', 'statusline', 'output-style', 'pr-comments', 'install-github-app', 'terminal-setup', 'ide', 'vim', 'install', 'update', 'worktree'],
+  'codex (local: review, exec, apply, resume, fork, doctor, plugin, sandbox, cloud, agents, features, mcp)': ['review', 'exec', 'apply', 'resume', 'fork', 'doctor', 'plugin', 'sandbox', 'cloud', 'agents', 'features', 'mcp', 'login', 'logout', 'completion', 'debug', 'init', 'compact', 'diff', 'mention', 'model', 'approvals', 'new', 'undo', 'status', 'quit'],
+  'gemini-cli/antigravity (local agy: agent, agents, install, mcp, models, plugin, plugins, update; slash commands documented)': ['agent', 'agents', 'install', 'mcp', 'models', 'plugin', 'plugins', 'update', 'help', 'chat', 'memory', 'tools', 'compress', 'restore', 'stats', 'theme', 'auth', 'editor', 'extensions', 'init', 'settings', 'directory', 'docs', 'privacy', 'about', 'bug'],
+  'opencode (documented; local --help lists no subcommands)': ['init', 'share', 'unshare', 'compact', 'undo', 'redo', 'models', 'sessions', 'themes', 'editor', 'export', 'help', 'new', 'details', 'agent', 'run', 'serve', 'auth', 'upgrade'],
+  'crush (local: run, logs, models, projects, session, stats, login, logout, dirs, update-providers)': ['run', 'logs', 'models', 'projects', 'session', 'stats', 'login', 'logout', 'dirs', 'update-providers', 'completion', 'help'],
+  'warp/oz (local oz: agent, run, runner, schedule, memory, memory-store, mcp, environment, integration, artifact, secret, model)': ['agent', 'run', 'runner', 'schedule', 'memory', 'memory-store', 'mcp', 'environment', 'integration', 'artifact', 'secret', 'model', 'login', 'logout', 'federate', 'whoami'],
+  'kimi (local: acp, ask, doctor, export, login, migrate, new, project, provider, server, web)': ['acp', 'ask', 'doctor', 'export', 'login', 'migrate', 'new', 'project', 'provider', 'server', 'web', 'init', 'compact', 'clear', 'help', 'setup'],
+};
+
+function filesOf(dir) {
+  return readdirSync(dir, { withFileTypes: true }).flatMap((entry) =>
+    entry.isDirectory() ? filesOf(join(dir, entry.name)) : [join(dir, entry.name)]);
+}
+
+function copyTree(source, target) {
+  mkdirSync(target, { recursive: true });
+  for (const entry of readdirSync(source, { withFileTypes: true })) {
+    if (entry.isDirectory()) copyTree(join(source, entry.name), join(target, entry.name));
+    else copyFileSync(join(source, entry.name), join(target, entry.name));
+  }
+}
+
+test('every offer directory is a standalone, licensed, versioned and clean skill', async (t) => {
+  assert.equal(OFFER_DIRS.length, SLUGS.size, 'slugs are unique across domains');
+  for (const { slug, dir } of OFFER_DIRS) {
+    await t.test(slug, (caseT) => {
+      const fixture = mkdtempSync(join(tmpdir(), `${slug}-alone-`));
+      caseT.after(() => rmSync(fixture, { recursive: true, force: true }));
+      const target = join(fixture, slug);
+      copyTree(dir, target);
+      assert.deepEqual(readdirSync(fixture), [slug]);
+      const skill = readFileSync(join(target, 'SKILL.md'), 'utf8');
+      assert.match(skill, new RegExp(`^---\nname: ${slug}\ndescription: .+\n---`));
+      assert.match(readFileSync(join(target, 'LICENSE'), 'utf8'), /MIT License[\s\S]*Tacuchi/);
+      const version = /^## \[(\d+\.\d+\.\d+)\]/m.exec(readFileSync(join(target, 'CHANGELOG.md'), 'utf8'))?.[1];
+      assert.ok(version, `${slug}: CHANGELOG announces a version`);
+      const notes = readFileSync(join(target, 'RELEASE_NOTES.md'), 'utf8');
+      assert.match(notes, new RegExp(`^# ${slug} ${version.replaceAll('.', '\\.')}$`, 'm'));
+      assert.ok(notes.includes(`skill/${slug}/v${version}`), `${slug}: release notes name the tag`);
+      for (const file of filesOf(target)) {
+        const content = readFileSync(file, 'utf8');
+        const where = relative(target, file);
+        for (const token of FORBIDDEN) assert.doesNotMatch(content, token, `${slug}/${where}: ${token}`);
+        const mentions = [
+          ...content.matchAll(/(?:\bthe |`)`?([a-z0-9]+(?:-[a-z0-9]+)+)`? skill\b/g),
+          ...content.matchAll(/`([a-z0-9]+(?:-[a-z0-9]+)*)` skill\b/g),
+        ];
+        for (const [, named] of mentions) {
+          assert.ok(SLUGS.has(named), `${slug}/${where}: names a skill that is not an offer: ${named}`);
+        }
+        if (file.endsWith('.md')) checkLocalLinks(content, resolve(file, '..'), target);
+      }
+    });
+  }
+});
+
+test('no offer takes the name of a native command, skill or subcommand of the eight hosts (Warp and Oz share one CLI)', () => {
+  for (const [host, names] of Object.entries(NATIVE_NAMES)) {
+    for (const { slug } of OFFER_DIRS) assert.ok(!names.includes(slug), `${slug} collides with ${host}`);
+  }
+});
+
+test('the creating-tools scripts scaffold a tool and archive a run in a temporary directory', (t) => {
+  const scripts = join(root, 'skills', 'agents', 'creating-tools', 'scripts');
+  const cwd = mkdtempSync(join(tmpdir(), 'creating-tools-'));
+  t.after(() => rmSync(cwd, { recursive: true, force: true }));
+  const run = (script, ...args) => spawnSync(process.execPath, [join(scripts, script), ...args], { cwd, encoding: 'utf8' });
+  assert.equal(run('scaffold-tool.mjs').status, 1, 'no arguments prints usage and fails');
+  assert.equal(run('scaffold-tool.mjs', 'Bad_Slug').status, 1);
+  const scaffold = run('scaffold-tool.mjs', 'sample-tool', '--type', 'cli');
+  assert.equal(scaffold.status, 0, scaffold.stderr);
+  const tool = join(cwd, 'docs', 'tools', 'sample-tool');
+  for (const dir of ['runs', 'output']) assert.ok(existsSync(join(tool, dir)), `${dir}/ created`);
+  assert.match(readFileSync(join(tool, 'README.md'), 'utf8'), /\*\*Type\*\*: cli/);
+  const index = join(cwd, 'docs', 'tools', 'README.md');
+  assert.match(readFileSync(index, 'utf8'), /\| \[sample-tool\]\(sample-tool\/README\.md\) \|/);
+  assert.equal(run('scaffold-tool.mjs', 'sample-tool').status, 0, 'a re-run is idempotent');
+  assert.equal(readFileSync(index, 'utf8').match(/\(sample-tool\/README\.md\)/g).length, 1);
+  const archived = run('record-run.mjs', 'sample-tool', '--', process.execPath, '-e', 'process.exit(3)');
+  assert.equal(archived.status, 3, 'the command exit code is kept');
+  const [stamp] = readdirSync(join(tool, 'runs'));
+  assert.match(readFileSync(join(tool, 'runs', stamp, 'command.txt'), 'utf8'), /exit_code=3/);
+  assert.ok(existsSync(join(tool, 'runs', stamp, 'run.log')));
+  assert.equal(run('record-run.mjs', 'missing-tool', '--', 'true').status, 1);
 });
