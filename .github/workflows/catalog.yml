@@ -2,6 +2,7 @@ name: Catalog
 
 on:
   push:
+    branches: ['**']
   pull_request:
 
 jobs:
