@@ -7,7 +7,7 @@ Check the source, the ref and the data/permissions of each offer before deciding
 ## Catalog
 
 <!-- catalog:start -->
-Index revision: **7** (schema 1).
+Index revision: **8** (schema 1).
 
 ### Active offers
 
@@ -16,7 +16,7 @@ Index revision: **7** (schema 1).
 | UI authoring | design | own | https://github.com/Tacuchi/agent-skills | skills/design/ui-authoring/SKILL.md | skill/ui-authoring/v2.0.0 | Tacuchi | not verified |
 | System diagrams | architecture | own | https://github.com/Tacuchi/agent-skills | skills/architecture/system-diagrams/SKILL.md | skill/system-diagrams/v2.0.0 | Tacuchi | not verified |
 | SQL authoring | data | own | https://github.com/Tacuchi/agent-skills | skills/data/sql-authoring/SKILL.md | skill/sql-authoring/v2.0.0 | Tacuchi | not verified |
-| Herdr coordination | orchestration | own | https://github.com/Tacuchi/agent-skills | skills/orchestration/herdr-coordination/SKILL.md | skill/herdr-coordination/v2.0.0 | Tacuchi | not verified |
+| Coordinating agents | orchestration | own | https://github.com/Tacuchi/agent-skills | skills/orchestration/coordinating-agents/SKILL.md | skill/coordinating-agents/v1.0.0 | Tacuchi | not verified |
 | Authoring skills | agents | own | https://github.com/Tacuchi/agent-skills | skills/agents/authoring-skills/SKILL.md | skill/authoring-skills/v1.0.0 | Tacuchi | not verified |
 | Creating tools | agents | own | https://github.com/Tacuchi/agent-skills | skills/agents/creating-tools/SKILL.md | skill/creating-tools/v1.0.0 | Tacuchi | not verified |
 | Coding standards | engineering | own | https://github.com/Tacuchi/agent-skills | skills/engineering/coding-standards/SKILL.md | skill/coding-standards/v1.0.0 | Tacuchi | not verified |
@@ -33,7 +33,9 @@ Index revision: **7** (schema 1).
 
 ### Retired offers
 
-No retired offers.
+| Skill | Domain | Type | Source | Path | Ref | Lifecycle | Data/permissions | Reason |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Herdr coordination | orchestration | own | https://github.com/Tacuchi/agent-skills | skills/orchestration/herdr-coordination/SKILL.md | skill/herdr-coordination/v2.0.0 | Tacuchi | not verified | Superseded by coordinating-agents, which generalizes it to any orchestrator and keeps its Herdr rules in references/herdr.md. |
 <!-- catalog:end -->
 
 The editorial index is [`catalog/index.json`](catalog/index.json). Each offer states its URL, location and exact ref; retired ones keep their reason and history. The block above is generated with `node scripts/catalog.mjs` and compared with `node scripts/catalog.mjs --check`.
@@ -47,7 +49,7 @@ Choose **a single** path of the repository `https://github.com/Tacuchi/agent-ski
 - [ui-authoring](skills/design/ui-authoring/SKILL.md): `skills/design/ui-authoring/SKILL.md`; journey, screen and accessibility decisions. [Release notes](skills/design/ui-authoring/RELEASE_NOTES.md).
 - [system-diagrams](skills/architecture/system-diagrams/SKILL.md): `skills/architecture/system-diagrams/SKILL.md`; evidence-backed diagrams with local rendering. [Release notes](skills/architecture/system-diagrams/RELEASE_NOTES.md).
 - [sql-authoring](skills/data/sql-authoring/SKILL.md): `skills/data/sql-authoring/SKILL.md`; parametrized scripts and rollbacks for someone else to apply, including PostgreSQL bundles. [Release notes](skills/data/sql-authoring/RELEASE_NOTES.md).
-- [herdr-coordination](skills/orchestration/herdr-coordination/SKILL.md): `skills/orchestration/herdr-coordination/SKILL.md`; verifiable coordination of panes and human authorizations. [Release notes](skills/orchestration/herdr-coordination/RELEASE_NOTES.md).
+- [coordinating-agents](skills/orchestration/coordinating-agents/SKILL.md): `skills/orchestration/coordinating-agents/SKILL.md`; verifiable coordination of agents under any orchestrator (Herdr, Orca, teamctl, Dorothy or another) and human authorizations. [Release notes](skills/orchestration/coordinating-agents/RELEASE_NOTES.md).
 - [authoring-skills](skills/agents/authoring-skills/SKILL.md): `skills/agents/authoring-skills/SKILL.md`; writing and tuning an agent's SKILL.md. [Release notes](skills/agents/authoring-skills/RELEASE_NOTES.md).
 - [creating-tools](skills/agents/creating-tools/SKILL.md): `skills/agents/creating-tools/SKILL.md`; scaffolding and archiving the runs of auxiliary developer tools. [Release notes](skills/agents/creating-tools/RELEASE_NOTES.md).
 - [coding-standards](skills/engineering/coding-standards/SKILL.md): `skills/engineering/coding-standards/SKILL.md`; the stack-agnostic core of clean code. [Release notes](skills/engineering/coding-standards/RELEASE_NOTES.md).
