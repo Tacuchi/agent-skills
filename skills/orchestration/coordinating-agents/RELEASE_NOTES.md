@@ -1,9 +1,9 @@
-# coordinating-agents 1.1.0
+# coordinating-agents 1.2.0
 
 Coordinates coding agents under any multi-agent orchestrator through its current help, verification of the effective model, effort and permission mode, and following states, questions and restarts. An accepted send does not prove receipt or result; permissions and reserved effects need a written answer from the person and a check afterwards. Reference files for Herdr, Orca, teamctl and Dorothy map each one onto the same cycle.
 
-Version 1.1.0 adds dispatch by project. The **Locate** step uses a project registry when the environment exposes one, and opens the agent in the chosen project's folder. The Herdr reference adds one workspace per project: find it by label, confirm it by a pane's `cwd`, and create it with `--cwd` only when it is missing and the layout is agreed. Every 1.0.0 rule stays, including not creating panes or workspaces without that agreement.
+Version 1.2.0 lets the person delegate routine questions: the coordinator answers those that touch no reserved effect and that the agreement backs, and lists them in its next summary. Faced with a commit offer, it may decline it and collect the commits for the person. Reserved effects still need the person's answer to each request. The version also adds generic layout and dialog discipline learned from building agent grids in Orca. What the coordinator observes wins over the help, and it tells the person. It keeps its own pane out of every split, close and send. It builds layouts with plain shells first, lists the layout before retrying a timed-out split, and closes only idle shells it created. It reads the indicator again after a mode switch, and relays a recommended option as the agent's opinion. A new `references/agent-types.md` covers how Codex and Claude Code ask questions. The Orca reference adds the Windows 1.4.217–1.4.218 traps. Every 1.1.0 rule stays.
 
-Acquire the whole `skills/orchestration/coordinating-agents/` directory, including `references/`, from `Tacuchi/agent-skills` once the ref `skill/coordinating-agents/v1.1.0` exists; it works with no other harness and no other offer.
+Acquire the whole `skills/orchestration/coordinating-agents/` directory, including `references/`, from `Tacuchi/agent-skills` once the ref `skill/coordinating-agents/v1.2.0` exists; it works with no other harness and no other offer.
 
 Owner: Tacuchi. License: MIT, in the `LICENSE` file of this directory. The ref and its remote publication are created after this change.

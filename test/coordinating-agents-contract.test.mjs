@@ -8,6 +8,7 @@ const root = resolve(import.meta.dirname, '..');
 const offer = join(root, 'skills', 'orchestration', 'coordinating-agents');
 const skill = readFileSync(join(offer, 'SKILL.md'), 'utf8');
 const adapters = ['dorothy.md', 'herdr.md', 'orca.md', 'teamctl.md'];
+const references = [...adapters, 'agent-types.md'].sort();
 const reference = (name) => readFileSync(join(offer, 'references', name), 'utf8');
 const HARNESS = /\baw\b|\.workflow\/|Workline|scratchpad|\/Users\/|w\d+:p\w+|OPENCODE_CONFIG/;
 
@@ -19,15 +20,15 @@ test('an isolated install keeps identity, license, history, adapters and standal
   assert.deepEqual(readdirSync(join(fixture, 'skills')), ['coordinating-agents']);
   assert.match(skill, /^---\nname: coordinating-agents\ndescription: "[^"]+"\n---/);
   assert.match(skill, /If the orchestrator's interface is missing.*do not attribute started tasks or results/s);
-  assert.deepEqual(readdirSync(join(target, 'references')).sort(), adapters);
+  assert.deepEqual(readdirSync(join(target, 'references')).sort(), references);
   for (const [, href] of skill.matchAll(/\]\(([^)]+)\)/g)) {
     const linked = resolve(target, href);
     const within = relative(target, linked);
     assert.ok(!isAbsolute(href) && within && !within.startsWith('..'), `link inside the offer: ${href}`);
     assert.ok(existsSync(linked), `existing link: ${href}`);
   }
-  for (const name of adapters) assert.ok(skill.includes(`](references/${name})`), `${name}: reachable from SKILL.md`);
-  for (const text of [skill, ...adapters.map(reference)]) assert.doesNotMatch(text, HARNESS);
+  for (const name of references) assert.ok(skill.includes(`](references/${name})`), `${name}: reachable from SKILL.md`);
+  for (const text of [skill, ...references.map(reference)]) assert.doesNotMatch(text, HARNESS);
   assert.match(readFileSync(join(target, 'LICENSE'), 'utf8'), /MIT License[\s\S]*Tacuchi/);
   assert.match(readFileSync(join(target, 'CHANGELOG.md'), 'utf8'), /## \[1\.0\.0\][\s\S]*herdr-coordination/);
   const version = /^## \[(\d+\.\d+\.\d+)\]/m.exec(readFileSync(join(target, 'CHANGELOG.md'), 'utf8'))[1];
@@ -96,6 +97,11 @@ test('each adapter maps its states onto the five, defers to the installed help a
   assert.match(orca, /never send to the old and the new one both/);
   assert.match(orca, /never run it there/);
   assert.match(orca, /`--on <environment>` sends work to another machine: that is wider access/);
+  assert.match(orca, /`terminal split` returns it in `result\.split\.handle`/);
+  assert.match(orca, /Split without `--command` and start the agent with `terminal send`/);
+  assert.match(orca, /Check the first split in the layout before repeating it/);
+  assert.match(orca, /never close `ORCA_TERMINAL_HANDLE`/);
+  assert.match(orca, /once the person agrees, since it drives their desktop/);
   const teamctl = reference('teamctl.md');
   assert.match(teamctl, /Treat every agent as `unknown` until/);
   assert.match(teamctl, /`teamctl approve <id>` is the person's answer to \*\*that\*\* request/);
@@ -104,6 +110,28 @@ test('each adapter maps its states onto the five, defers to the installed help a
   const dorothy = reference('dorothy.md');
   assert.match(dorothy, /Pass `skipPermissions: false` unless the person explicitly authorized/);
   assert.match(dorothy, /`send_message` auto-starts an idle agent: it is a new instruction, never a status probe/);
+});
+
+test('layouts, own panes, agent dialogs and mode switches stay observable', () => {
+  assert.match(skill, /delegate routine questions to you in writing/);
+  assert.match(skill, /touches none of the reserved effects/);
+  assert.match(skill, /Answer it only when what was already agreed backs the answer/);
+  assert.match(skill, /A question that leaves you in doubt, or that the agreement does not settle, goes to the person/);
+  assert.match(skill, /never pick the option that commits/);
+  assert.match(skill, /told not to ask, an agent answers its own decisions unreviewed/);
+  assert.match(skill, /A publication is reserved, so the earlier sentence does not answer it/);
+  assert.match(skill, /the observation wins: tell the person, with the version and platform/);
+  assert.match(skill, /leave it out of every split, close, resize and send/);
+  assert.match(skill, /list the layout before retrying: the pane may exist anyway/);
+  assert.match(skill, /Close only panes you created that show an idle shell prompt/);
+  assert.match(skill, /read the field that says whether the condition was met/);
+  assert.match(skill, /A mode switch inside the agent .* read the indicator again after any switch/);
+  assert.match(skill, /recommended as the agent's opinion, never as the person's choice/);
+  assert.match(skill, /let them answer in the orchestrator's interface/);
+  const agents = reference('agent-types.md');
+  assert.match(agents, /Checked against/);
+  assert.match(agents, /Plan mode also switches the effort to `medium`: report the change/);
+  assert.match(agents, /Launch with it only once the person agrees/);
 });
 
 test('fixtures of eight host families acquire only coordinating-agents and read its metadata without a harness', (t) => {
@@ -123,7 +151,7 @@ test('fixtures of eight host families acquire only coordinating-agents and read 
     const installed = readFileSync(join(target, 'SKILL.md'), 'utf8');
     assert.match(installed, /^name: coordinating-agents$/m, `${host}: selection by name`);
     assert.match(installed, /^description: .+orchestrator.+Herdr.+Orca.+teamctl.+Dorothy.+$/m, `${host}: selection by description`);
-    assert.deepEqual(readdirSync(join(target, 'references')).sort(), adapters, `${host}: adapters travel with the skill`);
+    assert.deepEqual(readdirSync(join(target, 'references')).sort(), references, `${host}: references travel with the skill`);
     assert.doesNotMatch(installed, HARNESS);
   }
 });
