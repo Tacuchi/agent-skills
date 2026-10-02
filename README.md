@@ -7,7 +7,7 @@ Check the source, the ref and the data/permissions of each offer before deciding
 ## Catalog
 
 <!-- catalog:start -->
-Index revision: **9** (schema 1).
+Index revision: **10** (schema 1).
 
 ### Active offers
 
@@ -16,7 +16,7 @@ Index revision: **9** (schema 1).
 | UI authoring | design | own | https://github.com/Tacuchi/agent-skills | skills/design/ui-authoring/SKILL.md | skill/ui-authoring/v2.0.0 | Tacuchi | not verified |
 | System diagrams | architecture | own | https://github.com/Tacuchi/agent-skills | skills/architecture/system-diagrams/SKILL.md | skill/system-diagrams/v2.0.0 | Tacuchi | not verified |
 | SQL authoring | data | own | https://github.com/Tacuchi/agent-skills | skills/data/sql-authoring/SKILL.md | skill/sql-authoring/v2.0.0 | Tacuchi | not verified |
-| Coordinating agents | orchestration | own | https://github.com/Tacuchi/agent-skills | skills/orchestration/coordinating-agents/SKILL.md | skill/coordinating-agents/v1.1.0 | Tacuchi | not verified |
+| Coordinating agents | orchestration | own | https://github.com/Tacuchi/agent-skills | skills/orchestration/coordinating-agents/SKILL.md | skill/coordinating-agents/v1.2.0 | Tacuchi | not verified |
 | Authoring skills | agents | own | https://github.com/Tacuchi/agent-skills | skills/agents/authoring-skills/SKILL.md | skill/authoring-skills/v1.0.0 | Tacuchi | not verified |
 | Creating tools | agents | own | https://github.com/Tacuchi/agent-skills | skills/agents/creating-tools/SKILL.md | skill/creating-tools/v1.0.0 | Tacuchi | not verified |
 | Coding standards | engineering | own | https://github.com/Tacuchi/agent-skills | skills/engineering/coding-standards/SKILL.md | skill/coding-standards/v1.0.0 | Tacuchi | not verified |
