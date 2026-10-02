@@ -23,6 +23,17 @@ Herdr is a terminal multiplexer (workspaces, tabs, panes) with an agent layer th
 
 States are Herdr's own: `working`, `blocked`, `idle`, `done`, `unknown`. They come from screen detection; `herdr agent explain` shows why a state was chosen.
 
+## One workspace per project
+
+When the person agrees on a destination and a layout for a project, keep one Herdr workspace per project and find it again instead of creating another:
+
+1. `herdr workspace list` and match the project by `label`. Herdr 0.9.0 lists no `cwd` per workspace, so confirm the match with `herdr pane list --workspace <id>`: one pane's `cwd` or `foreground_cwd` must be in the project folder. A label without such a pane, or used by two workspaces, is not the project's: report it and leave it alone.
+2. Only if none matches, `herdr workspace create --cwd <dir> --label <label> --no-focus`.
+3. `herdr pane split --workspace <id> --cwd <dir> --no-focus` for each extra agent the layout calls for.
+4. `herdr agent start <name> --kind <type> --pane <pane>` in each pane, as in **Start**.
+
+Never rename or close a workspace to make it match: a label someone edited is theirs.
+
 ## Traps
 
 - **Layout.** Create a tab (`herdr tab create`) or split a pane (`herdr pane split`) only once the destination and the layout are agreed. To split a tab evenly between N agents, `--ratio` sets the fraction the split pane keeps: the first cut goes at 1/N, the next at 1/(N-1) on the new pane, and so on. Check the layout with `herdr pane layout` and fix it with `herdr pane resize --direction <direction> --amount <ratio delta>`.
