@@ -1,6 +1,6 @@
 # Orca adapter
 
-Orca is a desktop agent IDE with an `orca` CLI (`--json`) that talks to the running app. Checked against `orca` 1.4.212 on macOS and 1.4.217–1.4.218 on Windows 11. The binary serves its own version-matched guides; this file only maps them onto the cycle and names the traps.
+Orca is a desktop agent IDE with an `orca` CLI (`--json`) that talks to the running app. Checked against `orca` 1.4.212 and 1.4.245 on macOS and 1.4.217–1.4.218 on Windows 11. The binary serves its own version-matched guides; this file only maps them onto the cycle and names the traps.
 
 ## Resolve the executable and load its guide
 
@@ -44,13 +44,16 @@ State mapping:
 - **Remote placement.** `--on <environment>` sends work to another machine: that is wider access, so it needs the person's explicit answer.
 - **Absence.** A timeout, an empty `check` or `unverifiable` liveness authorizes no stop, retry, release or duplicate launch; keep waiting or inspect, as the guide requires.
 - **Handles.** Handles do not survive a restart: re-list, address exactly one handle, and never send to the old and the new one both. `terminal create` returns the handle in `result.terminal.handle`, but `terminal split` returns it in `result.split.handle`.
-- **Split direction.** The guide says `horizontal` splits left/right and `vertical` top/bottom; Windows 1.4.218 does the opposite. Check the first split in the layout before repeating it.
+- **Split direction.** The guide says `horizontal` splits left/right and `vertical` top/bottom; macOS 1.4.245 and Windows 1.4.218 do the opposite: `vertical` puts the new pane side by side and `horizontal` stacks it below. The visual layout tree reports the direction you asked for, not where the pane landed. Check the first split in the layout before repeating it, by measuring the panes.
+- **Projects.** `terminal create` needs a folder Orca knows as a project (`project list`); a bare path fails with `selector_not_found`. `project setup-existing-folder` registers one durably, so ask the person first. The project id must match the one Orca derives from the remote, in its case.
+- **Measuring.** The layout tree carries no sizes. In a plain shell, `terminal send --text "stty size" --enter` and then `terminal read` give rows and columns; measure before starting the agents.
 - **Split with a command.** On Windows 1.4.218, `terminal split --direction vertical --command <cmd>` answers `Timed out waiting for split pane handle`: the first call creates the pane without running the command, and later calls create nothing. Split without `--command` and start the agent with `terminal send`.
-- **Sizes.** Every split halves the pane, with no size option, and the CLI cannot move, swap or resize panes. Three columns cut in a row end at 50/25/25. Leave that layout as it is, or equalize it with one `computer drag` of the first border to a third of the panes' width, once the person agrees, since it drives their desktop:
+- **Sizes.** Every split halves the pane, with no size option, and the CLI cannot move, swap or resize panes. Three columns cut in a row end at 50/25/25: prefer an even cut order instead (two on top and one full-width below; two rows of two), which needs no resizing. To keep three columns, equalize them with one `computer drag` of the first border to a third of the panes' width, once the person agrees, since it drives their desktop:
   - get the pid and window id from `computer list-apps` and `computer list-windows --app Orca`, again after every Orca restart;
   - run `terminal switch --terminal <h>` first, because the screenshot shows the active tab;
   - with `scale: 1` in `computer get-app-state`, screenshot pixels match window coordinates;
-  - a locked screen yields a lock-screen capture, so the drag cannot work.
+  - a locked screen yields a lock-screen capture, so the drag cannot work;
+  - on macOS, `computer` commands answer `permission_denied` until the person grants Accessibility to Orca Computer Use.
 - **Keys.** `terminal send` sends text only: there is no Esc or Shift+Tab. Relaunching an agent means closing its pane and creating another.
 - **Closing.** `terminal close --terminal <h> --tab` closes a whole tab from 1.4.218; on 1.4.217, close the panes one by one. Read each pane's `preview` in `terminal list` before closing it, and never close `ORCA_TERMINAL_HANDLE`. A pane just closed may still appear in `terminal list` for a moment.
 - **PowerShell scripts.** A function named `H` never receives its argument, because `H` is the alias of `Get-History`. Write `"${h}:"`, not `"$h:"`, inside a string. `Start-ThreadJob` with `Wait-Job | Receive-Job` waits on several terminals at once.

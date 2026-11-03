@@ -1,6 +1,6 @@
 ---
 name: coordinating-agents
-description: "Coordinates coding agents run by a multi-agent orchestrator (Herdr, Orca, teamctl, Dorothy, Pylon or another): delegates bounded tasks, verifies the effective model and effort, follows states and questions, and recovers sessions without impersonating human authorizations. Use it when the person asks to coordinate, supervise, dispatch to or monitor agents in an orchestrator's panes, terminals, workers or worktrees. Not for a host's built-in subagent tool, and not for choosing how to plan the work."
+description: "Coordinates coding agents run by a multi-agent orchestrator (Herdr, Orca, teamctl, Dorothy, Pylon or another): delegates bounded tasks, verifies the effective model and effort, follows states and questions, and recovers sessions without impersonating human authorizations. Use it when the person asks to coordinate, supervise, dispatch to or monitor agents in an orchestrator's panes, terminals, workers or worktrees. Not for a host's built-in subagent tool, not for choosing how to plan the work, and not for taking over a whole task and deciding its staffing yourself: the master skill covers that."
 ---
 
 # Coordinating agents under an orchestrator
@@ -11,14 +11,14 @@ This guide works on its own in any host that can drive an orchestrator through i
 
 1. Identify the orchestrator from the person's words and from the environment (an injected variable, a running app, a team file).
 2. Read only the reference file for that orchestrator, before the first command:
-   - Herdr: [references/herdr.md](references/herdr.md).
+   - Herdr, both herdr-core (`hc` with the Herdr app) and the older `herdr` multiplexer: [references/herdr.md](references/herdr.md).
    - Orca: [references/orca.md](references/orca.md).
    - teamctl: [references/teamctl.md](references/teamctl.md).
    - Dorothy: [references/dorothy.md](references/dorothy.md).
 3. For any other orchestrator (Pylon, a tmux wrapper, an IDE panel), read its installed help or docs and answer every row of the primitives table below before acting. If it offers no way to read an agent's output or state, coordinate through the person: tell them what to send and ask what they see.
 4. When the orchestrator's installed help or version-matched guide differs from a reference file, the installed help wins: a reference records mappings and traps, not a complete CLI.
 5. When the observed behavior differs from the help (a split direction, the field that carries a handle, an option that times out), the observation wins: tell the person, with the version and platform, and adapt the next commands.
-6. If a coordinated agent is Claude Code or Codex, also read [references/agent-types.md](references/agent-types.md) before relaying its questions or switching its mode.
+6. If a coordinated agent is Claude Code, Codex or Antigravity CLI, also read [references/agent-types.md](references/agent-types.md) before relaying its questions or switching its mode.
 
 | Primitive | Establish from the help before relying on it |
 |---|---|
@@ -41,15 +41,17 @@ This guide works on its own in any host that can drive an orchestrator through i
 - The person may delegate routine questions to you in writing ("answer the routine ones yourself"). A routine question touches none of the reserved effects in the next point: a step or route inside the agreed task, where to save a document within the task's destination, flow control. Answer it only when what was already agreed backs the answer: read the whole question and the earlier dialogue first, relay the answer, check its receipt and list it in your next summary to the person. A question that leaves you in doubt, or that the agreement does not settle, goes to the person.
 - When an agent offers to commit as one option among others, you may pick the option that does not commit and collect the pending commits to propose to the person at the end; never pick the option that commits.
 - A request for permission, a spend of quota/resources, a commit, a publication, an irreversible change or wider access goes back **verbatim to the person**, with its context and every visible alternative. Launching an agent with a permission-skipping flag, an autonomy level above the default or a remote placement is wider access too. Wait for an explicit written answer to **that** request; do not choose or press keys on their behalf, do not infer authorization from earlier instructions, and do not delegate it to the blocked agent. If the person does not answer, keep the block. Relay only the option they authorized, then check its receipt and the state that follows. A general authorization given earlier ("answer the routine ones yourself") is not the answer to **that** request. The host's permission policies still apply: if the host blocks sending keys, prompts or replies to another agent's dialog, do not look for another way; summarize for the person the question, its options and the agent's recommendation, and let them answer in the orchestrator's own interface.
+- A command the person invokes may declare, in its own published contract, that invoking it answers one of these requests for that run: the `master` skill, for example, authorizes unrestricted launches inside the task's folder and quota above a floor. Treat that invocation as the written answer for exactly the effects its contract names, in that run only. Every other reserved effect, and the same effect in a later run, goes back to the person.
 
 ## Observable cycle
 
 1. **Locate.** List the orchestrator's sessions, panes, terminals or workers and find the right one; inspect it before acting if there is ambiguity. If the environment exposes a project registry (a CLI that lists projects with their folders), use it to pick the destination, and open the agent in that project's folder. Create a new pane, terminal, worker or worktree only once the destination and the layout are agreed; do not close or replace other people's. Keep the task ↔ handle relationship; do not rely only on an agent name.
    - Build an agreed layout in two passes: first every pane with a plain shell, then the agents. Check the result of the first split before repeating it, because direction names vary between builds.
-   - Splits usually halve a pane: plan the order of the cuts for the target grid, and use the orchestrator's size ratio or resize command when it has one.
+   - Keep every tab even: rows of equal height and, inside each row, panes of equal width, with no pane larger than its neighbors and space left over. Use the orchestrator's size ratio or resize command when it has one. When splits only halve a pane, plan the cut order: two panes side by side; three as two on top and one full-width below; four as two rows of two; more in another tab. Measure every pane before starting the agents.
    - If a create, split or close fails or times out, list the layout before retrying: the pane may exist anyway. A list taken right after a close may still show the closed pane; list again before concluding.
    - Close only panes you created that show an idle shell prompt with nothing running.
 2. **Start.** Check the start command's help and the agent type actually available. Pass only the options its help confirms. Success means the orchestrator detected the agent and it is ready for input, not that the task has started. If the destination is busy or the type is not supported, stop and rethink the choice; do not force the process.
+   - If a usage tool is installed (such as `openusage`, which reads limits without spending them), check the remaining quota of the agent's provider before launching. A launch that would run a provider dry, a quota reset or paid credits is a spend of quota/resources.
    - Starting the agent by typing its command into a ready shell, then waiting for its interface to be idle, is easier to observe than a create-time command option.
    - When several agents start at once, list the panes afterwards and check the count per agent type against the agreed layout.
 3. **Verify before the handoff.** Read the agent's output and compare its banner or indicator, the effective model and effort, the permission mode, the session and the readiness with the agreed task. If you adjust model or effort through that agent's own UI, wait for it to update, read the screen again and only then confirm. A mode switch inside the agent (a planning mode, for example) can change its model or effort too: read the indicator again after any switch. If they are not shown or they differ, report the uncertainty and ask before using a different configuration.

@@ -1,5 +1,15 @@
 # coordinating-agents changelog
 
+## [1.3.0] — 2026-11-03
+
+- `references/herdr.md` covers herdr-core first: `hc` 0.1.17 for agents and `herdr-app` 0.1.12 for the window, detected by `HC_TERMINAL_ID`. It maps the primitives and the five states (`error` reads as `unknown`), keeps one space per project, and names the traps measured on macOS: splits halve with no resize, a split pane starts in the space's folder, `hc run` children end with their parent and land without a chosen place, an unsent first message, sends refused to a blocked program, waits that time out as check-ins, and tagged child reports. The older `herdr` multiplexer keeps every 1.2.0 rule in its own section.
+- **Locate** keeps every tab even: rows of equal height and panes of equal width inside each row. When splits only halve, it builds two side by side, three as two on top and one full-width below, four as two rows of two, more in another tab, and measures every pane before starting agents.
+- **Start** reads the remaining quota with a usage tool when one is installed; running a provider dry, a reset or paid credits is a spend of quota/resources.
+- The human boundary accepts a command whose published contract makes its invocation the written answer to named effects for one run, such as the `master` skill's unrestricted launches; every other reserved effect still goes back to the person.
+- `references/orca.md` adds macOS 1.4.245: split directions are inverted there too and the layout tree reports the requested direction, `terminal create` needs a registered project, `stty size` measures panes, an even cut order replaces resizing, and `computer` commands need the Accessibility permission.
+- `references/agent-types.md` adds Claude Code 2.1.317, Codex 0.166.0 and Antigravity CLI 1.4.12: model, effort and unrestricted flags, and Antigravity's modes.
+- The `description` points to the `master` skill for taking over a whole task.
+
 ## [1.2.0] — 2026-10-02
 
 - The observed behavior wins over the installed help when they differ; the coordinator tells the person, with the version and platform.

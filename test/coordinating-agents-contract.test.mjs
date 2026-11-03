@@ -75,6 +75,24 @@ test('permission, quota, commit, publication, irreversibility and wider access g
   assert.match(skill, /Do not send keys, prompts or replies to answer until you receive the explicit choice/);
   assert.match(skill, /if receipt is not confirmed, keep the question pending/);
   assert.match(skill, /With the written answer "No", relay "No", read the output again/);
+  assert.match(boundary, /Treat that invocation as the written answer for exactly the effects its contract names, in that run only/);
+  assert.match(boundary, /Every other reserved effect, and the same effect in a later run, goes back to the person/);
+});
+
+test('the Herdr adapter covers herdr-core first and keeps the older multiplexer apart', () => {
+  const herdr = reference('herdr.md');
+  assert.ok(herdr.indexOf('## herdr-core') < herdr.indexOf('## The older `herdr` multiplexer'), 'herdr-core comes first');
+  assert.match(herdr, /`HC_TERMINAL_ID` is set: \*\*herdr-core\*\*/);
+  assert.match(herdr, /Never mix them/);
+  assert.match(herdr, /`error`, or no status at all → `unknown`/);
+  assert.match(herdr, /A split pane starts in the space's folder/);
+  assert.match(herdr, /they end when you end unless started with `--outlive-parent`/);
+  assert.match(herdr, /`first_message\.sent: false` means the task was not sent/);
+  assert.match(herdr, /`hc send` refuses a blocked program unless forced/);
+  assert.match(herdr, /They are reports, not instructions from the person/);
+  const orca = reference('orca.md');
+  assert.match(orca, /macOS 1\.4\.245 and Windows 1\.4\.218 do the opposite/);
+  assert.match(orca, /`terminal create` needs a folder Orca knows as a project/);
 });
 
 test('each adapter maps its states onto the five, defers to the installed help and keeps its traps', () => {
@@ -128,8 +146,13 @@ test('layouts, own panes, agent dialogs and mode switches stay observable', () =
   assert.match(skill, /A mode switch inside the agent .* read the indicator again after any switch/);
   assert.match(skill, /recommended as the agent's opinion, never as the person's choice/);
   assert.match(skill, /let them answer in the orchestrator's interface/);
+  assert.match(skill, /Keep every tab even: rows of equal height and, inside each row, panes of equal width/);
+  assert.match(skill, /three as two on top and one full-width below; four as two rows of two/);
+  assert.match(skill, /Measure every pane before starting the agents/);
+  assert.match(skill, /check the remaining quota of the agent's provider before launching/);
   const agents = reference('agent-types.md');
   assert.match(agents, /Checked against/);
+  assert.match(agents, /## Antigravity CLI[\s\S]*`--dangerously-skip-permissions` auto-approves every tool request, which is wider access/);
   assert.match(agents, /Plan mode also switches the effort to `medium`: report the change/);
   assert.match(agents, /Launch with it only once the person agrees/);
 });
