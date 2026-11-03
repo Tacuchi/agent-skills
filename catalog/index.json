@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "revision": 10,
+  "revision": 11,
   "entries": [
     {
       "id": "ui-authoring",
@@ -54,13 +54,28 @@
       "type": "own",
       "source_url": "https://github.com/Tacuchi/agent-skills",
       "path": "skills/orchestration/coordinating-agents/SKILL.md",
-      "ref": "skill/coordinating-agents/v1.2.0",
+      "ref": "skill/coordinating-agents/v1.3.0",
       "lifecycle_owner": "Tacuchi",
       "status": "active",
       "data_permissions": { "status": "unverified", "summary": "not verified" },
       "license": "skills/orchestration/coordinating-agents/LICENSE",
       "changelog": "skills/orchestration/coordinating-agents/CHANGELOG.md",
       "release_notes": "skills/orchestration/coordinating-agents/RELEASE_NOTES.md"
+    },
+    {
+      "id": "master",
+      "name": "Master",
+      "domain": "orchestration",
+      "type": "own",
+      "source_url": "https://github.com/Tacuchi/agent-skills",
+      "path": "skills/orchestration/master/SKILL.md",
+      "ref": "skill/master/v1.0.0",
+      "lifecycle_owner": "Tacuchi",
+      "status": "active",
+      "data_permissions": { "status": "unverified", "summary": "not verified" },
+      "license": "skills/orchestration/master/LICENSE",
+      "changelog": "skills/orchestration/master/CHANGELOG.md",
+      "release_notes": "skills/orchestration/master/RELEASE_NOTES.md"
     },
     {
       "id": "authoring-skills",
