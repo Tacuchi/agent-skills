@@ -1,6 +1,6 @@
 # Agent-type notes
 
-How the agents running inside the orchestrator ask questions and change modes. Checked against Claude Code 2.1.287 and Codex 0.159.3, and again on 2026-11-03 against Claude Code 2.1.317, Codex 0.166.0 and Antigravity CLI (`agy`) 1.4.12. The agent's installed help (`codex features list`, `claude --help`, `agy --help`) wins over this file.
+How the agents running inside the orchestrator ask questions and change modes. Checked against Claude Code 2.1.287 and Codex 0.159.3, and again on 2026-11-03 against Claude Code 2.1.317, Codex 0.166.0 and Antigravity CLI (`agy`) 1.4.12; the launch flags were read again in each `--help` on 2026-11-14 against Claude Code 2.1.325, Codex 0.167.0 and `agy` 1.5.4. The agent's installed help (`codex features list`, `claude --help`, `agy --help`) wins over this file.
 
 ## Codex
 

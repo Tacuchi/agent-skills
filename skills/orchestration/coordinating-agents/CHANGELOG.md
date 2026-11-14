@@ -1,5 +1,15 @@
 # coordinating-agents changelog
 
+## [1.4.0] — 2026-11-14
+
+- The coordinator keeps its own tab whole: panes for agents are created in another tab, in any orchestrator, and when the orchestrator cannot open a tab the person opens it. The only exception is the person asking for another placement in the current request. The primitives table gains **Place**.
+- The `description` names agentic development environments (ADE) and T3 Code among the orchestrators mapped from their own help.
+- Reserved requests go to the person through the host's structured question tool when it has one, so that picking one option is the whole answer.
+- Agents that share a clone are told not to use `git stash`; a wait for an output signal must not match the echo of the coordinator's own prompt; an agent that died or returned nothing produced no result.
+- `references/herdr.md` was measured again on `hc` 0.1.21 and `herdr-app` 0.1.15: the agents' tab with `tab.new`, the folder a split pane starts in, stale sizes in a hidden tab and `layout.resize --weight`.
+- `references/orca.md`: the coordinator's own handle is never split; split timeouts and `--retry-split`; stuck workers seen on Windows 11.
+- `references/agent-types.md`: the launch flags were read again against Claude Code 2.1.325, Codex 0.167.0 and Antigravity CLI 1.5.4.
+
 ## [1.3.0] — 2026-11-03
 
 - `references/herdr.md` covers herdr-core first: `hc` 0.1.17 for agents and `herdr-app` 0.1.12 for the window, detected by `HC_TERMINAL_ID`. It maps the primitives and the five states (`error` reads as `unknown`), keeps one space per project, and names the traps measured on macOS: splits halve with no resize, a split pane starts in the space's folder, `hc run` children end with their parent and land without a chosen place, an unsent first message, sends refused to a blocked program, waits that time out as check-ins, and tagged child reports. The older `herdr` multiplexer keeps every 1.2.0 rule in its own section.

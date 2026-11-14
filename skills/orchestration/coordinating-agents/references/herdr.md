@@ -10,12 +10,12 @@ Never mix them: `hc` and `herdr` are separate products, and `herdr` commands do 
 
 ## herdr-core (`hc`) with the Herdr app
 
-Checked against `hc` 0.1.17 and `herdr-app` 0.1.12 on macOS. Load `hc --skill` before the first `hc` command and `herdr-app --skill` before changing the window; their help (`hc <command> --help`, `herdr-app commands`) wins over this file.
+Checked against `hc` 0.1.17 and `herdr-app` 0.1.12 on macOS; tabs, splits, sizes and folders were measured again on 2026-11-14 against `hc` 0.1.21 and `herdr-app` 0.1.15. Read `hc --skill` before the first `hc` command and `herdr-app --skill` before changing the window; their help (`hc <command> --help`, `herdr-app commands`) wins over this file.
 
 | Primitive | herdr-core mechanism |
 |---|---|
 | Locate | `hc ls` (every live terminal), `hc get <t>`; `herdr-app ls` maps spaces > tabs > panes to terminal addresses. |
-| Start | A visible pane: `herdr-app do pane.split --direction right\|down --pane <id>` (or `tab.new`), then type the agent's command with `hc send <t>`. A hidden worker: `hc run --bg --name <name> --cwd <dir> <agent> "<task>"`, then check `first_message.sent`. |
+| Start | A visible pane: `herdr-app do tab.new --name <task> --space <space id> --folder <dir>` for the agents' tab, then `herdr-app do pane.split --direction right\|down --pane <id>` inside it, then type the agent's command with `hc send <t>`. A hidden worker: `hc run --bg --name <name> --cwd <dir> <agent> "<task>"`, then check `first_message.sent`. |
 | Verify | `hc read <t> --lines 0` shows the visible screen; `hc get <t>` shows `status.app`, `foreground.argv` and `foreground.cwd`. |
 | Send | `hc send <t> "<task>"` pastes the text and presses Enter; `hc send --wait` also waits for the turn. |
 | Wait | `hc wait <t>` until it stops working; `hc wait --children all\|any` for your own children; `--output <text>` for one printed signal. |
@@ -40,8 +40,10 @@ States come from `hc get <t>` → `status.state`, in the program's own words:
 
 ### Traps
 
-- **Layout.** `pane.split` halves the pane, with no ratio or resize command. Build even layouts by cut order: two panes side by side; three as two on top and one full-width below; four as two rows of two. Measure every pane with `hc get <t>` (`cols`, `rows`) before starting agents.
-- **Folder.** A split pane starts in the space's folder, not the folder of the pane you cut. Start agents with `cd '<dir>' && <command>` and check `foreground.cwd`.
+- **Own tab.** The pane whose terminal equals `$HC_TERMINAL_ID` and its tab are yours: never pass that pane to `pane.split`. A tab made with `tab.new` is shown at once and its terminal starts in `--folder`.
+- **Layout.** `pane.split` halves the pane. Build even layouts by cut order: two panes side by side; three as two on top and one full-width below; four as two rows of two. From `herdr-app` 0.1.15, `herdr-app do layout.resize --id <pane id> --weight <n>` sets a pane's share of its row, and the same weight on every pane of the row makes them equal. Measure every pane with `hc get <t>` (`cols`, `rows`) before starting agents.
+- **Hidden tab.** A pane in a tab that is not shown reports a stale size, or 120 × 40 if it was never drawn. `herdr-app status` names the shown tab and `herdr-app do tab.select --id <tab>` shows one: measure with the tab shown.
+- **Folder.** Where a split pane starts depends on the version: on `herdr-app` 0.1.15 it starts in the current folder of the pane you cut; on 0.1.12 it started in the space's folder. Start agents with `cd '<dir>' && <command>` either way and check `foreground.cwd`.
 - **Children.** Terminals you start with `hc run` are your children: they end when you end unless started with `--outlive-parent`. `hc run --label herdr.tab=<tab>` shows one in a tab, but it halves the focused pane without letting you choose where. Panes created with `herdr-app` have no parent.
 - **First message.** In a launch with a task, `first_message.sent: false` means the task was not sent. Read the screen first; a trust dialog may need `hc keys <t> down enter`.
 - **Blocked.** `hc send` refuses a blocked program unless forced. After the person's written choice, send only the keys the visible dialog requires.

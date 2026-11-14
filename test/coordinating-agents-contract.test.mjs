@@ -66,6 +66,7 @@ test('permission, quota, commit, publication, irreversibility and wider access g
   const boundary = skill.slice(skill.indexOf('- A request for permission'), skill.indexOf('\n\n## Observable cycle'));
   for (const effect of reserved) assert.ok(boundary.includes(effect), `${effect}: human boundary`);
   assert.match(boundary, /verbatim to the person/);
+  assert.match(boundary, /structured question tool when it has one, otherwise as a labeled list/);
   assert.match(boundary, /permission-skipping flag, an autonomy level above the default or a remote placement is wider access/);
   assert.match(boundary, /explicit written answer to \*\*that\*\* request/);
   assert.match(boundary, /Relay only the option they authorized, then check its receipt/);
@@ -85,7 +86,10 @@ test('the Herdr adapter covers herdr-core first and keeps the older multiplexer 
   assert.match(herdr, /`HC_TERMINAL_ID` is set: \*\*herdr-core\*\*/);
   assert.match(herdr, /Never mix them/);
   assert.match(herdr, /`error`, or no status at all → `unknown`/);
-  assert.match(herdr, /A split pane starts in the space's folder/);
+  assert.match(herdr, /Where a split pane starts depends on the version/);
+  assert.match(herdr, /never pass that pane to `pane\.split`/);
+  assert.match(herdr, /A pane in a tab that is not shown reports a stale size/);
+  assert.match(herdr, /`herdr-app do layout\.resize --id <pane id> --weight <n>` sets a pane's share of its row/);
   assert.match(herdr, /they end when you end unless started with `--outlive-parent`/);
   assert.match(herdr, /`first_message\.sent: false` means the task was not sent/);
   assert.match(herdr, /`hc send` refuses a blocked program unless forced/);
@@ -93,6 +97,7 @@ test('the Herdr adapter covers herdr-core first and keeps the older multiplexer 
   const orca = reference('orca.md');
   assert.match(orca, /macOS 1\.4\.245 and Windows 1\.4\.218 do the opposite/);
   assert.match(orca, /`terminal create` needs a folder Orca knows as a project/);
+  assert.match(orca, /Never split that handle: open the agents' tab with `terminal create` and split there/);
 });
 
 test('each adapter maps its states onto the five, defers to the installed help and keeps its traps', () => {
@@ -140,6 +145,11 @@ test('layouts, own panes, agent dialogs and mode switches stay observable', () =
   assert.match(skill, /A publication is reserved, so the earlier sentence does not answer it/);
   assert.match(skill, /the observation wins: tell the person, with the version and platform/);
   assert.match(skill, /leave it out of every split, close, resize and send/);
+  assert.match(skill, /Keep your own tab whole: when you create panes for agents, create them in another tab, in any orchestrator/);
+  assert.match(skill, /Open the agents in a tab other than your own/);
+  assert.match(skill, /do not split your own tab instead/);
+  assert.match(skill, /tell them not to use `git stash`/);
+  assert.match(skill, /an empty list of findings from a reviewer that did not run is not a clean review/);
   assert.match(skill, /list the layout before retrying: the pane may exist anyway/);
   assert.match(skill, /Close only panes you created that show an idle shell prompt/);
   assert.match(skill, /read the field that says whether the condition was met/);
@@ -173,7 +183,7 @@ test('fixtures of eight host families acquire only coordinating-agents and read 
     assert.deepEqual(readdirSync(skills), ['coordinating-agents'], `${host}: no sibling offers`);
     const installed = readFileSync(join(target, 'SKILL.md'), 'utf8');
     assert.match(installed, /^name: coordinating-agents$/m, `${host}: selection by name`);
-    assert.match(installed, /^description: .+orchestrator.+Herdr.+Orca.+teamctl.+Dorothy.+$/m, `${host}: selection by description`);
+    assert.match(installed, /^description: .+orchestrator.+ADE.+Herdr.+Orca.+T3 Code.+teamctl.+Dorothy.+$/m, `${host}: selection by description`);
     assert.deepEqual(readdirSync(join(target, 'references')).sort(), references, `${host}: references travel with the skill`);
     assert.doesNotMatch(installed, HARNESS);
   }

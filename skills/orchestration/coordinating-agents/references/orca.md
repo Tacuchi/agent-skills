@@ -10,7 +10,7 @@ Orca is a desktop agent IDE with an `orca` CLI (`--json`) that talks to the runn
    - Terminals, worktrees and unsupervised handoffs: `<executable> skills get orca-cli`.
 3. Follow that guide's syntax and action gates. This skill adds the human-authorization boundary and the verification discipline on top.
 4. If the executable fails, report its exact error and stop; do not switch to another executable.
-5. Inside an Orca terminal, `ORCA_TERMINAL_HANDLE`, `ORCA_TAB_ID` and `ORCA_WORKTREE_ID` identify your own pane, tab and worktree.
+5. Inside an Orca terminal, `ORCA_TERMINAL_HANDLE`, `ORCA_TAB_ID` and `ORCA_WORKTREE_ID` identify your own pane, tab and worktree. Never split that handle: open the agents' tab with `terminal create` and split there.
 
 ## Primitives
 
@@ -48,6 +48,13 @@ State mapping:
 - **Projects.** `terminal create` needs a folder Orca knows as a project (`project list`); a bare path fails with `selector_not_found`. `project setup-existing-folder` registers one durably, so ask the person first. The project id must match the one Orca derives from the remote, in its case.
 - **Measuring.** The layout tree carries no sizes. In a plain shell, `terminal send --text "stty size" --enter` and then `terminal read` give rows and columns; measure before starting the agents.
 - **Split with a command.** On Windows 1.4.218, `terminal split --direction vertical --command <cmd>` answers `Timed out waiting for split pane handle`: the first call creates the pane without running the command, and later calls create nothing. Split without `--command` and start the agent with `terminal send`.
+- **Split timeout.** A split can also time out while the coordinator's tab is not visible and focused, and the pane may appear later, when the person focuses the tab. Try once, list the terminals and close the duplicates you created. The help of 1.4.255 offers `--retry-split <leafId>` to wait for that pane instead of splitting again; it was read there, not exercised.
+- **Stuck workers.** Seen on Windows 11 in October and November 2026; when a waiter times out with no message or heartbeat, read the worker's terminal before assuming anything:
+  - a worker that asked a question and ended its turn may not wake on `reply` or `send` (`handled: false`): type into its terminal with `terminal send` asking it to run `orchestration check`, and read the terminal after each reply;
+  - after a worker restarts, its dispatch can go inactive for that pane (`worker_identity_changed`): reach it with `terminal send` and have it answer with `orchestration send --to run:<run>`;
+  - a spec that carries image paths can leave the prompt typed but not sent: submit it with `terminal send --terminal <handle> --enter`;
+  - a connection error mid-response leaves the worker idle at its prompt: a `send --to dispatch:<id>` wakes it;
+  - a trust or hook-review dialog on a new folder, or a git hook that asks for confirmation, leaves the worker waiting with no `ask`: that dialog is the person's to answer, and a third `worker-start` retry does not help.
 - **Sizes.** Every split halves the pane, with no size option, and the CLI cannot move, swap or resize panes. Three columns cut in a row end at 50/25/25: prefer an even cut order instead (two on top and one full-width below; two rows of two), which needs no resizing. To keep three columns, equalize them with one `computer drag` of the first border to a third of the panes' width, once the person agrees, since it drives their desktop:
   - get the pid and window id from `computer list-apps` and `computer list-windows --app Orca`, again after every Orca restart;
   - run `terminal switch --terminal <h>` first, because the screenshot shows the active tab;

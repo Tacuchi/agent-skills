@@ -39,7 +39,9 @@ test('the description fires on /master and draws its seams', () => {
   assert.ok(description.length <= 1024, 'description fits the 1024-character limit');
   assert.match(description, /^Turns the current agent into the master of a task/);
   assert.match(description, /Use when the person types \/master/);
-  assert.match(description, /Herdr or Orca/);
+  assert.match(description, /keeps its own tab whole and opens the agents in another tab/);
+  assert.match(description, /agentic development environment \(ADE\)/);
+  assert.match(description, /Herdr, Orca, T3 Code or another/);
   assert.match(description, /Not for a git master branch/);
   assert.match(description, /coordinating-agents skill/);
 });
@@ -54,6 +56,7 @@ test('the invocation authorizes three effects for one run and keeps the rest wit
     assert.ok(boundary.includes(effect), `${effect}: stays with the person`);
   }
   assert.match(boundary, /pick the option that does not commit and collect the commits/);
+  assert.match(boundary, /structured question tool when it has one, the option you recommend first/);
   assert.match(skill, /## Invariants[\s\S]*for this run only[\s\S]*stay with the person/);
   assert.match(reference('profile.md'), /can narrow the authorization .*never widen it/);
 });
@@ -63,6 +66,26 @@ test('solo is the default and delegation needs a named reason', () => {
   assert.match(skill, /two or more parts that can run in parallel without editing the same files/);
   assert.match(skill, /Stay solo when the task fits one context/);
   assert.match(skill, /`Solo: <why>` or `Delegating to <n> agents: <why>`/);
+});
+
+test('the master keeps its own tab whole and opens the agents in another tab of any orchestrator', () => {
+  assert.match(skill, /\*\*Your own tab stays whole\.\*\* Never split it\. Every agent goes in another tab/);
+  assert.match(skill, /The only exception is the person asking for another placement in the current request/);
+  assert.match(skill, /Never split your own tab as a fallback/);
+  assert.match(skill, /In any other orchestrator \(T3 Code, a tmux wrapper, an IDE's agent panel\)/);
+  assert.match(skill, /## Invariants[\s\S]*Your own tab stays whole: the agents live in other tabs, in any orchestrator/);
+  const layouts = reference('layouts.md');
+  assert.match(layouts, /## Where the agents go[\s\S]*Your own tab stays whole: never split it, in any orchestrator/);
+  assert.match(layouts, /Never pass that pane to `pane\.split`/);
+  assert.match(layouts, /`\$ORCA_TERMINAL_HANDLE` is your pane and `\$ORCA_TAB_ID` your tab\. Never split that handle/);
+  const generic = layouts.slice(layouts.indexOf('## Any other orchestrator'), layouts.indexOf('## Check before launching'));
+  for (const primitive of ['Own pane', 'New tab', 'Split', 'Measure', 'Even out', 'Send and read', 'Close']) {
+    assert.ok(generic.includes(`| ${primitive} |`), `${primitive}: established from the help`);
+  }
+  assert.match(generic, /Never split your own tab as a fallback/);
+  assert.match(generic, /Tell the person which mapping you used/);
+  assert.match(layouts, /Your own tab still holds one pane: yours/);
+  assert.match(reference('profile.md'), /It cannot place agents in the master's own tab/);
 });
 
 test('layouts stay even: only halving cut orders, measured before launch', () => {
@@ -75,13 +98,16 @@ test('layouts stay even: only halving cut orders, measured before launch', () =>
   assert.match(rows['5 to 8'], /3\+2, 3\+3, 4\+3, 4\+4/);
   assert.match(skill, /rows of equal height and, inside each row, panes of equal width/);
   assert.match(skill, /Never cut three columns: halving leaves 50\/25\/25/);
-  assert.match(skill, /measure every pane before launching any agent/);
+  assert.match(skill, /measure every pane before launching any agent, while that tab is shown/);
   const layouts = reference('layouts.md');
   assert.match(layouts, /62 \/ 29 \/ 29 \| no/);
-  assert.match(layouts, /A split pane starts in the space's folder/);
+  assert.match(layouts, /Where a split pane starts depends on the version/);
+  assert.match(layouts, /`herdr-app do layout\.resize --id <pane id> --weight <n>` sets a pane's share of its row/);
+  assert.match(layouts, /a pane in a hidden tab reports a stale size/);
   assert.match(layouts, /`vertical` puts the new pane side by side and `horizontal` stacks it below/);
   assert.match(layouts, /it drives the person's desktop, so the master never does it/);
-  assert.match(layouts, /Checked on macOS on 2026-11-03/);
+  assert.match(layouts, /Checked on macOS: Herdr on 2026-11-14 against `hc` 0\.1\.21 and `herdr-app` 0\.1\.15/);
+  assert.match(layouts, /Orca on 2026-11-03 against 1\.4\.245, not measured again on later versions/);
 });
 
 test('launches are interactive, flagged and verified on screen; quota reads cost nothing', () => {
@@ -103,6 +129,8 @@ test('the brief and the report keep a fixed shape', () => {
   for (const field of ['Task:', 'Folder:', 'Done when:', 'Limits:', 'Report:']) assert.ok(brief.includes(field), `brief: ${field}`);
   assert.match(brief, /no commit, push, tag, publish or release/);
   assert.match(brief, /start no other agents/);
+  assert.match(brief, /no git stash/);
+  assert.match(brief, /Keep plan, task and ticket identifiers out of code, tests and user-facing text/);
   assert.match(skill, /Master: <task>\nMode: solo \| delegated \(<n> agents\)/);
   assert.match(skill, /Example:\n\n```text\nMaster: /);
 });

@@ -1,6 +1,6 @@
 # Launching agents and reading quota
 
-Read this before you start an agent or pick a provider. Checked on 2026-11-03 against Claude Code 2.1.317, Codex 0.166.0 and Antigravity CLI (`agy`) 1.4.12. Each CLI's `--help` wins over this file.
+Read this before you start an agent or pick a provider. Checked on 2026-11-03 against Claude Code 2.1.317, Codex 0.166.0 and Antigravity CLI (`agy`) 1.4.12; the flags were read again in each `--help` on 2026-11-14 against Claude Code 2.1.325, Codex 0.167.0 and `agy` 1.5.4. Each CLI's `--help` wins over this file.
 
 ## Launch flags
 

@@ -6,12 +6,14 @@ The profile holds one person's defaults so that `/master` needs no extra instruc
 
 | Key | Default |
 |---|---|
-| Placement | your own tab, up to four panes; more panes go to new tabs named after the task |
+| Agents' tabs | a new tab named after the task, up to four agents per tab; more agents go to further tabs |
 | Minimum pane | 60 columns × 14 rows |
 | Quota floor | 15 % weekly remaining |
 | Unrestricted launch | yes |
 | Models | the strongest model each CLI lists for specs and design, its general model for implementation, its fast tier for mechanical work |
 | Workflow effort | specs xhigh, plans high, plan execution medium, small direct tasks high |
+
+The master's own tab is never split, whatever the profile says.
 
 ## Format
 
@@ -20,7 +22,7 @@ Plain Markdown, one key per bullet, read by the agent; no parser depends on it. 
 ```markdown
 # master profile
 
-- Placement: Orca: always my own tab. Herdr: my own tab up to 4 panes.
+- Agents' tabs: up to 4 agents per tab, named after the task
 - Minimum pane: 60x14
 - Quota floor: 15 % weekly
 - Unrestricted launch: yes
@@ -36,4 +38,5 @@ Plain Markdown, one key per bullet, read by the agent; no parser depends on it. 
 
 - The person's words in the current request win over the profile; the profile wins over this skill's defaults.
 - A profile can narrow the authorization (for example `Unrestricted launch: no`), never widen it: commits, publications, destructive changes, production data, resets and remote placement stay with the person whatever it says.
+- A profile sets how many agents share a tab and how tabs are named. It cannot place agents in the master's own tab.
 - When the person states a lasting preference during a run, offer to add it to the profile; write it only after they agree.
