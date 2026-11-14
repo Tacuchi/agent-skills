@@ -1,6 +1,6 @@
 # Even layouts in any orchestrator
 
-Read this before the first split. Checked on macOS: Herdr on 2026-11-14 against `hc` 0.1.21 and `herdr-app` 0.1.15 (first measured on 2026-11-03 against `hc` 0.1.17); Orca on 2026-11-03 against 1.4.245, not measured again on later versions. The installed help wins over this file; the observed behavior wins over the help.
+Read this before the first split. Checked on macOS on 2026-11-14: Herdr against `hc` 0.1.21 and `herdr-app` 0.1.15, and Orca against 1.4.258 (both first measured on 2026-11-03, against `hc` 0.1.17 and Orca 1.4.245). Paradev, T3 Code and AgentsRoom were read in their help or tool catalog on the same day and not exercised. The installed help wins over this file; the observed behavior wins over the help.
 
 ## Where the agents go
 
@@ -20,7 +20,7 @@ A split halves the pane in Herdr and in Orca. Measured in a Herdr tab 129 column
 | A right, then each half down | four panes of 62 × 15 | yes |
 | A down, then the top pane right | 62 + 62 on top, 129 below, all 15 rows | yes |
 
-Orca behaves the same way (four panes of 60 × 30 for two rows of two) and has no size command, so three equal columns cannot be built there. Herdr can size panes from `herdr-app` 0.1.15: the same weight on every pane of a row makes them equal (71 / 33 / 33 became 46 / 46 / 46 in a 148-column tab). The layouts below stay the default because they need no resizing and work in every orchestrator; use sizing to fix a row that came out uneven. Dragging a divider with the mouse would work, but it drives the person's desktop, so the master never does it.
+Orca behaves the same way: in a tab of 122 columns and 61 rows, two rows of two give four panes of 59 × 30, and a third cut in a row gives 59 / 28 / 28. It has no size command, so three equal columns cannot be built there. Herdr can size panes from `herdr-app` 0.1.15: the same weight on every pane of a row makes them equal (71 / 33 / 33 became 46 / 46 / 46 in a 148-column tab). The layouts below stay the default because they need no resizing and work in every orchestrator; use sizing to fix a row that came out uneven. Dragging a divider with the mouse would work, but it drives the person's desktop, so the master never does it.
 
 ## Minimum pane size
 
@@ -51,16 +51,49 @@ Name the first pane of the agents' tab A. Every cut halves the pane named in it.
 ## Orca
 
 - **Your pane.** `$ORCA_TERMINAL_HANDLE` is your pane and `$ORCA_TAB_ID` your tab. Never split that handle.
-- **The agents' tab.** `orca terminal create --worktree <selector> --title <task> --json`; the handle of its first pane, A, is in `result.terminal.handle`. The folder must be an Orca project (`orca project list`); registering a folder is durable, so ask the person first.
-- **Cut.** `orca terminal split --terminal <handle> --direction vertical|horizontal --json`; the new handle is in `result.split.handle`. On macOS 1.4.245 and Windows 1.4.218, `vertical` puts the new pane side by side and `horizontal` stacks it below, the opposite of what the guide says. Measure after the first cut before repeating it.
-- **Measure.** `orca terminal send --terminal <handle> --text "stty size" --enter`, then `orca terminal read --terminal <handle>`: it prints rows, then columns. Do it while the panes still hold plain shells.
+- **The agents' tab.** `orca terminal create --worktree <selector> --title <task> --json`; the handle of its first pane, A, is in `result.terminal.handle`. From 1.4.258 the tab opens without taking the focus unless `--focus` is passed. The folder must be an Orca project (`orca project list`); registering a folder is durable, so ask the person first.
+- **Cut.** `orca terminal split --terminal <handle> --direction vertical|horizontal --json`; the new handle is in `result.split.handle`. On macOS 1.4.245 and 1.4.258 and on Windows 1.4.218, `vertical` puts the new pane side by side and `horizontal` stacks it below. The guide of 1.4.258 says the same; older guides said the opposite. Measure after the first cut before repeating it.
+- **Measure.** `orca terminal send --terminal <handle> --text "stty size" --enter`, then `orca terminal read --terminal <handle>`: it prints rows, then columns. Do it while the panes still hold plain shells and with the tab shown: a pane in a tab that is not shown reports 24 × 80 or a stale size. `orca terminal switch --terminal <handle>` shows the tab.
 - **Start.** `orca terminal send --terminal <handle> --text "cd '<dir>' && <agent command>" --enter`, then `orca terminal wait --terminal <handle> --for tui-idle --timeout-ms 90000` and read `wait.satisfied`.
 - **Layout tree.** `orca terminal list --worktree <selector> --include-visual-layouts --json` shows the split tree without sizes; use it to find panes, and `stty size` to check evenness.
 - **Close.** `orca terminal close --terminal <handle> --tab` closes a whole tab you created. Never close `$ORCA_TERMINAL_HANDLE`.
 
+## Paradev
+
+Read in the `--help` of `superset` 2.0.8, not exercised: check the first tab, the first cut and the first measurement before repeating them.
+
+- **Your pane.** `$SUPERSET_PANE_ID` is your pane and `$SUPERSET_TAB_ID` your tab, in the workspace `$SUPERSET_WORKSPACE_ID`. Never split that pane.
+- **The agents' tab.** `superset panes new-tab --workspace <id>` opens a tab with a terminal; it is selected only with `--focus`.
+- **Cut.** `superset panes split --workspace <id> --pane <pane id> --direction right|left|down|up`.
+- **Even out.** `superset panes equalize --workspace <id> --tab <tab id>` gives the panes of a tab equal space; `superset panes resize --pane <pane id> --ratio <0.05 to 0.95>` sets one pane's share of its split.
+- **Measure.** `superset terminals send --terminal <id> --text "stty size"`, then `superset terminals read --terminal <id>`: rows, then columns.
+- **Start.** `superset terminals send --terminal <id> --text "cd '<dir>' && <agent command>"`, then `superset terminals read` for the banner.
+- **Close.** `superset panes close --pane <id>` ends the pane and its terminal.
+- **Local.** Pass `--local` where a command offers it: several default to the cloud when the account has cloud workspaces, and that is a remote placement.
+
+## T3 Code
+
+Read in the `--help` of the `t3` CLI 0.1.9 and in the notes bundled with the app, not exercised.
+
+- There are no panes or tabs to arrange: each agent is a thread of a project, so your own view is never split.
+- **Start.** `t3 thread start <project> "<brief>" --provider <id> --model <slug> --json` prints the thread id and starts work at once; there is no shell to prepare and no banner to read first.
+- **Follow.** `--wait` on `start` or `send` exits 1 if the run fails and 2 if the thread waits for an answer; `t3 thread show <thread> --messages <n>` reads it.
+- **Mode.** The CLI has no effort or permission flag: report what the thread shows, and the rest as not verifiable.
+- Inside a T3 Code thread, follow the notes the app gives you: in 0.1.9 delegated work goes through `delegate_task`, and new top-level threads only when the person asks for one.
+
+## AgentsRoom
+
+Read in the tool catalog bundled with the app 1.270.0, not exercised.
+
+- The app gives each spawned agent its own tab: there is nothing to cut, and your own tab stays whole.
+- **Start.** `agents_spawn` with the brief; the person confirms every call on a card in your tab, and a decline is final.
+- **Follow.** `agents_spawned_wait` until a run settles, then read its `report`; `agents_spawned_list` for the runs you opened.
+- **Close.** `agents_close` for runs you opened, once they reported.
+- The catalog keeps `agents_spawn` for when the person asked for another agent and points to your host's subagents for parallel work of your own: prefer those when the person did not ask for agents in the app.
+
 ## Any other orchestrator
 
-For an orchestrator with no section above (T3 Code, a tmux wrapper, an IDE's agent panel), read its installed help and answer every row before the first command:
+For an orchestrator with no section above (a tmux wrapper, an IDE's agent panel), read its installed help and answer every row before the first command:
 
 | Primitive | Establish from the help |
 |---|---|

@@ -1,6 +1,6 @@
 # Orca adapter
 
-Orca is a desktop agent IDE with an `orca` CLI (`--json`) that talks to the running app. Checked against `orca` 1.4.212 and 1.4.245 on macOS and 1.4.217–1.4.218 on Windows 11. The binary serves its own version-matched guides; this file only maps them onto the cycle and names the traps.
+Orca is a desktop agent IDE with an `orca` CLI (`--json`) that talks to the running app. Checked against `orca` 1.4.212 and 1.4.245 on macOS and 1.4.217–1.4.218 on Windows 11; tabs, splits and sizes were measured again on macOS 1.4.258 on 2026-11-14. The binary serves its own version-matched guides; this file only maps them onto the cycle and names the traps.
 
 ## Resolve the executable and load its guide
 
@@ -44,7 +44,9 @@ State mapping:
 - **Remote placement.** `--on <environment>` sends work to another machine: that is wider access, so it needs the person's explicit answer.
 - **Absence.** A timeout, an empty `check` or `unverifiable` liveness authorizes no stop, retry, release or duplicate launch; keep waiting or inspect, as the guide requires.
 - **Handles.** Handles do not survive a restart: re-list, address exactly one handle, and never send to the old and the new one both. `terminal create` returns the handle in `result.terminal.handle`, but `terminal split` returns it in `result.split.handle`.
-- **Split direction.** The guide says `horizontal` splits left/right and `vertical` top/bottom; macOS 1.4.245 and Windows 1.4.218 do the opposite: `vertical` puts the new pane side by side and `horizontal` stacks it below. The visual layout tree reports the direction you asked for, not where the pane landed. Check the first split in the layout before repeating it, by measuring the panes.
+- **Split direction.** Older guides said `horizontal` splits left/right and `vertical` top/bottom; macOS 1.4.245 and Windows 1.4.218 do the opposite: `vertical` puts the new pane side by side and `horizontal` stacks it below. The guide of 1.4.258 agrees with that behavior, measured again on macOS. The visual layout tree reports the direction you asked for, not where the pane landed. Check the first split in the layout before repeating it, by measuring the panes.
+- **Tab without focus.** From 1.4.258, `terminal create` opens the tab without switching to it unless `--focus` is passed. A pane in a tab that is not shown reports 24 × 80 or a stale size: show the tab with `terminal switch --terminal <handle>` before measuring. `activeTabId` in the visual layout names the shown tab.
+- **Agent launch.** The help of 1.4.258 adds `orca agent launch --agent <id> --worktree <selector> --prompt "<task>" --model <id> --effort <level> --surface chat|terminal` to start an agent in an existing workspace. It was read there, not exercised.
 - **Projects.** `terminal create` needs a folder Orca knows as a project (`project list`); a bare path fails with `selector_not_found`. `project setup-existing-folder` registers one durably, so ask the person first. The project id must match the one Orca derives from the remote, in its case.
 - **Measuring.** The layout tree carries no sizes. In a plain shell, `terminal send --text "stty size" --enter` and then `terminal read` give rows and columns; measure before starting the agents.
 - **Split with a command.** On Windows 1.4.218, `terminal split --direction vertical --command <cmd>` answers `Timed out waiting for split pane handle`: the first call creates the pane without running the command, and later calls create nothing. Split without `--command` and start the agent with `terminal send`.

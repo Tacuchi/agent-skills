@@ -1,6 +1,6 @@
 ---
 name: master
-description: "Turns the current agent into the master of a task when the person types /master: it sizes the work, decides whether to do it alone or delegate to coding agents (Claude Code, Codex, Antigravity), keeps its own tab whole and opens the agents in another tab of the orchestrator or agentic development environment (ADE) it runs in (Herdr, Orca, T3 Code or another), picks each agent's model and effort from the remaining quota, lays the panes out evenly, launches them unrestricted within hard limits and follows them to a verified result. Use when the person types /master, appends /master to a command, or asks you to orchestrate and decide everything yourself. Not for a git master branch, and not for supervising agents someone else launched: the coordinating-agents skill covers that."
+description: "Turns the current agent into the master of a task when the person types /master: it sizes the work, decides whether to do it alone or delegate to coding agents (Claude Code, Codex, Antigravity), keeps its own tab whole and opens the agents in another tab of the orchestrator or agentic development environment (ADE) it runs in (Herdr, Orca, Paradev, T3 Code, AgentsRoom or another), picks each agent's model and effort from the remaining quota, lays the panes out evenly, launches them unrestricted within hard limits and follows them to a verified result. Use when the person types /master, appends /master to a command, or asks you to orchestrate and decide everything yourself. Not for a git master branch, and not for supervising agents someone else launched: the coordinating-agents skill covers that."
 ---
 
 # Master
@@ -42,10 +42,13 @@ The orchestrator is whatever runs your terminal and can open more of them: a mul
 
 1. If `HC_TERMINAL_ID` is set, you run inside Herdr: use `hc` for agents and `herdr-app` for the window. Your address is `$HC_TERMINAL_ID`.
 2. If `ORCA_TERMINAL_HANDLE` is set, you run inside Orca. Your pane is that handle.
-3. In any other orchestrator (T3 Code, a tmux wrapper, an IDE's agent panel), find the variables it injects and its CLI, read its installed help, and answer the primitives table of [references/layouts.md](references/layouts.md) before the first command.
-4. If you find none, there is no orchestrator here: work alone or with your host's subagents. If the person named an installed orchestrator you are not running inside, ask once whether to use it.
-5. Read the orchestrator's own guide before its first command: `hc --skill` and `herdr-app --skill` for Herdr; `orca skills get orca-cli` for Orca, plus `orca skills get orchestration` for supervised task graphs. The installed guide wins over this skill.
-6. For the supervision cycle (verifying banners, sends, waits, dialogs and recovery), use the `coordinating-agents` skill if available.
+3. If `SUPERSET_TERMINAL_ID` is set, you run inside Paradev: its CLI is `superset`, with `paradev` as an alias. Your pane is `$SUPERSET_PANE_ID` and your tab `$SUPERSET_TAB_ID`.
+4. If `AGENTSROOM_AGENT_ID` is set, you run inside AgentsRoom: it is driven through its MCP tools and gives each agent its own tab.
+5. If your host offers T3 tools such as `orchestrator_capabilities` and `delegate_task`, you run inside T3 Code: each agent is a thread.
+6. In any other orchestrator (a tmux wrapper, an IDE's agent panel), find the variables it injects and its CLI, read its installed help, and answer the primitives table of [references/layouts.md](references/layouts.md) before the first command.
+7. If you find none, there is no orchestrator here: work alone or with your host's subagents. If the person named an installed orchestrator you are not running inside, ask once whether to use it.
+8. Read the orchestrator's own guide before its first command: `hc --skill` and `herdr-app --skill` for Herdr; `orca skills get orca-cli` for Orca, plus `orca skills get orchestration` for supervised task graphs; `superset <command> --help` for Paradev; `capabilities_get` for AgentsRoom; `t3 thread --help` and the notes the app gives you for T3 Code. The installed guide wins over this skill.
+9. For the supervision cycle (verifying banners, sends, waits, dialogs and recovery), use the `coordinating-agents` skill if available.
 
 Your tab is yours alone: never split it, and keep your own pane out of every close and send.
 
@@ -105,6 +108,7 @@ A split halves the pane, so use only these layouts:
 - Count agents only: your pane is in none of these tabs.
 - Never cut three columns: halving leaves 50/25/25. Where the orchestrator can size panes, even out a row with that command instead of rebuilding it.
 - After building the grid, measure every pane before launching any agent, while that tab is shown: a hidden tab can report stale sizes. If a row is uneven or a pane is below the minimum size, fix the layout first, using another tab if needed.
+- Where agents are threads, or the app gives each one its own tab (T3 Code, AgentsRoom), there are no panes to cut: each agent gets its own thread or tab and the table does not apply.
 - If the orchestrator cannot open a tab from its CLI or API, ask the person to open one and give you its handle, or use fewer agents through your host's subagents. Never split your own tab as a fallback.
 
 ## 7. Launch, brief and follow

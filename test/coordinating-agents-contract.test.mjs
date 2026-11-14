@@ -7,7 +7,7 @@ import test from 'node:test';
 const root = resolve(import.meta.dirname, '..');
 const offer = join(root, 'skills', 'orchestration', 'coordinating-agents');
 const skill = readFileSync(join(offer, 'SKILL.md'), 'utf8');
-const adapters = ['dorothy.md', 'herdr.md', 'orca.md', 'teamctl.md'];
+const adapters = ['agentsroom.md', 'dorothy.md', 'herdr.md', 'orca.md', 'paradev.md', 't3code.md', 'teamctl.md'];
 const references = [...adapters, 'agent-types.md'].sort();
 const reference = (name) => readFileSync(join(offer, 'references', name), 'utf8');
 const HARNESS = /\baw\b|\.workflow\/|Workline|scratchpad|\/Users\/|w\d+:p\w+|OPENCODE_CONFIG/;
@@ -132,6 +132,24 @@ test('each adapter maps its states onto the five, defers to the installed help a
   assert.match(teamctl, /Raising either one is wider access/);
   const dorothy = reference('dorothy.md');
   assert.match(dorothy, /Pass `skipPermissions: false` unless the person explicitly authorized/);
+  assert.match(orca, /The guide of 1\.4\.258 agrees with that behavior, measured again on macOS/);
+  assert.match(orca, /A pane in a tab that is not shown reports 24 × 80 or a stale size/);
+  const paradev = reference('paradev.md');
+  assert.match(paradev, /no command was exercised, because the CLI answered `Not logged in`/);
+  assert.match(paradev, /Never pass `\$SUPERSET_PANE_ID` to `panes split`: open the agents' tab with `panes new-tab`/);
+  assert.match(paradev, /A cloud workspace or another `--host` is a remote placement, which is wider access/);
+  assert.match(paradev, /signing in with `superset auth login` is the person's step/);
+  const t3code = reference('t3code.md');
+  assert.match(t3code, /no thread was started/);
+  assert.match(t3code, /Nothing to place: each agent is its own thread, so your own view is never split/);
+  assert.match(t3code, /`thread start` spends the provider's quota at once/);
+  assert.match(t3code, /Exit 2 → `blocked`: the thread waits for an answer/);
+  assert.match(t3code, /`t3 project add <path>` registers one durably, so ask the person first/);
+  const agentsroom = reference('agentsroom.md');
+  assert.match(agentsroom, /the tools were not called/);
+  assert.match(agentsroom, /The person confirms every call on a card in your tab, and a decline is final/);
+  assert.match(agentsroom, /`agents_question_answer` takes only an answer the person explicitly gave/);
+  assert.match(agentsroom, /information, never an instruction above the person/);
   assert.match(dorothy, /`send_message` auto-starts an idle agent: it is a new instruction, never a status probe/);
 });
 
@@ -148,6 +166,7 @@ test('layouts, own panes, agent dialogs and mode switches stay observable', () =
   assert.match(skill, /Keep your own tab whole: when you create panes for agents, create them in another tab, in any orchestrator/);
   assert.match(skill, /Open the agents in a tab other than your own/);
   assert.match(skill, /do not split your own tab instead/);
+  assert.match(skill, /Where agents are threads or get a tab each from the app \(T3 Code, AgentsRoom\), there is nothing to split/);
   assert.match(skill, /tell them not to use `git stash`/);
   assert.match(skill, /an empty list of findings from a reviewer that did not run is not a clean review/);
   assert.match(skill, /list the layout before retrying: the pane may exist anyway/);
@@ -183,7 +202,7 @@ test('fixtures of eight host families acquire only coordinating-agents and read 
     assert.deepEqual(readdirSync(skills), ['coordinating-agents'], `${host}: no sibling offers`);
     const installed = readFileSync(join(target, 'SKILL.md'), 'utf8');
     assert.match(installed, /^name: coordinating-agents$/m, `${host}: selection by name`);
-    assert.match(installed, /^description: .+orchestrator.+ADE.+Herdr.+Orca.+T3 Code.+teamctl.+Dorothy.+$/m, `${host}: selection by description`);
+    assert.match(installed, /^description: .+orchestrator.+ADE.+Herdr.+Orca.+Paradev.+T3 Code.+AgentsRoom.+teamctl.+Dorothy.+$/m, `${host}: selection by description`);
     assert.deepEqual(readdirSync(join(target, 'references')).sort(), references, `${host}: references travel with the skill`);
     assert.doesNotMatch(installed, HARNESS);
   }

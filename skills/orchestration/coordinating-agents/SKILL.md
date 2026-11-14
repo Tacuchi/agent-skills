@@ -1,6 +1,6 @@
 ---
 name: coordinating-agents
-description: "Coordinates coding agents run by a multi-agent orchestrator or agentic development environment, ADE (Herdr, Orca, T3 Code, teamctl, Dorothy, Pylon or another): delegates bounded tasks, verifies the effective model and effort, follows states and questions, and recovers sessions without impersonating human authorizations. Use it when the person asks to coordinate, supervise, dispatch to or monitor agents in an orchestrator's panes, terminals, workers or worktrees. Not for a host's built-in subagent tool, not for choosing how to plan the work, and not for taking over a whole task and deciding its staffing yourself: the master skill covers that."
+description: "Coordinates coding agents run by a multi-agent orchestrator or agentic development environment, ADE (Herdr, Orca, Paradev, T3 Code, AgentsRoom, teamctl, Dorothy, Pylon or another): delegates bounded tasks, verifies the effective model and effort, follows states and questions, and recovers sessions without impersonating human authorizations. Use it when the person asks to coordinate, supervise, dispatch to or monitor agents in an orchestrator's panes, terminals, workers or worktrees. Not for a host's built-in subagent tool, not for choosing how to plan the work, and not for taking over a whole task and deciding its staffing yourself: the master skill covers that."
 ---
 
 # Coordinating agents under an orchestrator
@@ -13,9 +13,12 @@ This guide works on its own in any host that can drive an orchestrator through i
 2. Read only the reference file for that orchestrator, before the first command:
    - Herdr, both herdr-core (`hc` with the Herdr app) and the older `herdr` multiplexer: [references/herdr.md](references/herdr.md).
    - Orca: [references/orca.md](references/orca.md).
+   - Paradev, whose CLI is `superset`: [references/paradev.md](references/paradev.md).
+   - T3 Code, which runs agents as threads: [references/t3code.md](references/t3code.md).
+   - AgentsRoom, driven through its MCP tools: [references/agentsroom.md](references/agentsroom.md).
    - teamctl: [references/teamctl.md](references/teamctl.md).
    - Dorothy: [references/dorothy.md](references/dorothy.md).
-3. For any other orchestrator (T3 Code, Pylon, a tmux wrapper, an IDE panel), read its installed help or docs and answer every row of the primitives table below before acting. If it offers no way to read an agent's output or state, coordinate through the person: tell them what to send and ask what they see.
+3. For any other orchestrator (Pylon, a tmux wrapper, an IDE panel), read its installed help or docs and answer every row of the primitives table below before acting. If it offers no way to read an agent's output or state, coordinate through the person: tell them what to send and ask what they see.
 4. When the orchestrator's installed help or version-matched guide differs from a reference file, the installed help wins: a reference records mappings and traps, not a complete CLI.
 5. When the observed behavior differs from the help (a split direction, the field that carries a handle, an option that times out), the observation wins: tell the person, with the version and platform, and adapt the next commands.
 6. If a coordinated agent is Claude Code, Codex or Antigravity CLI, also read [references/agent-types.md](references/agent-types.md) before relaying its questions or switching its mode.
@@ -48,7 +51,7 @@ This guide works on its own in any host that can drive an orchestrator through i
 ## Observable cycle
 
 1. **Locate.** List the orchestrator's sessions, panes, terminals or workers and find the right one; inspect it before acting if there is ambiguity. If the environment exposes a project registry (a CLI that lists projects with their folders), use it to pick the destination, and open the agent in that project's folder. Create a new pane, terminal, worker or worktree only once the destination and the layout are agreed; do not close or replace other people's. Keep the task ↔ handle relationship; do not rely only on an agent name.
-   - Open the agents in a tab other than your own, creating it once the layout is agreed, and split only there. If the orchestrator cannot open a tab from its interface, ask the person to open one; do not split your own tab instead.
+   - Open the agents in a tab other than your own, creating it once the layout is agreed, and split only there. If the orchestrator cannot open a tab from its interface, ask the person to open one; do not split your own tab instead. Where agents are threads or get a tab each from the app (T3 Code, AgentsRoom), there is nothing to split and the layout rules below do not apply.
    - Build an agreed layout in two passes: first every pane with a plain shell, then the agents. Check the result of the first split before repeating it, because direction names vary between builds.
    - Keep every tab even: rows of equal height and, inside each row, panes of equal width, with no pane larger than its neighbors and space left over. Use the orchestrator's size ratio or resize command when it has one. When splits only halve a pane, plan the cut order: two panes side by side; three as two on top and one full-width below; four as two rows of two; more in another tab. Measure every pane before starting the agents, while its tab is shown: a hidden tab can report stale sizes.
    - If a create, split or close fails or times out, list the layout before retrying: the pane may exist anyway. A list taken right after a close may still show the closed pane; list again before concluding.

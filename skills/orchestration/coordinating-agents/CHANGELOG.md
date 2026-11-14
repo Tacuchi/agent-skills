@@ -1,5 +1,11 @@
 # coordinating-agents changelog
 
+## [1.5.0] — 2026-11-14
+
+- Three new adapters: `references/paradev.md` (the `superset` CLI: snapshot, terminals, panes), `references/t3code.md` (the `t3` CLI and the T3 tools: each agent is a thread) and `references/agentsroom.md` (MCP tools: each spawned agent gets its own tab and the person confirms every spawn). They were written from the help of `superset` 2.0.8 and `t3` 0.1.9 and from the tool catalog of AgentsRoom 1.270.0; nothing was exercised, and each file says so.
+- The `description` names Paradev and AgentsRoom, and **Locate** says that where agents are threads or get a tab each from the app there is nothing to split.
+- `references/orca.md` was measured again on macOS 1.4.258: the guide now agrees with the split directions, a tab opens without the focus, a pane in a tab that is not shown reports 24 × 80 or a stale size, and the help adds `orca agent launch`.
+
 ## [1.4.0] — 2026-11-14
 
 - The coordinator keeps its own tab whole: panes for agents are created in another tab, in any orchestrator, and when the orchestrator cannot open a tab the person opens it. The only exception is the person asking for another placement in the current request. The primitives table gains **Place**.

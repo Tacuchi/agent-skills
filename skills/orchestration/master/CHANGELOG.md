@@ -1,5 +1,11 @@
 # master changelog
 
+## [1.2.0] — 2026-11-14
+
+- Detection names three more orchestrators: Paradev by `SUPERSET_TERMINAL_ID` (its CLI is `superset`), AgentsRoom by `AGENTSROOM_AGENT_ID` (driven through its MCP tools) and T3 Code by its T3 tools (each agent is a thread). The `description` names them.
+- `references/layouts.md` adds a section for each one. Paradev has tabs and panes with `panes new-tab`, `panes split`, `panes equalize` and `panes resize`. T3 Code and AgentsRoom have no panes to cut: each agent gets its own thread or tab, so the layout table does not apply. The three were read in their help or tool catalog and not exercised.
+- Orca was measured again on macOS 1.4.258: `vertical` still puts the new pane side by side and the guide now says the same; a tab opens without the focus unless `--focus` is passed; a pane in a tab that is not shown reports 24 × 80, so the tab is shown with `terminal switch` before measuring. Four panes of 59 × 30 in two rows of two; a third cut in a row gives 59 / 28 / 28.
+
 ## [1.1.0] — 2026-11-14
 
 - The master's own tab stays whole. Every agent goes in another tab, created for the run and named after the task, with up to four agents per tab; a single agent still gets its own tab. The only exception is the person asking for another placement in the current request, and a profile cannot override it. The layout table now counts agents only.

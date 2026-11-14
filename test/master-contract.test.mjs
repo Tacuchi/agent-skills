@@ -41,7 +41,7 @@ test('the description fires on /master and draws its seams', () => {
   assert.match(description, /Use when the person types \/master/);
   assert.match(description, /keeps its own tab whole and opens the agents in another tab/);
   assert.match(description, /agentic development environment \(ADE\)/);
-  assert.match(description, /Herdr, Orca, T3 Code or another/);
+  assert.match(description, /Herdr, Orca, Paradev, T3 Code, AgentsRoom or another/);
   assert.match(description, /Not for a git master branch/);
   assert.match(description, /coordinating-agents skill/);
 });
@@ -72,7 +72,11 @@ test('the master keeps its own tab whole and opens the agents in another tab of 
   assert.match(skill, /\*\*Your own tab stays whole\.\*\* Never split it\. Every agent goes in another tab/);
   assert.match(skill, /The only exception is the person asking for another placement in the current request/);
   assert.match(skill, /Never split your own tab as a fallback/);
-  assert.match(skill, /In any other orchestrator \(T3 Code, a tmux wrapper, an IDE's agent panel\)/);
+  assert.match(skill, /In any other orchestrator \(a tmux wrapper, an IDE's agent panel\)/);
+  assert.match(skill, /If `SUPERSET_TERMINAL_ID` is set, you run inside Paradev: its CLI is `superset`/);
+  assert.match(skill, /If `AGENTSROOM_AGENT_ID` is set, you run inside AgentsRoom/);
+  assert.match(skill, /`orchestrator_capabilities` and `delegate_task`, you run inside T3 Code: each agent is a thread/);
+  assert.match(skill, /there are no panes to cut: each agent gets its own thread or tab and the table does not apply/);
   assert.match(skill, /## Invariants[\s\S]*Your own tab stays whole: the agents live in other tabs, in any orchestrator/);
   const layouts = reference('layouts.md');
   assert.match(layouts, /## Where the agents go[\s\S]*Your own tab stays whole: never split it, in any orchestrator/);
@@ -85,6 +89,20 @@ test('the master keeps its own tab whole and opens the agents in another tab of 
   assert.match(generic, /Never split your own tab as a fallback/);
   assert.match(generic, /Tell the person which mapping you used/);
   assert.match(layouts, /Your own tab still holds one pane: yours/);
+  const section = (title, next) => layouts.slice(layouts.indexOf(`## ${title}\n`), layouts.indexOf(`## ${next}\n`));
+  const paradev = section('Paradev', 'T3 Code');
+  assert.match(paradev, /Read in the `--help` of `superset` 2\.0\.8, not exercised/);
+  assert.match(paradev, /`\$SUPERSET_PANE_ID` is your pane and `\$SUPERSET_TAB_ID` your tab[^\n]*Never split that pane/);
+  assert.match(paradev, /`superset panes new-tab --workspace <id>`/);
+  assert.match(paradev, /`superset panes equalize --workspace <id> --tab <tab id>`/);
+  const t3 = section('T3 Code', 'AgentsRoom');
+  assert.match(t3, /not exercised/);
+  assert.match(t3, /each agent is a thread of a project, so your own view is never split/);
+  assert.match(t3, /starts work at once; there is no shell to prepare and no banner to read first/);
+  const rooms = section('AgentsRoom', 'Any other orchestrator');
+  assert.match(rooms, /not exercised/);
+  assert.match(rooms, /The app gives each spawned agent its own tab: there is nothing to cut, and your own tab stays whole/);
+  assert.match(rooms, /the person confirms every call on a card in your tab, and a decline is final/);
   assert.match(reference('profile.md'), /It cannot place agents in the master's own tab/);
 });
 
@@ -106,8 +124,10 @@ test('layouts stay even: only halving cut orders, measured before launch', () =>
   assert.match(layouts, /a pane in a hidden tab reports a stale size/);
   assert.match(layouts, /`vertical` puts the new pane side by side and `horizontal` stacks it below/);
   assert.match(layouts, /it drives the person's desktop, so the master never does it/);
-  assert.match(layouts, /Checked on macOS: Herdr on 2026-11-14 against `hc` 0\.1\.21 and `herdr-app` 0\.1\.15/);
-  assert.match(layouts, /Orca on 2026-11-03 against 1\.4\.245, not measured again on later versions/);
+  assert.match(layouts, /Checked on macOS on 2026-11-14: Herdr against `hc` 0\.1\.21 and `herdr-app` 0\.1\.15, and Orca against 1\.4\.258/);
+  assert.match(layouts, /Paradev, T3 Code and AgentsRoom were read in their help or tool catalog on the same day and not exercised/);
+  assert.match(layouts, /four panes of 59 × 30, and a third cut in a row gives 59 \/ 28 \/ 28/);
+  assert.match(layouts, /a pane in a tab that is not shown reports 24 × 80 or a stale size/);
 });
 
 test('launches are interactive, flagged and verified on screen; quota reads cost nothing', () => {
