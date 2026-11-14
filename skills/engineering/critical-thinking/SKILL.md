@@ -26,6 +26,7 @@ A conclusion that only fits *your* explanation is untested.
 - List the **competing explanations** that fit the same evidence.
 - For the leading one, name the observation that would **disprove** it — then look for that, not for more confirming evidence.
 - Grade the evidence: direct vs circumstantial, verified vs assumed. Do not upgrade an assumption to a fact by repeating it.
+- Check existence claims at the source. Before writing that something exists, does not exist or says X, look: the tool's own help, a search in the code. A tool error is not evidence of absence, and an old blocker deserves a new measurement before you believe it.
 
 If you can't state what would change your mind, you don't yet have a conclusion.
 

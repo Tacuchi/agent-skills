@@ -11,6 +11,7 @@ const offers = [
   ['architecture', 'system-diagrams'],
   ['data', 'sql-authoring'],
 ];
+const versionBySlug = { 'ui-authoring': '2.0.0', 'system-diagrams': '2.0.0', 'sql-authoring': '2.1.0' };
 const referenceBySlug = {
   'ui-authoring': 'journeys-and-screens.md',
   'system-diagrams': 'c4-and-engines.md',
@@ -72,8 +73,9 @@ test('each offer is acquired alone with its links, owner, history and license', 
       const changelog = readFileSync(join(target, 'CHANGELOG.md'), 'utf8');
       assert.match(changelog, /## \[2\.0\.0\][\s\S]*## \[1\.1\.0\][\s\S]*## \[1\.0\.0\]/);
       const notes = readFileSync(join(target, 'RELEASE_NOTES.md'), 'utf8');
-      assert.match(notes, new RegExp(`^# ${slug} 2\\.0\\.0$`, 'm'));
-      assert.match(notes, new RegExp(`skill/${slug}/v2\\.0\\.0`));
+      const version = versionBySlug[slug].replaceAll('.', '\\.');
+      assert.match(notes, new RegExp(`^# ${slug} ${version}$`, 'm'));
+      assert.match(notes, new RegExp(`skill/${slug}/v${version}`));
     });
   }
 });
@@ -203,6 +205,11 @@ test('every offer directory is a standalone, licensed, versioned and clean skill
       assert.deepEqual(readdirSync(fixture), [slug]);
       const skill = readFileSync(join(target, 'SKILL.md'), 'utf8');
       assert.match(skill, new RegExp(`^---\nname: ${slug}\ndescription: .+\n---`));
+      const description = /^description: (.+)$/m.exec(skill)[1];
+      const text = description.startsWith('"') ? JSON.parse(description) : description;
+      assert.ok(description.startsWith('"') || !description.includes(': '), `${slug}: an unquoted description holds no ": "`);
+      assert.ok(text.length <= 1024, `${slug}: description fits the 1024-character limit (${text.length})`);
+      assert.ok(slug.length <= 64, `${slug}: name fits the 64-character limit`);
       assert.match(readFileSync(join(target, 'LICENSE'), 'utf8'), /MIT License[\s\S]*Tacuchi/);
       const version = /^## \[(\d+\.\d+\.\d+)\]/m.exec(readFileSync(join(target, 'CHANGELOG.md'), 'utf8'))?.[1];
       assert.ok(version, `${slug}: CHANGELOG announces a version`);

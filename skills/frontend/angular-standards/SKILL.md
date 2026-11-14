@@ -91,6 +91,18 @@ Stack conventions for writing and reviewing Angular code. It contributes idiomat
 ### Centralized error handling (never silence)
 
 - Two levels: (1) the HTTP wrapper's `catchError` normalizes `HttpErrorResponse` and shows an `ngx-toastr` toast ('danger'), then re-throws with `throwError`; (2) a global `ErrorInterceptor` handles auth: **403** → silent refresh-token + replay of the cloned request; **401** → redirect to `/login`; exclude the login/refresh endpoints.
+- **The logout belongs to the refresh, not to the replay.** Put the `catchError` that logs out on the refresh call, before the `switchMap` that replays. Placed after it, a 403 for a missing permission, a 500 or a network drop on the replayed request logs out a valid session.
+
+  ```ts
+  refreshToken$().pipe(
+    catchError((error) => { logout(); return throwError(() => error); }),
+    switchMap(() => next.handle(retried)),
+  );
+  ```
+
+- Make logout idempotent: parallel requests (`forkJoin`) can each receive the 403.
+- Detect the rejection by the `HttpErrorResponse` status, not only by the body: a gateway can answer 403 with HTML or plain text.
+- Stop polling (`timer`/`interval`) on 401/403. A poll whose `catchError` swallows the error keeps calling with a dead session.
 - **Forbidden**: `catchError(() => of([]))` and leftover `console.log` of tokens/responses.
 - Guard the deep message path: read `error?.error?.status?.error?.messages?.[0]` with optional-chaining + fallback. The unguarded access `error.error.status.error.messages[0]` blows up when the shape differs — fix it when touched.
 - The session interceptor (Bearer token, per-request identity headers, pre-auth skip) is a separate interceptor from the `ErrorInterceptor`.

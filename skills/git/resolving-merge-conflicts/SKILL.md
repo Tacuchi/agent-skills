@@ -58,6 +58,16 @@ as if it were a merge (`REBASE_HEAD` / `CHERRY_PICK_HEAD` have different exits).
 - If the merge itself must be abandoned, explain the effect and request separate
   authorization for `git merge --abort`; never use it as an automatic recovery.
 
+## What a clean auto-merge can still break
+
+Git reporting no conflict does not make the result right.
+
+- An auto-merge can drop an import, a parameter or a method from one side, duplicate a block that the other side moved, or accept a rename on one branch and new calls to the old name on the other. Build the merged tree even when no path conflicted: the compiler is the only detector.
+- With crossed bases, a merge can bring back, with no conflict, something one branch deleted. Review the deletions by hand.
+- Markers may already be committed in either branch, from an earlier merge or a stash pop. Look for them before trusting the result: `git grep -n -e '^<<<<<<< ' -e '^>>>>>>> ' -- .`
+- `git checkout --ours -- <path>` (or `--theirs`) leaves the path unmerged: it still needs `git add -- <path>`.
+- Normalize line endings on both sides before measuring one against `:2:` or `:3:`: a CRLF/LF difference makes every line look changed.
+
 ## Close only after checking the *merged* checkout
 
 1. `git ls-files -u` must be empty; `git diff --check` and

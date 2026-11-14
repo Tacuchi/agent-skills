@@ -1,5 +1,11 @@
 # sql-authoring changelog
 
+## [2.1.0] — 2026-11-14
+
+- New section in the guide, "A bundle applied by hand": one code block per step with the gate in prose, `ON_ERROR_STOP`, verification in a new connection, the lock an `ALTER TABLE` holds, sequences that do not roll back, scripts that end in `ROLLBACK`, conditional rollbacks, expand and contract, and guarded routine replacement.
+- The `description` is now a quoted string; its text does not change.
+- Every 2.0.0 rule stays.
+
 ## [2.0.0] — 2026-09-29
 
 - The skill, its guide, its example and its history are now in English. The `description` the host uses to activate it changes, so this is a major version.

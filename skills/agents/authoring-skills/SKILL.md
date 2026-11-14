@@ -17,12 +17,16 @@ Only `name` + `description` (~100 tokens) is preloaded to route among many skill
 - **Concrete, not vague** — never "helps with X" / "handles Y"; name the artifact and the action.
 - **Draw the seam** — add a negative-scope clause against adjacent skills ("…not for Vue" / "for the core rules, see the `coding-standards` skill if available"). This is the main lever against over-triggering and collisions. Negative scope belongs *here*, in the description — the opposite of the affirmative rule for action steps below.
 - **One job** — statable in ~10 words. If the description needs several "or" clauses to cover its cases, split the skill.
+- **Stay inside the standard's limits** — `name` ≤ 64 characters and equal to the folder name; `description` ≤ 1024 characters, because a tolerant client truncates the tail, where the pointers to sibling skills usually sit; a version goes in `metadata.version`, not in a top-level field.
+- **Write the description as a quoted string** — unquoted text that contains `: ` is invalid YAML, and some hosts drop the skill without a message while a permissive test parser still passes. After installing, check that the host lists the skill.
 
 ## Keep the body lean (progressive disclosure)
 
 - Three levels: metadata (always loaded) → SKILL.md body (loaded on trigger; keep ≤~500 lines) → bundled files/scripts (read or executed only when needed). In a session the body stays for the whole conversation — every line is a recurring token cost.
 - **Add only what the model does not already know** — project conventions, edge cases, specific tools. Challenge each line: "would the agent get this wrong without it?" Cut what fails.
 - **References ≤1 hop** from SKILL.md, each with a **load condition** ("Read api-errors.md if the API returns non-200"). Never chain SKILL → a → b.
+- **The floor goes inline** — what must hold even if nothing else is read (safety rules, the output language, the one mandatory step) lives in SKILL.md itself. Weaker models stop at the second hop, so a rule that lives only in a reference is a rule they never read. An explicit list of what to read beats a chain of prose pointers.
+- **Commands run as written** — give the complete signature with every required flag, and mark placeholders so that nobody can copy them literally. Models paste what a skill teaches.
 
 ## Write instructions the weakest model can follow
 
@@ -44,6 +48,8 @@ Only `name` + `description` (~100 tokens) is preloaded to route among many skill
 ## Gotchas
 
 - **Dial back shouty caps** — "CRITICAL: You MUST ALWAYS…" makes current models over-trigger; prefer "Use when…". Emphasis is not clarity.
+- **A skill is episodic** — it fires once, its text dilutes as the conversation grows, and subagents start without it. A rule that must hold on every turn, or inside subagents, needs the host's enforcement layer: a hook that blocks or asks, or a line in the repository's instruction file. A better description only helps the first trigger.
+- **One `SKILL.md` per skill folder** — hosts that scan recursively index a nested `SKILL.md` as another skill, and others cannot invoke it at all. Keep internal doctrine in plain reference files, and keep staging or backup copies out of the folder the host scans: a leading dot does not hide them.
 - **Multi-host caveat** — this guidance is measured mostly on Claude. On other hosts (Codex, Gemini, OpenCode, Crush) the keyword-matching, truncation points and caps-sensitivity may differ; when a host matters, verify triggering there rather than assuming it transfers.
 
 For prose style, the `technical-writing` skill helps if available; for scaffolding a developer tool (not a skill), the `creating-tools` skill helps if available.

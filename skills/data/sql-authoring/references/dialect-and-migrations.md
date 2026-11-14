@@ -176,9 +176,23 @@ parser.parse_plpgsql_json(block)     # per DO block, separately
 
 Say what it proves and what it does not: this is **syntax**, not catalog. A column that does not exist, a constraint named wrong, a role that is absent: none of that is visible here. Those belong to a read-only inspection of the target, done by someone authorized, and to the script's own guard block.
 
+### A bundle applied by hand: what the applier's checklist says
+
+The applier runs your files one by one from a console. Write the checklist for that person.
+
+- **One code block per step.** If two `psql -f` lines share a block, the applier pastes both and the irreversible step commits before anyone reads the gate between them. `&&` does not help: a gate that is a `SELECT` exits successfully even when it returns false. Put the condition to advance in prose between the blocks, pass `-v ON_ERROR_STOP=1` on every invocation and, for an irreversible step, put the condition inside the file as a `DO` block that raises. Count the `psql -f` lines per block after writing: more than one, with an irreversible one among them, is broken.
+- **Verify in a new connection.** A check run in the session that applied the change looks green even when the `COMMIT` never happened, and `psql -f` on a file with no `COMMIT` rolls back on disconnect.
+- **Locks.** An `ALTER TABLE` holds its exclusive lock until the `COMMIT`: place it last or in its own transaction, with `SET lock_timeout`, and never leave that transaction open while results are reviewed.
+- **Sequences do not roll back.** A probe that inserts real rows consumes `nextval` even when it is rolled back: probe with the routine's `SELECT`, not with the write.
+- **A script that ends in `ROLLBACK` leaves no trace.** Its printed output is the only evidence: tell the applier to keep it.
+- **A conditional step needs a conditional rollback.** `pglast` reads a `DO` block as opaque, so parse the DDL inside it separately.
+- **Expand, then contract.** When the old code and the new code need different objects, deliver two bundles: the additive one before the deployment and the removal after it.
+- **Replacing a routine.** Guard the replacement with a hash of the live body, taken with line endings normalized, before and after; capture the rollback from the live body, never by hand; and print `current_database()` next to the hash, because two environments can hold the same body.
+
 ### Anti-patterns to avoid
 
 - Concatenating strings in dynamic SQL (injection).
+- A checklist with two `psql -f` lines in one code block when one of them is irreversible.
 - A table without a schema, or in `public`.
 - `DELETE` or `UPDATE` without a backup or a `WHERE`.
 - Throwaway functions or procedures created only to reuse logic inside one script: use a CTE or repeat it inline.

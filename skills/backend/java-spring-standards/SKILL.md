@@ -51,6 +51,17 @@ public class TaskHistoryServiceImpl implements TaskHistoryService {
 - `@Transactional(readOnly = true)` on reads; `@Transactional` wrapping multi-step writes.
 - **Consistent import**: use `org.springframework.transaction.annotation.Transactional` (avoid mixing `javax`/`jakarta` — a common source of drift).
 - Anti-pattern to avoid: a multi-step write without `@Transactional`.
+- **Annotations work through the proxy.** `@Transactional`, `@Cacheable` and `@Async` on a method called from its own class (`this.method()`, also inside a lambda) are inert. Before relying on "this is cached" or "this is transactional", find the callers; when they are internal, move the method to another bean.
+- **A caught constraint violation does not save the transaction.** The persistence context has already marked it rollback-only, and the commit fails with `UnexpectedRollbackException`. Check before inserting instead of catching the unique-index error, and raise a business rejection as an exception the advice maps, never as a `200` with a failure flag.
+- A `@OneToMany` collection assigned with `List.of` or `Collections.singletonList` fails on the second save, because the merge clears an immutable list: use `new ArrayList<>()`.
+- With open-session-in-view enabled, `findById` returns the entity cached in the request and does not see what another request committed: read again with a scalar query when freshness matters.
+- An `@Async` thread with no transaction that touches a `LAZY` relation throws `LazyInitializationException`. No test without a Spring context sees it; a run against a real database does.
+
+### Filters that guard a path
+
+- A servlet filter that compares `request.getRequestURI()` with a route can be bypassed with `%2D` or `;x=1`: that string arrives undecoded and with its matrix parameters, while Spring decodes and strips both before choosing the handler. Compare the lookup path (`UrlPathHelper.getLookupPathForRequest`, `getServletPath()`) or use a `HandlerInterceptor`, and test both variants.
+- With chunked transfer `getContentLengthLong()` is `-1`: a size limit that trusts it checks nothing.
+- Test a rate limit with a concurrent burst; a sequential loop may never trip it.
 
 ### Async executors (`@Async`)
 
@@ -106,6 +117,9 @@ log.info("[LOAD] batch {} started", batchId);
 ```
 
 - `traceId` via MDC in `log4j2.xml` for correlation. Never log secrets/PII (the `security-practices` skill, if available, covers this in depth).
+- **Check the logging runtime in `dependency:tree`, not by the configuration file present.** A `log4j2.xml` on the classpath is never read when `spring-boot-starter-logging` is not excluded and `log4j-core` is absent: Logback is the one running.
+- The generated `toString` of a record or a `@Data` DTO prints every field, credentials included: exclude them before logging the object.
+- `e.getMessage()` of a `DataIntegrityViolationException` carries the whole statement: bound it before storing it in a fixed-length column, or the insert of the error report fails too.
 
 ### DTOs as Lombok POJOs (honest drift)
 

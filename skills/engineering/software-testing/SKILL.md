@@ -36,6 +36,19 @@ A bugfix **requires a regression test** that reproduces the defect:
 
 Without the prior red there is no guarantee the test covers the bug. For new features, the test accompanies the new logic — never deferred.
 
+Reproduce before fixing: choose the fix from a reproduction, never from a hypothesis that merely sounds right.
+
+### Make the test bite
+
+A green suite proves little until a broken version turns it red.
+
+- **Mutate the guarantee.** For each guarantee a change adds, break the code on purpose (restore the defect, delete the guard) and run the test: it must fail. A surviving mutant means the test asserts less than the code promises, usually a final state that the broken version also reaches. Restore from a backup copy of the file; `git checkout -- <file>` would also discard your uncommitted work.
+- **Test the caller, not only the primitive.** A correct function that nothing calls is dead, and a harness that supplies the missing wiring by hand is a structural false green. Run the real entry point (the built binary, the HTTP route) at least once and find who consumes each new function.
+- **A double is never more permissive than the real thing.** Give the fake the invariants of the service it replaces, and keep at least one contract test against the real service or its real validation. Mocks on both sides of a boundary leave a broken contract green on both.
+- **An exception added so a check passes is as suspect as a deleted test.** Ask which mutation would stay green with it.
+- **Guard against vacuous passes**: a scan that found zero elements, a scenario another rule already excludes, a `catch` that turns a crash into data. Assert a floor (at least one item checked) and write one case that varies only what each guard protects.
+- **Fixtures age and flatter**: use dates relative to now or an injected clock, cross numeric widths (`999` against `1000`) when testing an order, and use realistic names instead of `one`/`two`.
+
 ### A red you did not cause still has to be proven
 
 A failing test in a repo you just touched is not preexisting because it looks unrelated. Demonstrate
@@ -209,7 +222,7 @@ The human can switch levels at any time or decide not to run.
 ### Execution and logging
 
 1. Confirm the human wants execution (see "Execution rule").
-2. Run the resolved command per stack and level.
+2. Run the resolved command per stack and level. Read the runner's own exit code: in `<runner> | tail; echo $?` the code is `tail`'s, so use `${PIPESTATUS[0]}` or redirect the output to a log.
 3. On failures, if the human wants to continue: fix and re-run.
 4. If the human already validated manually, do not repeat; note one brief line if it adds traceability.
 

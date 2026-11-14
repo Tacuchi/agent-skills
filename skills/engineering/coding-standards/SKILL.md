@@ -1,6 +1,6 @@
 ---
 name: coding-standards
-description: "Use whenever you write, edit, review, or refactor ANY code in ANY stack — features, fixes, endpoints, components — even when the user does not say 'standards'. Enforces the stack-agnostic core: SOLID, fail-fast early returns, self-documenting names (comments say WHY), small single-responsibility methods, DRY (rule-of-three, check shared/ or common/ first), composition over inheritance, never silence errors, DTOs between layers, constructor injection, logging by severity, and the FE-BE contract (sparse DTO, PATCH for partial edit, send only changed fields, no hidden fallbacks). For UI/HTML/web, detect the installed framework and use minimal custom CSS. Optional complements, if available: the `java-spring-standards` skill, the `angular-standards` skill or the `sql-authoring` skill for stack-specific rules; the `security-practices` skill for secrets, SQL injection, auth, CORS, or PII; the `version-evolution` skill for selecting or migrating language, framework, toolchain or LTS versions; the `reviewing-code` skill for diff hygiene."
+description: "Use whenever you write, edit, review, or refactor ANY code in ANY stack — features, fixes, endpoints, components — even when the user does not say 'standards'. Enforces the stack-agnostic core: SOLID, fail-fast early returns, self-documenting names (comments say WHY), small single-responsibility methods, DRY (rule-of-three, check shared/ or common/ first), composition over inheritance, never silence errors, DTOs between layers, constructor injection, logging by severity, and the FE-BE contract (sparse DTO, PATCH for partial edit, send only changed fields, no hidden fallbacks). For UI/HTML/web, detect the installed framework and use minimal custom CSS. Optional complements, if available: the `java-spring-standards` skill, the `angular-standards` skill or the `sql-authoring` skill for stack rules; the `security-practices` skill for secrets, SQL injection, auth, CORS or PII; the `version-evolution` skill for choosing or migrating versions; the `reviewing-code` skill for diff hygiene."
 ---
 
 # coding-standards — Universal coding standards
@@ -19,9 +19,12 @@ Stack- or concern-specific rules can come from other skills when they are availa
 - **Fail fast** — validate and return at the top of the method (early returns); avoid deep nesting.
 - **Descriptive names** — code self-documents. Comments explain the **why**, never the **what**. A comment that repeats the code gets deleted. `TODO` for incomplete code.
 - **The code file is not the home of design documentation** — architecture, rationale, usage guides and change narratives do not belong in a header block or a running commentary inside the source. Keep in the file only what a reader of that file needs to understand it; the rest belongs in the repository's own documentation. Where that documentation lives and how it is named is the repository's or the workflow harness' call, not this skill's.
+- **Keep the process out of the code** — plan, task, ticket and acceptance-criterion identifiers do not go in code, comments, tests or user-facing text, unless the repository's convention asks for them. The product must read the same whatever process produced it.
 - **Small methods** — one responsibility per function.
 - **Composition over inheritance**.
 - **Never silence errors** — an unhandled error propagates; never catch it to return a mock/empty value.
+- **A failed read is not an empty result** — tell a real "nothing there" from a timeout, a parse failure or a dependency that is down. Before a step that deletes, cancels or overwrites, stop on the second kind instead of going on as if the set were empty.
+- **An error message names the expected shape, the valid values and what actually arrived** — a diagnosis that names something else sends an obedient caller, human or agent, into a loop.
 
 ### Fit the repository you are changing
 
@@ -34,6 +37,7 @@ Stack- or concern-specific rules can come from other skills when they are availa
 - Before creating a component/function/class, check whether it exists: `shared/` (frontend) or `common/`/`util/` (backend).
 - **Rule of three**: extract only when a pattern repeats 3+ times (a pattern in 2 places is observed; in 3, extracted).
 - Extraction always as an isolated diff, separate from the feature.
+- **One source for a list** — an enumeration repeated by hand in several places drifts. Derive it from one source; when that is not possible, add a check that reports both what is missing and what is extra.
 
 ### DTOs and injection (cross-stack)
 

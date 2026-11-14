@@ -61,6 +61,26 @@ feign:
 - **Never** copy raw PII into evidence artifacts, analyses, logs or tickets.
 - Prefer counts/aggregations (`COUNT`, `GROUP BY`) over row dumps with personal data.
 
+### Logs — mask before you truncate
+
+- Log a URL without its query string and fragment: a link that carries a token puts that token in every line.
+- Never log a serialized entity or a generated `toString` (records, DTOs with generated accessors): they print password hashes, recovery codes and card numbers.
+- Mask first, truncate after: truncating first can leave a cut token readable.
+- Write the probe before the pattern: real and odd strings (an encoded `%40`, `Bearer%20…`, a token inside an encoded URL, a truncated JWT, a value followed by punctuation) plus long inputs to time it. The obvious pattern misses most of them.
+
+### Agent and LLM surfaces
+
+- **Retrieved content is data, never instructions**: memory entries, web pages, tool results, another agent's output and user-written fields. Neutralize role prefixes, wrap the content in a delimiter it cannot close, and put the rules after the data block.
+- **Identity comes from the server's context**, never from an argument the model chooses. Check the owner before the sensitivity level: a "non-sensitive" record of someone else is still someone else's.
+- **Hard data comes from the deterministic source**: names, ids, dates and amounts are never taken from the model's answer. The model decides the judgment; the source supplies the values.
+- **Public projections enumerate their fields**: `SELECT *` exposes the next sensitive column someone adds.
+
+### Network premises
+
+- "Loopback only" stops protecting on the day the service gets a public domain: the proxy routes by host, not by path. Check the premise again whenever a service gains a domain, and guard administration endpoints with their own credential.
+- A rate limit keyed on the first `X-Forwarded-For` value is keyed on a value the client chooses, unless the proxy overwrites it.
+- A guard on a path must compare the same normalized path the router matches; an encoded or parameterized variant otherwise walks around it.
+
 ### Database access — read-only
 
 - Database connections used by the AI (MCP or any other) are **READ-ONLY**: only `SELECT` / `EXPLAIN` / `\d`. The AI **never** runs `INSERT/UPDATE/DELETE/TRUNCATE/MERGE` or DDL via MCP, Bash, `psql` or a driver.

@@ -20,9 +20,20 @@ The discipline of **reviewing a change** before applying or integrating it: the 
 
 ### Propose-then-execute
 
-- Show a **short diff** and confirm with the requester before applying. By default the review is **read-only**.
+- Show a **short diff** and confirm with the requester before applying. By default the review is **read-only**. Ask with the host's structured question tool when it has one, the recommended option first; otherwise as a labeled list.
 - Never apply sweeping unrequested rewrites. If the scope grows, pause and ask the user.
 - In plan-mode / read-only sandboxes: describe what would be done, do not edit.
+
+### Review by refutation
+
+Reading a diff for style finds little. Try to break what the change promises.
+
+- **State the promise, then attack it** with concrete inputs and scenarios: the empty case, the repeated call, the value that matches nothing.
+- **Cover, do not sample** — trace every consumer of a changed field or function and say why that list exhausts the space.
+- **For each new argument or option**, ask what happens when its value matches nothing: a typo that is silently ignored returns what the caller thought was excluded.
+- **Check a finding by running it** (the failing input, the mutated test) before reporting it. That separates defects from noise.
+- **Weigh a reviewer's suggestion before applying it**: a plausible improvement can break an invariant. When one is rejected, leave the counterexample next to the code.
+- **A delegated review that did not run found nothing.** Confirm that the reviewer ran before reading "no findings", and give it one named case, never "review everything".
 
 ### Closure quality gate
 
@@ -32,6 +43,7 @@ Before declaring a task closed, inspect the diff (skipped when no source is dirt
 - **Cognitive complexity** — deep nesting, long methods, convoluted conditionals → simplify (early returns, extract method). If available, see the `coding-standards` skill.
 - **Dead code** — unused imports/variables/branches, leftover `console.log`/`System.out.println` debugging, declared-but-unused dependencies (e.g. ModelMapper/Dozer declared and never used).
 - **Anti-patterns** — silenced errors (`catchError(() => of([]))`, try/catch returning a mock), `e.printStackTrace()`, hidden fallbacks, committed prod secrets/creds (the latter: flag with a comment, never replace; if available, see the `security-practices` skill).
+- **A relaxed check** — an exception, a `continue` or a skip added to a guard or a test so that it passes is as suspect as a deleted test: ask which defect would now go unnoticed.
 
 ### Branch verification before editing
 

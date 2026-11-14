@@ -109,6 +109,11 @@ After: the DEC-007 block above.
 
 Even there: simple chained sentences, never long ones.
 
+### After cutting, read the whole text again
+
+- Compressing prose deletes more than intended: a rule, a section of exclusions, the verb of a sentence. After trimming, read the whole document again, not the diff.
+- Leave old changelog entries as they are: a count that was right when written is history, not an error to fix.
+
 ### Application by document type
 
 - **commit messages**: one line, what changes (not how); no jargon, no filler. The exact shape and the propose-first policy belong to the `git-conventions` skill, if available.
