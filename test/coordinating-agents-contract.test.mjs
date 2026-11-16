@@ -10,7 +10,7 @@ const skill = readFileSync(join(offer, 'SKILL.md'), 'utf8');
 const adapters = ['agentsroom.md', 'dorothy.md', 'herdr.md', 'orca.md', 'paradev.md', 't3code.md', 'teamctl.md'];
 const references = [...adapters, 'agent-types.md'].sort();
 const reference = (name) => readFileSync(join(offer, 'references', name), 'utf8');
-const HARNESS = /\baw\b|\.workflow\/|Workline|scratchpad|\/Users\/|w\d+:p\w+|OPENCODE_CONFIG/;
+const HARNESS = /\baw\b|\.workflow\/|agent-workflow|scratchpad|\/Users\/|w\d+:p\w+|OPENCODE_CONFIG/i;
 
 test('an isolated install keeps identity, license, history, adapters and standalone scope', (t) => {
   const fixture = mkdtempSync(join(tmpdir(), 'coordinating-agents-only-'));

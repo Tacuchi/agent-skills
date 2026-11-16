@@ -9,7 +9,7 @@ const offer = join(root, 'skills', 'orchestration', 'master');
 const skill = readFileSync(join(offer, 'SKILL.md'), 'utf8');
 const references = ['launch.md', 'layouts.md', 'profile.md'];
 const reference = (name) => readFileSync(join(offer, 'references', name), 'utf8');
-const HARNESS = /\baw\b|\.workflow\/|Workline|scratchpad|\/Users\/|w\d+:p\w+|OPENCODE_CONFIG|\bQTC\b/;
+const HARNESS = /\baw\b|\.workflow\/|agent-workflow|scratchpad|\/Users\/|w\d+:p\w+|OPENCODE_CONFIG|\bQTC\b/i;
 
 test('an isolated install keeps identity, license, history and references', (t) => {
   const fixture = mkdtempSync(join(tmpdir(), 'master-only-'));

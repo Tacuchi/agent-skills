@@ -67,7 +67,7 @@ test('each offer is acquired alone with its links, owner, history and license', 
       assert.ok(skill.includes(`](references/${reference})`), `${slug}: reference reachable from SKILL.md`);
       assert.ok(checkLocalLinks(skill, target, target) >= 2, `${slug}: local links checked`);
       const details = readFileSync(join(target, 'references', reference), 'utf8');
-      assert.doesNotMatch(details, /\bWorkline\b|\baw\b|\.workflow\/|docs\/(?:designs|diagrams|scripts)\/|\bQTC\b/i);
+      assert.doesNotMatch(details, /\bagent-workflow\b|\baw\b|\.workflow\/|docs\/(?:designs|diagrams|scripts)\/|\bQTC\b/i);
       checkLocalLinks(details, join(target, 'references'), target);
       assert.match(readFileSync(join(target, 'LICENSE'), 'utf8'), /MIT License[\s\S]*Tacuchi/);
       const changelog = readFileSync(join(target, 'CHANGELOG.md'), 'utf8');
@@ -161,7 +161,7 @@ const OFFER_DIRS = readdirSync(join(root, 'skills')).flatMap((domain) =>
 const SLUGS = new Set(OFFER_DIRS.map(({ slug }) => slug));
 const FORBIDDEN = [
   /\bQTC\b/, /qtc-/i, /\bRespBase\b/, /\bReqBase\b/, /\bApiService\b/, /tb_maestra/, /\b(?:esq|tb|seq|fn|sp)_[a-z]/,
-  /\bWorkline\b/i, /\/w:/, /\baw\b/, /\.workflow\//, /structured-choice/, /worktree unit/i,
+  /\bagent-workflow\b/i, /\/w:/, /\baw\b/, /\.workflow\//, /structured-choice/, /worktree unit/i,
   /\b(?:code-review|sql-database-standards|receiving-code-review)\b/, /(?:the |`)(?:testing|writing)`? skill\b/,
   // Host-native slash commands never stand in for an offer.
   /(?:^|[\s(`])\/(?:review|code-review|security-review|ultrareview|init|simplify)\b/m,
