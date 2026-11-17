@@ -1,6 +1,6 @@
 ---
 name: ui-authoring
-description: Defines the journeys, screens, states, accessibility and failures of an interface from user needs. Use it when asked to design or specify the visible behavior of a UI, even with no code and no framework chosen.
+description: "Defines the journeys, screens, states, accessibility and failures of an interface from user needs, as a specification another team can implement. Use it when asked to design or specify the visible behavior of a UI before it is built, even with no code and no framework chosen. Not for reviewing, critiquing or polishing an existing interface, nor for implementing it: an interface review or design critique skill covers that, if available."
 ---
 
 # Authoring interfaces

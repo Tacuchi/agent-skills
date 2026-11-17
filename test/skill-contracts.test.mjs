@@ -11,7 +11,7 @@ const offers = [
   ['architecture', 'system-diagrams'],
   ['data', 'sql-authoring'],
 ];
-const versionBySlug = { 'ui-authoring': '2.0.0', 'system-diagrams': '2.0.0', 'sql-authoring': '2.1.0' };
+const versionBySlug = { 'ui-authoring': '3.0.0', 'system-diagrams': '2.0.0', 'sql-authoring': '2.1.0' };
 const referenceBySlug = {
   'ui-authoring': 'journeys-and-screens.md',
   'system-diagrams': 'c4-and-engines.md',
