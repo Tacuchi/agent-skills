@@ -7,6 +7,18 @@ description: "Coordinates coding agents run by a multi-agent orchestrator or age
 
 This guide works on its own in any host that can drive an orchestrator through its CLI, API or MCP tools. It does not install agents, configure the host or create panes, terminals or workers by default. If the orchestrator's interface is missing, or there is no access to an authorized session, explain the precondition and stop: do not attribute started tasks or results to an agent you could not observe.
 
+## Step 0 — Permissions this skill uses
+
+Run this once, when the skill loads and before its other steps. It keeps the session from stopping on a prompt for a command this skill is known to run. It is not a security check: the host and its hooks still decide.
+
+1. Run `node <skill dir>/scripts/permissions.mjs check --root <session folder> --host <claude|codex|agy>`. `<skill dir>` is the folder of this `SKILL.md`; `<session folder>` is the folder where the session started; the host is the one you run in.
+2. If `node` is missing or the command fails, say so, list the needs in `<skill dir>/permissions.json` and go on with the skill.
+3. Read `hosts.<host>` in the output. Show its `notice` when there is one.
+4. Ask each entry of its `questions` with the host's structured question tool, in the person's language: its `text`, then its options in the given order, the one marked `recommended` first. Low-risk and high-risk needs are separate questions; ask them separately and never recommend allowing a high-risk need.
+5. Run the `command` of the option the person chose, exactly as given. An option without a command writes nothing. Write nothing the person did not choose.
+6. Tell the person the `applies` line of the result: whether the change works now or after a restart. If the command fails, say so and go on.
+7. After "Skip for now", do not run this step again in the session.
+
 ## Pick the adapter
 
 1. Identify the orchestrator from the person's words and from the environment (an injected variable, a running app, a team file).

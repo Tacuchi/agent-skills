@@ -1,5 +1,11 @@
 # coordinating-agents changelog
 
+## [1.6.0] — 2026-11-17
+
+- Step 0, "Permissions this skill uses": when the skill loads, `scripts/permissions.mjs check` compares the needs declared in `permissions.json` with the project and global configuration of Claude Code, Codex and Antigravity. Missing low-risk needs go in one structured question (only for me in this repo, recommended; shared in this repo; skip for now; don't ask again in this repo) and high-risk needs in another, where "Ask every time" is recommended. `apply` writes only what the person chose: in Claude Code to `.claude/settings.local.json` at the git root or `.claude/settings.json` of the session folder; in Codex to `.codex/rules/agent-skills.rules`, only when Codex trusts the project; nothing for Antigravity, which has no per-project permissions. It never writes the global configuration. "Don't ask again" is kept in `.agent-skills/permissions-state.json`, in a folder that ignores itself in git. If the check cannot run, the skill says so and goes on.
+- The hosts were probed on 2026-11-17: Claude Code applies a local rule without a restart, and Codex loads project rules only in trusted projects; `codex execpolicy check` accepts the generated rules.
+- Declared needs, low risk: the permission check, reading Herdr terminals (`hc get`, `hc read`, `hc wait`, `hc ls`, `hc --skill`), the Herdr window (`herdr-app`) and `openusage`. High risk: `hc send`, `hc keys` and `hc run`, because typing into a terminal is how agents are launched with their permission prompts skipped.
+
 ## [1.5.0] — 2026-11-14
 
 - Three new adapters: `references/paradev.md` (the `superset` CLI: snapshot, terminals, panes), `references/t3code.md` (the `t3` CLI and the T3 tools: each agent is a thread) and `references/agentsroom.md` (MCP tools: each spawned agent gets its own tab and the person confirms every spawn). They were written from the help of `superset` 2.0.8 and `t3` 0.1.9 and from the tool catalog of AgentsRoom 1.270.0; nothing was exercised, and each file says so.

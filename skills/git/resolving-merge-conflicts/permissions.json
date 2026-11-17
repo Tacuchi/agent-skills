@@ -1,0 +1,26 @@
+{
+  "skill": "resolving-merge-conflicts",
+  "needs": [
+    {
+      "id": "permission-check",
+      "type": "command",
+      "tier": "low",
+      "reason": "Run this permission check when the skill loads, without a prompt.",
+      "prefixes": [
+        "node {skill_dir}/scripts/permissions.mjs"
+      ]
+    },
+    {
+      "id": "git-read",
+      "type": "command",
+      "tier": "low",
+      "reason": "Read the state, changes, history and current branch of the repository.",
+      "prefixes": [
+        "git status",
+        "git diff",
+        "git log",
+        "git branch --show-current"
+      ]
+    }
+  ]
+}

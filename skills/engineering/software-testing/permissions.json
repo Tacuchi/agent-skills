@@ -1,0 +1,30 @@
+{
+  "skill": "software-testing",
+  "needs": [
+    {
+      "id": "permission-check",
+      "type": "command",
+      "tier": "low",
+      "reason": "Run this permission check when the skill loads, without a prompt.",
+      "prefixes": [
+        "node {skill_dir}/scripts/permissions.mjs"
+      ]
+    },
+    {
+      "id": "build-test",
+      "type": "command",
+      "tier": "low",
+      "reason": "Run the repository's committed build and test wrappers and test scripts.",
+      "prefixes": [
+        "./mvnw test",
+        "./mvnw verify",
+        "./gradlew",
+        "npm test",
+        "npm run test",
+        "pnpm test",
+        "pnpm run test",
+        "yarn test"
+      ]
+    }
+  ]
+}

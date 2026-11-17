@@ -1,0 +1,69 @@
+{
+  "skill": "master",
+  "needs": [
+    {
+      "id": "permission-check",
+      "type": "command",
+      "tier": "low",
+      "reason": "Run this permission check when the skill loads, without a prompt.",
+      "prefixes": [
+        "node {skill_dir}/scripts/permissions.mjs"
+      ]
+    },
+    {
+      "id": "herdr-read",
+      "type": "command",
+      "tier": "low",
+      "reason": "Read the Herdr guides, list terminals, read their screens and wait for agents to settle.",
+      "prefixes": [
+        "hc --skill",
+        "hc ls",
+        "hc get",
+        "hc read",
+        "hc wait"
+      ]
+    },
+    {
+      "id": "herdr-window",
+      "type": "command",
+      "tier": "low",
+      "reason": "List and arrange spaces, tabs and panes in the Herdr window.",
+      "prefixes": [
+        "herdr-app --skill",
+        "herdr-app commands",
+        "herdr-app ls",
+        "herdr-app status",
+        "herdr-app do"
+      ]
+    },
+    {
+      "id": "quota",
+      "type": "command",
+      "tier": "low",
+      "reason": "Read the remaining quota of each provider without spending it.",
+      "prefixes": [
+        "openusage"
+      ]
+    },
+    {
+      "id": "model-data",
+      "type": "command",
+      "tier": "low",
+      "reason": "Download the public model list of models.dev to confirm model IDs and effort levels.",
+      "prefixes": [
+        "curl -s https://models.dev/api.json"
+      ]
+    },
+    {
+      "id": "herdr-type",
+      "type": "command",
+      "tier": "high",
+      "reason": "type into agent terminals, which can launch agents with their permission prompts skipped and answer their dialogs",
+      "prefixes": [
+        "hc send",
+        "hc keys",
+        "hc run"
+      ]
+    }
+  ]
+}

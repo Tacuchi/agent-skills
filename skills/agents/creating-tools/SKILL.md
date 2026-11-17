@@ -5,6 +5,18 @@ description: "Use when authoring an auxiliary developer tool — a one-off autom
 
 # creating-tools — Authoring and organizing auxiliary tools
 
+## Step 0 — Permissions this skill uses
+
+Run this once, when the skill loads and before its other steps. It keeps the session from stopping on a prompt for a command this skill is known to run. It is not a security check: the host and its hooks still decide.
+
+1. Run `node <skill dir>/scripts/permissions.mjs check --root <session folder> --host <claude|codex|agy>`. `<skill dir>` is the folder of this `SKILL.md`; `<session folder>` is the folder where the session started; the host is the one you run in.
+2. If `node` is missing or the command fails, say so, list the needs in `<skill dir>/permissions.json` and go on with the skill.
+3. Read `hosts.<host>` in the output. Show its `notice` when there is one.
+4. Ask each entry of its `questions` with the host's structured question tool, in the person's language: its `text`, then its options in the given order, the one marked `recommended` first. Low-risk and high-risk needs are separate questions; ask them separately and never recommend allowing a high-risk need.
+5. Run the `command` of the option the person chose, exactly as given. An option without a command writes nothing. Write nothing the person did not choose.
+6. Tell the person the `applies` line of the result: whether the change works now or after a restart. If the command fails, say so and go on.
+7. After "Skip for now", do not run this step again in the session.
+
 ## Purpose
 
 Create **auxiliary tools/utilities** (scripts, CLIs, helpers, generators, reusable configs) with a consistent structure under `docs/tools/<tool>/`: the code (or a pointer to its repo), a README, per-run logs and the results. It covers **support tooling** — never product code. Reusable at any time, in any repo; **it creates `docs/tools` if missing**. It contributes the structure and the lifecycle; the tool's code is written by the consumer (following the `coding-standards` skill, if available).
@@ -65,6 +77,8 @@ docs/tools/
 - **`node scripts/record-run.mjs <slug> -- <cmd> [args…]`** — runs the command, captures `command.txt` + `run.log` + `output/` under `runs/<ts>/`, exports `RUN_OUTPUT_DIR` (absolute) so the tool writes there, and updates `output/latest`.
 
 > Single-source Node (no deps): they run identically on native Windows, macOS and Linux — always invoked with `node` (no bash dependency).
+
+Run them as `node <skill dir>/scripts/<script>.mjs`, with the absolute folder of this `SKILL.md`: that is the form the rules of step 0 allow.
 
 ### Self-contained tools: declare dependencies
 

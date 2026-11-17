@@ -1,0 +1,32 @@
+{
+  "skill": "creating-tools",
+  "needs": [
+    {
+      "id": "permission-check",
+      "type": "command",
+      "tier": "low",
+      "reason": "Run this permission check when the skill loads, without a prompt.",
+      "prefixes": [
+        "node {skill_dir}/scripts/permissions.mjs"
+      ]
+    },
+    {
+      "id": "scaffold",
+      "type": "command",
+      "tier": "low",
+      "reason": "Create the folder and README of a tool under docs/tools.",
+      "prefixes": [
+        "node {skill_dir}/scripts/scaffold-tool.mjs"
+      ]
+    },
+    {
+      "id": "record-run",
+      "type": "command",
+      "tier": "high",
+      "reason": "run any command given after -- and archive its output, so allowing it allows whatever command it wraps",
+      "prefixes": [
+        "node {skill_dir}/scripts/record-run.mjs"
+      ]
+    }
+  ]
+}

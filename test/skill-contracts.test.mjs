@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
-import { copyFileSync, existsSync, mkdtempSync, mkdirSync, readFileSync, readdirSync, rmSync } from 'node:fs';
+import { copyFileSync, cpSync, existsSync, mkdtempSync, mkdirSync, readFileSync, readdirSync, realpathSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { isAbsolute, join, relative, resolve } from 'node:path';
 import test from 'node:test';
@@ -261,4 +261,85 @@ test('the creating-tools scripts scaffold a tool and archive a run in a temporar
   assert.match(readFileSync(join(tool, 'runs', stamp, 'command.txt'), 'utf8'), /exit_code=3/);
   assert.ok(existsSync(join(tool, 'runs', stamp, 'run.log')));
   assert.equal(run('record-run.mjs', 'missing-tool', '--', 'true').status, 1);
+});
+
+const PERMISSION_SKILLS = [
+  ['orchestration', 'master'],
+  ['orchestration', 'coordinating-agents'],
+  ['agents', 'creating-tools'],
+  ['engineering', 'software-testing'],
+  ['git', 'git-conventions'],
+  ['git', 'resolving-merge-conflicts'],
+];
+const GIT_READ = ['git status', 'git diff', 'git log', 'git branch --show-current'];
+const permissionsOf = (domain, slug) => JSON.parse(readFileSync(join(root, 'skills', domain, slug, 'permissions.json'), 'utf8'));
+const prefixes = (manifest, tier) => manifest.needs.filter((need) => !tier || need.tier === tier).flatMap((need) => need.prefixes ?? []);
+
+test('each skill that runs commands ships an identical permission script and a valid permissions.json', async (t) => {
+  const reference = readFileSync(join(root, 'scripts', 'permissions.mjs'), 'utf8');
+  for (const [domain, slug] of PERMISSION_SKILLS) {
+    await t.test(slug, (caseT) => {
+      const source = join(root, 'skills', domain, slug);
+      assert.equal(readFileSync(join(source, 'scripts', 'permissions.mjs'), 'utf8'), reference, `${slug}: copy differs from scripts/permissions.mjs`);
+      const fixture = mkdtempSync(join(tmpdir(), `${slug}-permissions-`));
+      caseT.after(() => rmSync(fixture, { recursive: true, force: true }));
+      const target = join(fixture, slug);
+      cpSync(source, target, { recursive: true });
+      const run = (...args) => spawnSync(process.execPath, [join(target, 'scripts', 'permissions.mjs'), ...args], {
+        cwd: fixture, encoding: 'utf8', env: { ...process.env, HOME: fixture, CLAUDE_CONFIG_DIR: '', CODEX_HOME: '' },
+      });
+      const validated = run('validate');
+      assert.equal(validated.status, 0, validated.stdout);
+      assert.equal(JSON.parse(validated.stdout).skill, slug);
+      const checked = run('check', '--root', fixture, '--host', 'claude');
+      assert.equal(checked.status, 0, checked.stdout);
+      const claude = JSON.parse(checked.stdout).hosts.claude;
+      assert.ok(claude.missing.some((need) => need.id === 'permission-check'), `${slug}: the check itself is declared`);
+      const self = claude.missing.find((need) => need.id === 'permission-check');
+      assert.deepEqual(self.rules, [`Bash(node ${realpathSync(target)}/scripts/permissions.mjs:*)`]);
+    });
+  }
+});
+
+test('step 0 checks, asks low and high risk apart, writes only the choice and goes on when the check fails', () => {
+  for (const [domain, slug] of PERMISSION_SKILLS) {
+    const skill = readFileSync(join(root, 'skills', domain, slug, 'SKILL.md'), 'utf8');
+    const at = skill.indexOf('\n## Step 0 — Permissions this skill uses\n');
+    assert.ok(at > 0, `${slug}: step 0 present`);
+    assert.equal(skill.indexOf('\n## '), at, `${slug}: step 0 is the first section`);
+    const step = skill.slice(at, skill.indexOf('\n## ', at + 1));
+    assert.match(step, /node <skill dir>\/scripts\/permissions\.mjs check --root <session folder> --host <claude\|codex\|agy>/);
+    assert.match(step, /If `node` is missing or the command fails, say so, list the needs in `<skill dir>\/permissions\.json` and go on with the skill/);
+    assert.match(step, /structured question tool/);
+    assert.match(step, /Low-risk and high-risk needs are separate questions; ask them separately and never recommend allowing a high-risk need/);
+    assert.match(step, /Run the `command` of the option the person chose, exactly as given\. An option without a command writes nothing\. Write nothing the person did not choose/);
+    assert.match(step, /`applies` line .* now or after a restart/);
+  }
+});
+
+test('each skill declares the needs its steps use, with git read-only and unrestricted launches as high risk', () => {
+  for (const [domain, slug] of PERMISSION_SKILLS) {
+    for (const prefix of prefixes(permissionsOf(domain, slug)).filter((p) => p.startsWith('git '))) {
+      assert.ok(GIT_READ.includes(prefix), `${slug}: ${prefix} is not a read-only git operation`);
+    }
+  }
+  for (const slug of ['git-conventions', 'resolving-merge-conflicts']) {
+    const manifest = permissionsOf('git', slug);
+    assert.deepEqual(prefixes(manifest).filter((p) => p.startsWith('git ')), GIT_READ);
+    assert.deepEqual(prefixes(manifest, 'high'), []);
+  }
+  const testing = permissionsOf('engineering', 'software-testing');
+  assert.deepEqual(prefixes(testing, 'high'), []);
+  for (const wrapper of ['./mvnw test', './gradlew', 'npm test']) assert.ok(prefixes(testing, 'low').includes(wrapper), wrapper);
+  for (const slug of ['master', 'coordinating-agents']) {
+    const manifest = permissionsOf('orchestration', slug);
+    // Agents are launched by typing their command into a terminal, so whatever types is high risk.
+    assert.deepEqual(prefixes(manifest, 'high'), ['hc send', 'hc keys', 'hc run']);
+    for (const read of ['hc get', 'hc read', 'hc wait', 'herdr-app do', 'openusage']) assert.ok(prefixes(manifest, 'low').includes(read), `${slug}: ${read}`);
+    assert.ok(!prefixes(manifest, 'low').some((p) => p === 'hc' || p.startsWith('hc send')), `${slug}: no low rule covers typing into terminals`);
+  }
+  assert.ok(prefixes(permissionsOf('orchestration', 'master'), 'low').includes('curl -s https://models.dev/api.json'));
+  const tools = permissionsOf('agents', 'creating-tools');
+  assert.deepEqual(prefixes(tools, 'low'), ['node {skill_dir}/scripts/permissions.mjs', 'node {skill_dir}/scripts/scaffold-tool.mjs']);
+  assert.deepEqual(prefixes(tools, 'high'), ['node {skill_dir}/scripts/record-run.mjs']);
 });
