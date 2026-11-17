@@ -7,13 +7,13 @@ Check the source, the ref and the data/permissions of each offer before deciding
 ## Catalog
 
 <!-- catalog:start -->
-Index revision: **13** (schema 1).
+Index revision: **14** (schema 1).
 
 ### Active offers
 
 | Skill | Domain | Type | Source | Path | Ref | Lifecycle | Data/permissions |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| UI authoring | design | own | https://github.com/Tacuchi/agent-skills | skills/design/ui-authoring/SKILL.md | skill/ui-authoring/v2.0.0 | Tacuchi | not verified |
+| UI authoring | design | own | https://github.com/Tacuchi/agent-skills | skills/design/ui-authoring/SKILL.md | skill/ui-authoring/v3.0.0 | Tacuchi | not verified |
 | System diagrams | architecture | own | https://github.com/Tacuchi/agent-skills | skills/architecture/system-diagrams/SKILL.md | skill/system-diagrams/v2.0.0 | Tacuchi | not verified |
 | SQL authoring | data | own | https://github.com/Tacuchi/agent-skills | skills/data/sql-authoring/SKILL.md | skill/sql-authoring/v2.1.0 | Tacuchi | not verified |
 | Coordinating agents | orchestration | own | https://github.com/Tacuchi/agent-skills | skills/orchestration/coordinating-agents/SKILL.md | skill/coordinating-agents/v1.5.0 | Tacuchi | not verified |
@@ -21,7 +21,7 @@ Index revision: **13** (schema 1).
 | Authoring skills | agents | own | https://github.com/Tacuchi/agent-skills | skills/agents/authoring-skills/SKILL.md | skill/authoring-skills/v1.1.0 | Tacuchi | not verified |
 | Creating tools | agents | own | https://github.com/Tacuchi/agent-skills | skills/agents/creating-tools/SKILL.md | skill/creating-tools/v1.0.0 | Tacuchi | not verified |
 | Coding standards | engineering | own | https://github.com/Tacuchi/agent-skills | skills/engineering/coding-standards/SKILL.md | skill/coding-standards/v1.1.0 | Tacuchi | not verified |
-| Reviewing code | engineering | own | https://github.com/Tacuchi/agent-skills | skills/engineering/reviewing-code/SKILL.md | skill/reviewing-code/v1.1.0 | Tacuchi | not verified |
+| Reviewing code | engineering | own | https://github.com/Tacuchi/agent-skills | skills/engineering/reviewing-code/SKILL.md | skill/reviewing-code/v2.0.0 | Tacuchi | not verified |
 | Software testing | engineering | own | https://github.com/Tacuchi/agent-skills | skills/engineering/software-testing/SKILL.md | skill/software-testing/v1.1.0 | Tacuchi | not verified |
 | Security practices | engineering | own | https://github.com/Tacuchi/agent-skills | skills/engineering/security-practices/SKILL.md | skill/security-practices/v1.1.0 | Tacuchi | not verified |
 | Version evolution | engineering | own | https://github.com/Tacuchi/agent-skills | skills/engineering/version-evolution/SKILL.md | skill/version-evolution/v1.0.0 | Tacuchi | not verified |
