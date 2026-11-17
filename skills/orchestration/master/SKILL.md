@@ -82,8 +82,17 @@ If the project has a structured workflow (spec, plan and plan-execution commands
 | Spec, design, ambiguous debugging | strongest model | high to xhigh |
 | Independent review | a vendor different from the implementer's | high |
 
-- The profile's concrete model IDs and workflow efforts win over this table.
-- List the models each CLI offers instead of guessing IDs: [references/launch.md](references/launch.md).
+- The profile's concrete model IDs win over this table. For effort, use the profile's effort for the workflow step first, then the profile's default effort for that agent, then this table.
+- Read your model notes before choosing: what past runs showed for each model, effort and kind of work. They live in the host's memory tool when one is installed, otherwise under the profile's `Model notes` key. The profile wins over them, and they win over benchmark data. When two notes disagree, the newer one wins; with no notes, go on without them.
+- Pick the model first, then its effort: a stronger model at a lower effort usually beats a weaker model at a higher effort.
+- When an agent loops, ignores its limits or fails the same check twice, relaunch that part one step up instead of raising the same model's effort:
+  1. the next tier of the same CLI: fast tier, then general model, then strongest model;
+  2. from the strongest model, another vendor's strongest model, only when model notes or benchmark data rank it higher for that kind of work;
+  3. with no step left, do the part yourself or ask the person.
+- The reviewer's vendor differs from whoever wrote the final change: if a relaunch moved the change to the reviewer's vendor, pick another reviewer.
+- When the profile leaves two or more vendors open for a part, break the tie with model notes, then independent benchmark data, preferring coding and agentic scores over general ones. Without either, say so and pick the provider with the most quota room. Quota above the floor always comes first.
+- Confirm each model ID and the effort levels it accepts before launching it, in the CLI's model list or in models.dev; never guess an ID. Launch with the ID the CLI lists.
+- [references/launch.md](references/launch.md) has the model lists, the data sources and their commands.
 - Pass model and effort as launch flags. Changing them inside a running agent can save them as the person's default.
 
 ## 6. Lay out the panes
@@ -159,6 +168,26 @@ Quota now: codex 71 %, claude 93 %
 For you: 2 commits proposed (phases 1 and 2); answer t3's migration question
 ```
 
+### Offer model notes
+
+When the run showed how a model handled a kind of work, offer to keep it for later runs:
+
+1. Draft one line per finding: a part finished cleanly, an agent looped, ignored its limits, failed a check or needed a stronger model.
+2. Search the existing notes first. Update the matching note instead of adding a near copy.
+3. When several notes agree, also draft a recommendation for that kind of work, such as `ambiguous debugging: prefer <model> over <model>`.
+4. Show the exact drafts and ask with your host's structured question tool: save, adjust or discard. Save only after the person picks save.
+5. Save in the host's memory tool when one is installed; otherwise append to the profile under `Model notes`.
+
+Note shape:
+
+```text
+<date> · <agent> <model> <effort> · <kind of work> -> <outcome> · evidence: <test output, path>
+```
+
+Example: `2026-11-17 · codex gpt-6.1-sol medium · rename a key across 40 files -> done first try · evidence: npm test 214/214`
+
+Write what the model did, never task content, customer data or secrets.
+
 ## Invariants
 
 - `/master` authorizes unrestricted launches, quota above the floor and routine answers, for this run only. Commits, publications, destructive changes, production data, resets, remote placement and other people's panes stay with the person.
@@ -166,3 +195,4 @@ For you: 2 commits proposed (phases 1 and 2); answer t3's migration question
 - Your own tab stays whole: the agents live in other tabs, in any orchestrator.
 - Every agents' tab balanced: equal row heights, equal widths inside a row, measured before any agent starts.
 - A done state or a report is not a result: check the evidence.
+- Model notes are saved only after the person approves the exact draft.

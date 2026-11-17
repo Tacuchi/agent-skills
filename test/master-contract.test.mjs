@@ -154,3 +154,39 @@ test('the brief and the report keep a fixed shape', () => {
   assert.match(skill, /Master: <task>\nMode: solo \| delegated \(<n> agents\)/);
   assert.match(skill, /Example:\n\n```text\nMaster: /);
 });
+
+test('the model comes before the effort, and model facts come from a source, not a guess', () => {
+  const choose = skill.slice(skill.indexOf('## 5. Choose model and effort'), skill.indexOf('## 6. Lay out the panes'));
+  assert.match(choose, /Pick the model first, then its effort/);
+  assert.match(choose, /use the profile's effort for the workflow step first, then the profile's default effort for that agent, then this table/);
+  assert.match(choose, /relaunch that part one step up instead of raising the same model's effort/);
+  assert.match(choose, /with no step left, do the part yourself or ask the person/);
+  assert.match(choose, /The reviewer's vendor differs from whoever wrote the final change/);
+  assert.match(choose, /break the tie with model notes, then independent benchmark data, preferring coding and agentic scores/);
+  assert.match(choose, /Without either, say so and pick the provider with the most quota room/);
+  assert.match(choose, /Quota above the floor always comes first/);
+  assert.match(choose, /never guess an ID/);
+  const launch = reference('launch.md');
+  const data = launch.slice(launch.indexOf('## Model data'), launch.indexOf('## Quota'));
+  assert.ok(data.includes('https://models.dev/api.json'), 'models.dev: documented');
+  assert.ok(data.includes('https://mcp.artificialanalysis.ai/mcp'), 'Artificial Analysis MCP: documented');
+  assert.match(data, /reasoning_options/);
+  assert.match(data, /queried without the suffix \(`gemini-4-argon`\) and launched with the full variant ID/);
+  assert.match(data, /jq -c '\.<provider>\.models\["<model id>"\]/);
+  assert.match(data, /internal use with attribution/);
+  assert.match(data, /When the person agrees, keep a comparison with its date as a model note/);
+  assert.match(data, /The Artificial Analysis MCP was read on its public page that day and not exercised/);
+});
+
+test('model notes come from past runs and are saved only after the person approves the draft', () => {
+  assert.match(skill, /Read your model notes before choosing/);
+  assert.match(skill, /in the host's memory tool when one is installed, otherwise under the profile's `Model notes` key/);
+  assert.match(skill, /The profile wins over them, and they win over benchmark data/);
+  const offer = skill.slice(skill.indexOf('### Offer model notes'), skill.indexOf('## Invariants'));
+  assert.match(offer, /Search the existing notes first\. Update the matching note/);
+  assert.match(offer, /ask with your host's structured question tool: save, adjust or discard\. Save only after the person picks save/);
+  assert.match(offer, /<date> · <agent> <model> <effort> · <kind of work> -> <outcome> · evidence:/);
+  assert.match(offer, /never task content, customer data or secrets/);
+  assert.match(skill, /## Invariants[\s\S]*Model notes are saved only after the person approves the exact draft/);
+  assert.match(reference('profile.md'), /`Model notes` holds what past runs showed/);
+});

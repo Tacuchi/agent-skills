@@ -32,6 +32,9 @@ Plain Markdown, one key per bullet, read by the agent; no parser depends on it. 
 - Workflow effort: spec xhigh, plan high, execution medium, quick high
 - Reviewers: only when I ask; at most two, one named case each
 - Never: put customer personal data in prompts
+- Model notes:
+  - 2026-11-17 · codex gpt-6.1-sol medium · rename a key across 40 files -> done first try · evidence: npm test 214/214
+  - ambiguous debugging: prefer <model> high over <model> medium (3 runs agree)
 ```
 
 ## Rules for the profile
@@ -40,3 +43,4 @@ Plain Markdown, one key per bullet, read by the agent; no parser depends on it. 
 - A profile can narrow the authorization (for example `Unrestricted launch: no`), never widen it: commits, publications, destructive changes, production data, resets and remote placement stay with the person whatever it says.
 - A profile sets how many agents share a tab and how tabs are named. It cannot place agents in the master's own tab.
 - When the person states a lasting preference during a run, offer to add it to the profile; write it only after they agree.
+- `Model notes` holds what past runs showed per model, effort and kind of work, and the recommendations drawn from them. It is used only when the host has no memory tool. Keep it to the notes that still decide a choice: replace a note that a newer run contradicts.

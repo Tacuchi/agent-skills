@@ -1,5 +1,13 @@
 # master changelog
 
+## [1.3.0] — 2026-11-17
+
+- Choosing model and effort gains explicit rules: effort comes from the profile's workflow step, then the profile's default for the agent, then the table; the model is picked before its effort, because a stronger model at a lower effort usually beats a weaker one at a higher effort; an agent that loops, ignores its limits or fails the same check twice moves one step up a ladder (next tier of the same CLI, then another vendor's strongest model only when notes or benchmarks rank it higher, then the master or the person) instead of a higher effort; the reviewer's vendor follows whoever wrote the final change; a tie between vendors is broken with model notes, then independent benchmark data with coding and agentic scores first, and without either by the provider with the most quota room; and every model ID and its accepted effort levels are confirmed before launch, never guessed.
+- `references/launch.md` explains that models.dev lists base IDs: a CLI variant ending in its effort, such as `gemini-4-argon-high`, is queried without the suffix and launched with the full ID and no separate effort flag.
+- These rules were tested on 2026-11-17 by giving the same scenario to Claude Code on claude-haiku-5-5 and to Codex on gpt-6.1-sol in Herdr; both found the undefined "stronger model", the missing tie-break without benchmarks and the suffixed IDs, which this version closes.
+- `references/launch.md` adds a Model data section with two public sources: models.dev (`https://models.dev/api.json`, no key), queried with `jq` for the model ID, its accepted effort levels in `reasoning_options` and its limits, exercised on 2026-11-17; and the Artificial Analysis MCP (`https://mcp.artificialanalysis.ai/mcp`), free after sign-in with 200 tool calls a day for internal use with attribution, read on its public page and not exercised. A comparison is kept as a dated model note only when the person agrees.
+- Model notes: the master reads what past runs showed per model, effort and kind of work before choosing, and at the end of a run offers one line per finding (and a recommendation when several notes agree) through the host's structured question tool: save, adjust or discard. It saves only after the person picks save, in the host's memory tool when one is installed, otherwise under the profile's new `Model notes` key. The profile wins over the notes, and the notes win over benchmark data.
+
 ## [1.2.0] — 2026-11-14
 
 - Detection names three more orchestrators: Paradev by `SUPERSET_TERMINAL_ID` (its CLI is `superset`), AgentsRoom by `AGENTSROOM_AGENT_ID` (driven through its MCP tools) and T3 Code by its T3 tools (each agent is a thread). The `description` names them.

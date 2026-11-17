@@ -1,6 +1,6 @@
 # Launching agents and reading quota
 
-Read this before you start an agent or pick a provider. Checked on 2026-11-03 against Claude Code 2.1.317, Codex 0.166.0 and Antigravity CLI (`agy`) 1.4.12; the flags were read again in each `--help` on 2026-11-14 against Claude Code 2.1.325, Codex 0.167.0 and `agy` 1.5.4. Each CLI's `--help` wins over this file.
+Read this before you start an agent, pick a model or pick a provider. Checked on 2026-11-03 against Claude Code 2.1.317, Codex 0.166.0 and Antigravity CLI (`agy`) 1.4.12; the flags were read again in each `--help` on 2026-11-14 against Claude Code 2.1.325, Codex 0.167.0 and `agy` 1.5.4. Each CLI's `--help` wins over this file.
 
 ## Launch flags
 
@@ -22,6 +22,30 @@ cd '/path/to/repo' && claude --dangerously-skip-permissions --model claude-opus-
 - If Codex ignores or mishandles a `-c` override, launch it with a profile (`-p`) that sets the model and effort instead.
 - Codex in its default mode asks questions as plain text; treat that text as the question. Claude Code and Antigravity show option dialogs.
 - For any other agent, read its `--help` for the four columns above before launching it.
+
+## Model data
+
+Two public sources describe the models. They help choose; the CLI's `--help` and the banner still decide what runs.
+
+| Source | Gives | Access |
+|---|---|---|
+| models.dev, `https://models.dev/api.json` | per provider: model IDs, the effort levels each model accepts (`reasoning_options`), context and output limits, price per million tokens, release date | free, no key; one JSON file of about 7 MB |
+| Artificial Analysis MCP, `https://mcp.artificialanalysis.ai/mcp` | independent benchmark indexes (intelligence, coding, agentic), price and speed | free plan after the person signs in: 200 tool calls a day, internal use with attribution |
+
+Download models.dev once per run, then query the copy:
+
+```sh
+curl -s https://models.dev/api.json -o "${TMPDIR:-/tmp}/models.json"
+jq -c '.<provider>.models["<model id>"] | {id, reasoning_options, limit}' "${TMPDIR:-/tmp}/models.json"
+```
+
+- `<provider>` is the models.dev key: `anthropic`, `openai` or `google`. An answer with `"id":null` means the ID does not exist there: check the CLI's own list before launching.
+- models.dev lists base IDs. A CLI variant that ends in its effort, such as `gemini-4-argon-high` in `agy models`, is queried without the suffix (`gemini-4-argon`) and launched with the full variant ID. The suffix is the effort: pass no separate effort flag with it.
+- `reasoning_options` lists the accepted effort levels. They differ by model: on 2026-11-17 `gemini-4-argon` accepted only `low`, `medium` and `high`, while `claude-opus-5-5` and `gpt-6.1-sol` also accepted `xhigh` and `max`.
+- Use Artificial Analysis only to break a tie between vendors that the profile leaves open. It needs the person to connect it in the host; without it, say so and decide by the profile and quota.
+- When the person agrees, keep a comparison with its date as a model note (the master's step 8), so later runs do not spend calls on it.
+
+models.dev was exercised on 2026-11-17. The Artificial Analysis MCP was read on its public page that day and not exercised.
 
 ## Quota
 
