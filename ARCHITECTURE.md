@@ -1,8 +1,16 @@
 # Architecture of agent-skills
 
-Reviewed on 2026-11-18 (commit `c1f75e2`).
+Reviewed on 2026-11-18 (commit `bbac7d3`).
 
 This document gives the overview: which parts exist, how they talk to each other and which rules never break. It covers the catalog, repository scripts, permission step, per-skill releases and CI. It does not describe each skill's subject or every host's acquisition mechanism. All values are defaults; nothing here was measured on a particular machine. There is no repository-wide version: each own skill has its own version tag.
+
+In short:
+
+- A catalog of independent agent skills, each acquired by its own path and per-skill tag.
+- Maintainers edit it; people pick one skill at a time through a compatible agent host.
+- Its catalog command talks only to local Git; CI runs on GitHub Actions.
+- Offers live in `catalog/index.json`; skill files and release history live in Git.
+- An own offer counts only when its tag exists locally with the skill and its release files.
 
 ## 1. Purpose and quality goals
 
@@ -12,16 +20,15 @@ What it is not:
 
 - A collective skill installer or an automatic update service.
 - A runtime service shared by all skills.
-- Proof that a remote release or a host acquisition has succeeded.
-- A verification of the meaning of a data/permissions claim: the checker validates its evidence URL's anchoring.
+- Proof that a remote release or a host acquisition has succeeded, or of what a data/permissions claim means ([catalog validation guide](docs/catalog-validation.md#what-the-checker-does-not-prove)).
 
 | Goal | Scenario |
 |---|---|
 | Independent acquisition | Every own offer names one `SKILL.md` path and a matching per-skill tag. |
 | Reproducible release content | The checker rejects a tag missing the skill, license, changelog or release notes. |
 | Honest permissions metadata | An unverified offer must say `not verified`; verified evidence needs an immutable reference. |
-| Traceable retirement | A retired offer keeps its historical ref and must state its retirement reason. |
-| Consistent discovery | CI rejects a README catalog block that differs from the JSON index. |
+
+Two more goals, traceable retirement and consistent discovery, are in the [catalog validation guide](docs/catalog-validation.md#more-quality-goals).
 
 ## 2. Context and scope
 
@@ -53,8 +60,7 @@ Only skills that include a permission manifest use that permission path.
 | Skill directories | Carry each skill's instructions, history, license and any supporting files. | `skills/<domain>/<slug>/` |
 | Catalog command | Validates metadata and tagged content; compares or regenerates the marked README block. | `scripts/catalog.mjs` |
 | Local Git history | Supplies immutable skill trees and the index revision baseline. | Git refs and objects, read by `scripts/catalog.mjs` |
-| Permission manifests | Declare command or web needs and their risk tiers for participating skills. | Individual `permissions.json` files |
-| Permission script | Reads host rules, reports questions and applies only the chosen project configuration. | Individual `scripts/permissions.mjs` copies |
+| Permission manifest and script | The manifest declares command or web needs and risk tiers; the script reports questions and applies only the chosen project configuration. | Individual `permissions.json` files and `scripts/permissions.mjs` copies |
 | Tests | Check catalog, skill contracts, language, permissions and bundled helpers. | `test/` |
 | Catalog workflow | Runs repository tests and the catalog check on GitHub Actions. | `.github/workflows/catalog.yml` |
 
@@ -78,22 +84,11 @@ Validate or regenerate the catalog:
 2. The command resolves the repository from its own script location and reads the JSON index.
 3. It checks schema, IDs, domains, sources, refs, permissions metadata and retirement fields.
 4. For each own offer, it reads the local tag and its tree, including license and release files.
-5. It compares the index with `HEAD`, or with `HEAD^` when the working index already matches `HEAD`.
-6. It requires an index revision increase when the editorial offer changes.
-7. It renders active and retired rows, then compares the single README block.
-8. Check mode fails on a mismatch. Generation replaces only that block when it differs.
-9. Any validation error reaches stderr and gives the command exit code 1.
+5. It compares the index with the previous commit and requires a higher revision when the editorial offer changes.
+6. It renders active and retired rows, then compares the single README block.
+7. Check mode fails on a mismatch with exit code 1; generation replaces only that block.
 
-Load a skill that includes the permission step:
-
-1. The host reads the acquired skill's instructions and runs its permission script's `check` command.
-2. The script loads that skill's manifest and reads existing project and global host permissions.
-3. It reports covered, missing, unsupported and previously declined needs.
-4. It groups missing needs by low or high risk and offers the corresponding choices.
-5. The person chooses whether to keep prompting, apply project rules or remember a local skip.
-6. Only the chosen `apply` command writes settings, rules or skip state.
-7. Codex writes require project trust. Antigravity receives a notice and no project-rule write.
-8. The host retains control over command execution; the permission script does not execute the declared commands.
+Each step in full is in the [catalog validation guide](docs/catalog-validation.md#full-walkthrough-validate-or-regenerate-the-catalog). Loading a skill with the permission step is walked through in the [permission step guide](docs/permissions.md).
 
 ## 5. Deployment view
 
@@ -107,19 +102,12 @@ CI checks the checkout; acquired skills run through their consuming hosts.
 | README generation | Replace only the marked table block | Run without `--check` | Pass `--check` for validation without writing. |
 | Own release ref | `skill/<slug>/vX.Y.Z` | Every own offer, including retired offers | Create the individual tag through the separate release process, then update the index. |
 | CI checkout | Full Git history, `fetch-depth: 0` | Catalog workflow | Keep required tags and history available when changing checkout behavior. |
-| Permission target project | Current folder; nearest Git root for applicable host rules | A participating skill's permission command | Pass `--root`. |
-| Claude Code rule files | Git-root `.claude/settings.local.json`; session-root `.claude/settings.json` | Chosen local or shared apply | Choose the scope and project root. |
-| Codex rule file | Git-root `.codex/rules/agent-skills.rules` | Approved command rules in a trusted project | Choose approved needs; start another Codex session to load them. |
-| Local skip state | `.agent-skills/permissions-state.json`, with its own ignore file | Chosen `--dont-ask` option | Choose that option for the declared need IDs. |
-| Antigravity project rules | Unsupported | Permission check or apply | Review the reported needs in the host; no project rules are written. |
+| Permission rules | Project files of each host, never global ones | A participating skill's chosen `apply` | Pass `--root`; the [permission step guide](docs/permissions.md#where-rules-are-written) lists every file. |
 
 Requirements: Node.js and Git for repository validation; CI selects Node.js 22.
 Each skill declares additional tools for its own work. Those tools are not collective catalog dependencies.
 
-Release by tag is separate from validation.
-The checker proves local tagged contents; it neither creates tags nor prepares GitHub Releases.
-The per-skill release notes supply the text for the separately prepared release.
-No current repository workflow publishes those releases.
+Release by tag is separate from validation; the [catalog validation guide](docs/catalog-validation.md#release-by-tag) says what each side does.
 
 ## 6. Cross-cutting concepts
 
@@ -170,15 +158,15 @@ Not recorded yet:
 
 ## Appendix: evidence
 
-Line numbers refer to commit `c1f75e2`. Every row cites code or configuration; the text above does not link to the code on purpose.
+Line numbers refer to commit `bbac7d3`. Every row cites code or configuration; the text above does not link to the code on purpose.
 
 | Section | Evidence |
 |---|---|
 | 1. Goals | `catalog/index.json:2`, `catalog/index.json:6-18`, `scripts/catalog.mjs:69-114`, `scripts/catalog.mjs:125-130`, `scripts/catalog.mjs:172-178` |
 | 2. Context | `scripts/catalog.mjs:28-33`, `scripts/catalog.mjs:96-100`, `scripts/catalog.mjs:154-178`, `.github/workflows/catalog.yml:3-19`, `skills/git/git-conventions/SKILL.md:8-18` |
-| 3. Blocks | `catalog/index.json:2`, `catalog/index.json:6-18`, `scripts/catalog.mjs:103-130`, `scripts/catalog.mjs:137-151`, `skills/git/git-conventions/permissions.json:1-34`, `.github/workflows/catalog.yml:8-19` |
-| 3. Rules | `scripts/catalog.mjs:36-40`, `scripts/catalog.mjs:48-56`, `scripts/catalog.mjs:103-130`, `scripts/catalog.mjs:162-178`, `skills/git/git-conventions/scripts/permissions.mjs:443-465` |
-| 4. Runtime | `scripts/catalog.mjs:154-187`, `skills/git/git-conventions/scripts/permissions.mjs:317-339`, `skills/git/git-conventions/scripts/permissions.mjs:348-396`, `skills/git/git-conventions/scripts/permissions.mjs:443-465` |
-| 5. Deployment | `.github/workflows/catalog.yml:3-19`, `scripts/catalog.mjs:103-130`, `scripts/catalog.mjs:172-187`, `skills/git/git-conventions/scripts/permissions.mjs:139-167`, `skills/git/git-conventions/scripts/permissions.mjs:278-303` |
-| 6. Privacy | `scripts/catalog.mjs:21-40`, `scripts/catalog.mjs:59-66`, `scripts/catalog.mjs:83-100`, `scripts/catalog.mjs:154-189`, `skills/git/git-conventions/scripts/permissions.mjs:57-65`, `skills/git/git-conventions/scripts/permissions.mjs:278-303`, `skills/git/git-conventions/scripts/permissions.mjs:348-380`, `skills/git/git-conventions/scripts/permissions.mjs:401-465` |
-| 7. Decisions | `scripts/catalog.mjs:93-114`, `scripts/catalog.mjs:125-130`, `skills/git/git-conventions/scripts/permissions.mjs:348-380`, `skills/git/git-conventions/scripts/permissions.mjs:443-465`. These establish behavior; the person confirmed the reasons on 2026-11-18. |
+| 3. Blocks | `catalog/index.json:6-18`, `scripts/catalog.mjs:103-130`, `scripts/catalog.mjs:137-151`, `skills/git/git-conventions/permissions.json:1-34`, `.github/workflows/catalog.yml:8-19` |
+| 3. Rules | `scripts/catalog.mjs:36-40`, `scripts/catalog.mjs:48-56`, `scripts/catalog.mjs:103-130`, `scripts/catalog.mjs:162-178`, `skills/git/git-conventions/scripts/permissions.mjs:446-468` |
+| 4. Runtime | `scripts/catalog.mjs:154-187`, `skills/git/git-conventions/scripts/permissions.mjs:320-342`, `skills/git/git-conventions/scripts/permissions.mjs:351-399`, `skills/git/git-conventions/scripts/permissions.mjs:446-468` |
+| 5. Deployment | `.github/workflows/catalog.yml:3-19`, `scripts/catalog.mjs:103-130`, `scripts/catalog.mjs:172-187`, `skills/git/git-conventions/scripts/permissions.mjs:142-170`, `skills/git/git-conventions/scripts/permissions.mjs:281-306` |
+| 6. Privacy | `scripts/catalog.mjs:21-40`, `scripts/catalog.mjs:59-66`, `scripts/catalog.mjs:154-189`, `skills/git/git-conventions/scripts/permissions.mjs:57-65`, `skills/git/git-conventions/scripts/permissions.mjs:404-468` |
+| 7. Decisions | `scripts/catalog.mjs:93-114`, `scripts/catalog.mjs:125-130`, `skills/git/git-conventions/scripts/permissions.mjs:351-383`, `skills/git/git-conventions/scripts/permissions.mjs:446-468`. These establish behavior; the person confirmed the reasons on 2026-11-18. |
