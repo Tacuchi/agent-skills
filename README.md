@@ -73,7 +73,7 @@ The catalog validation workflow runs on Linux with Node.js 22.
 ### Catalog
 
 <!-- catalog:start -->
-Index revision: **19** (schema 1).
+Index revision: **20** (schema 1).
 
 ### Active offers
 
@@ -97,7 +97,7 @@ Index revision: **19** (schema 1).
 | Java Spring standards | backend | own | https://github.com/Tacuchi/agent-skills | skills/backend/java-spring-standards/SKILL.md | skill/java-spring-standards/v1.1.0 | Tacuchi | not verified |
 | Angular standards | frontend | own | https://github.com/Tacuchi/agent-skills | skills/frontend/angular-standards/SKILL.md | skill/angular-standards/v1.1.0 | Tacuchi | not verified |
 | Technical writing | documentation | own | https://github.com/Tacuchi/agent-skills | skills/documentation/technical-writing/SKILL.md | skill/technical-writing/v1.1.0 | Tacuchi | not verified |
-| Project docs | documentation | own | https://github.com/Tacuchi/agent-skills | skills/documentation/project-docs/SKILL.md | skill/project-docs/v1.0.0 | Tacuchi | not verified |
+| Project docs | documentation | own | https://github.com/Tacuchi/agent-skills | skills/documentation/project-docs/SKILL.md | skill/project-docs/v1.0.1 | Tacuchi | not verified |
 | GitHub workflows | engineering | own | https://github.com/Tacuchi/agent-skills | skills/engineering/github-workflows/SKILL.md | skill/github-workflows/v1.0.1 | Tacuchi | not verified |
 
 ### Retired offers
