@@ -7,7 +7,7 @@ Check the source, the ref and the data/permissions of each offer before deciding
 ## Catalog
 
 <!-- catalog:start -->
-Index revision: **18** (schema 1).
+Index revision: **19** (schema 1).
 
 ### Active offers
 
@@ -32,7 +32,7 @@ Index revision: **18** (schema 1).
 | Angular standards | frontend | own | https://github.com/Tacuchi/agent-skills | skills/frontend/angular-standards/SKILL.md | skill/angular-standards/v1.1.0 | Tacuchi | not verified |
 | Technical writing | documentation | own | https://github.com/Tacuchi/agent-skills | skills/documentation/technical-writing/SKILL.md | skill/technical-writing/v1.1.0 | Tacuchi | not verified |
 | Project docs | documentation | own | https://github.com/Tacuchi/agent-skills | skills/documentation/project-docs/SKILL.md | skill/project-docs/v1.0.0 | Tacuchi | not verified |
-| GitHub workflows | engineering | own | https://github.com/Tacuchi/agent-skills | skills/engineering/github-workflows/SKILL.md | skill/github-workflows/v1.0.0 | Tacuchi | not verified |
+| GitHub workflows | engineering | own | https://github.com/Tacuchi/agent-skills | skills/engineering/github-workflows/SKILL.md | skill/github-workflows/v1.0.1 | Tacuchi | not verified |
 
 ### Retired offers
 
