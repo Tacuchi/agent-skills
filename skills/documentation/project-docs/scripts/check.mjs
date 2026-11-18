@@ -5,7 +5,7 @@ import { findChrome } from './lib/cdp.mjs';
 import { checkDiagrams, findArchify } from './lib/diagrams.mjs';
 import { checkEvidence, citationLabel, evidenceEntries, lines, parsePin, repin } from './lib/evidence.mjs';
 import { checkLinks } from './lib/links.mjs';
-import { checkPrivacy, privateTermsPath } from './lib/privacy.mjs';
+import { checkPrivacy, preferencesPath, privateTermsPath } from './lib/privacy.mjs';
 import { git, isShallow, projectVersion, readWorking, resolveCommit, showFile } from './lib/repo.mjs';
 import { checkStructure } from './lib/structure.mjs';
 
@@ -80,6 +80,7 @@ function preflight(repo, inGit, privateTermsFile) {
     chrome: findChrome({ env: process.env, platform: process.platform }).path,
     archify: findArchify(resolve(import.meta.dirname, '..'), process.env), node: process.versions.node,
     private_terms: privateTermsPath(privateTermsFile),
+    preferences: preferencesPath(),
   };
 }
 

@@ -423,3 +423,70 @@ test('--preflight says which private terms list is in use, or that there is none
   repo.write('terms.txt', 'acme-internal\n');
   assert.equal(runCheck(repo.dir, '--preflight', '--private-terms', join(repo.dir, 'terms.txt')).json.private_terms, join(repo.dir, 'terms.txt'));
 });
+
+test('evidence: a row with more than five citations warns and still exits 0', (t) => {
+  const repo = completeRepo(t);
+  const row = (count) => `| 3. Blocks | ${Array.from({ length: count }, (_, i) => `\`src/a.js:${i + 1}\``).join(', ')} |`;
+  repo.write('ARCHITECTURE.md', architecture({ commit: repo.pin, rows: row(5) }));
+  assert.deepEqual(runCheck(repo.dir).json.findings, []);
+  repo.write('ARCHITECTURE.md', architecture({ commit: repo.pin, rows: row(6) }));
+  const result = runCheck(repo.dir);
+  assert.equal(result.status, 0);
+  const finding = result.json.findings.find((f) => f.code === 'too-many-citations');
+  assert.equal(finding.level, 'warning');
+  assert.match(finding.message, /3\. Blocks: Expected at most 5 citations in a row; received 6\./);
+});
+
+test('evidence: a citation that covers a version or revision line warns, because it goes stale at every release', (t) => {
+  const repo = makeRepo(t, {
+    'src/a.js': source,
+    'catalog.json': '{\n  "schema": 1,\n  "revision": 7,\n  "entries": []\n}\n',
+    'pom.xml': '<project>\n  <version>1.0.0</version>\n  <name>x</name>\n</project>\n',
+    'LICENSE': 'MIT\n',
+    'README.md': '# Example\n\n> A useful example.\n\n[Architecture](ARCHITECTURE.md)\n\n## Install\n\n## Usage\n\n## Contributing\n\n## License\n',
+    'docs/decisions/0001-use-modules.md': '---\nstatus: accepted\ndate: 2026-01-02\n---\n\n# Use modules\n',
+  });
+  const pin = repo.commit('Create source');
+  repo.write('ARCHITECTURE.md', architecture({ commit: pin, rows: '| 3. Blocks | `catalog.json:2`, `catalog.json:4`, `pom.xml:3` |' }));
+  assert.deepEqual(runCheck(repo.dir).json.findings.filter((f) => f.code === 'volatile-citation'), []);
+  repo.write('ARCHITECTURE.md', architecture({ commit: pin, rows: '| 3. Blocks | `catalog.json:1-4`, `pom.xml:1-3` |' }));
+  const result = runCheck(repo.dir);
+  assert.equal(result.status, 0);
+  const found = result.json.findings.filter((f) => f.code === 'volatile-citation');
+  assert.deepEqual(found.map((f) => f.level), ['warning', 'warning']);
+  assert.match(found[0].message, /catalog\.json:1-4 \(3\. Blocks\): Expected a range without a version or revision line; received one at line 3\./);
+});
+
+test('--preflight says which preferences file is in use, or that there is none', (t) => {
+  const repo = completeRepo(t);
+  assert.equal(runCheck(repo.dir, '--preflight').json.preferences, null);
+  const file = join(repo.dir, '.fixture-home', '.config/agent-skills/project-docs/preferences.md');
+  repo.write('.fixture-home/.config/agent-skills/project-docs/preferences.md', '# Preferences\n');
+  assert.equal(runCheck(repo.dir, '--preflight').json.preferences, file);
+});
+
+test('budget: a long document, a long table and a missing summary warn and still exit 0', (t) => {
+  const repo = completeRepo(t);
+  const withSummary = read(repo, 'ARCHITECTURE.md');
+  assert.deepEqual(runCheck(repo.dir).json.findings, []);
+
+  repo.write('ARCHITECTURE.md', withSummary.replace('In short:\n\n- It does one thing.\n\n', ''));
+  let result = runCheck(repo.dir);
+  assert.equal(result.status, 0);
+  assert.deepEqual(result.json.findings.map((f) => [f.code, f.level]), [['no-summary', 'warning']]);
+
+  const table = (rows) => `| Block | Role |\n|---|---|\n${Array.from({ length: rows }, (_, i) => `| b${i} | r${i} |`).join('\n')}\n`;
+  repo.write('ARCHITECTURE.md', withSummary.replace('## 3. Section\n\nDescription.\n', `## 3. Section\n\n${table(7)}`));
+  assert.deepEqual(runCheck(repo.dir).json.findings, []);
+  repo.write('ARCHITECTURE.md', withSummary.replace('## 3. Section\n\nDescription.\n', `## 3. Section\n\n${table(8)}`));
+  result = runCheck(repo.dir);
+  assert.equal(result.status, 0);
+  assert.match(result.json.findings.find((f) => f.code === 'long-table').message, /3\. Section: Expected at most 7 rows in a table; received 8\./);
+
+  repo.write('ARCHITECTURE.md', withSummary.replace('## 4. Section\n\nDescription.\n', `## 4. Section\n\n${'word '.repeat(1500)}\n`));
+  result = runCheck(repo.dir);
+  assert.equal(result.status, 0);
+  const over = result.json.findings.find((f) => f.code === 'over-budget');
+  assert.equal(over.level, 'warning');
+  assert.match(over.message, /Expected at most 1500 words before the appendix; received 15\d\d\./);
+});

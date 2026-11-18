@@ -30,7 +30,7 @@ export function makeRepo(t, files = {}) {
 }
 
 export function architecture({ commit, rows = '| 3. Blocks | `src/a.js:1-3` |', date = '2026-01-02', version = '1.0.0' }) {
-  return `# Architecture\n\nReviewed on ${date} against version ${version} (commit \`${commit}\`).\n\n${Array.from({ length: 7 }, (_, i) => `## ${i + 1}. Section\n\nDescription.\n`).join('\n')}\n## Appendix: evidence\n\nReferences at commit \`${commit}\`.\n\n| Section | Evidence |\n|---|---|\n${rows}\n`;
+  return `# Architecture\n\nReviewed on ${date} against version ${version} (commit \`${commit}\`).\n\nIn short:\n\n- It does one thing.\n\n${Array.from({ length: 7 }, (_, i) => `## ${i + 1}. Section\n\nDescription.\n`).join('\n')}\n## Appendix: evidence\n\nReferences at commit \`${commit}\`.\n\n| Section | Evidence |\n|---|---|\n${rows}\n`;
 }
 
 export function completeRepo(t) {

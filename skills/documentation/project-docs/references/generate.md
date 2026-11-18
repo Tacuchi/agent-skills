@@ -35,7 +35,7 @@ Split the notes in two:
 
 ## 4. Ask only the gaps
 
-One round, at most four questions, with the structured question tool. Ask only what the code does not answer. Typical gaps:
+One round, at most four questions, with the structured question tool. Read the preferences file first, when the preflight names one. Ask only what neither the code nor that file answers. Typical gaps:
 
 - the purpose in the person's words, and what the project is not;
 - the reason for a decision the code shows but does not explain. Always offer "Not recorded yet" as an option;
@@ -54,12 +54,12 @@ Follow [diagrams.md](diagrams.md): one context diagram and one container diagram
 
 1. Copy [the template](../assets/ARCHITECTURE.md.template) to the repository root.
 2. Pin it: the commit is `git rev-parse --short HEAD`, the version is `project_version` from the preflight, the date is today.
-3. Fill the seven sections from the notes. Every claim must have a citation ready for the appendix.
+3. Write the summary list, then fill the seven sections from the notes, inside the budget of [format.md](format.md). Detail that does not fit goes to a guide in `docs/`. Every claim must have a citation ready for the appendix.
 4. Write the appendix last: one row per section, citing code or configuration only.
 
 ## 7. Record the decisions
 
-One record per decision with a known reason, from [the template](../assets/decision.md.template). List the others in section 7 as "Not recorded yet".
+One record per decision with a known reason, from [the template](../assets/decision.md.template). Record the ones a reader would ask "why" about; a choice that only repeats what the code shows needs no record. The table of section 7 shows the five that weigh most and links the folder. List the decisions without a known reason as "Not recorded yet".
 
 ## 8. Put the README in order
 
@@ -83,7 +83,8 @@ Then look at both exported images, in light and in dark, before calling the diag
 
 ## 10. Hand over
 
-1. Summarize what now exists: the files, the questions answered by the person and what stayed as "Not recorded yet".
+1. Summarize what now exists: the files, the questions answered by the person, the answers taken from the preferences file and what stayed as "Not recorded yet".
 2. Propose the commit with its exact paths and a one-line message, as a structured question. Commit only after the person approves. Never push unless they ask.
 3. Before any push, follow [publishing.md](publishing.md): a push of documentation can start a build or a deployment.
 4. For a public repository, offer GitHub Pages for the interactive diagrams, as a separate question. [diagrams.md](diagrams.md) has the details. Never offer it for a private repository.
+5. When the preflight named no preferences file and the person answered a question that is not about this repository alone, such as the contribution policy, offer once to save those answers. Write `preferences.md` from [the example](../assets/preferences.example.md) only after the person says yes.

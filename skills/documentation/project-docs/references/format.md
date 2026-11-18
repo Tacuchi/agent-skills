@@ -40,7 +40,25 @@ Rules:
 
 ## `ARCHITECTURE.md`
 
-Start from [the ARCHITECTURE template](../assets/ARCHITECTURE.md.template). Aim for 150 to 350 lines.
+Start from [the ARCHITECTURE template](../assets/ARCHITECTURE.md.template).
+
+### Budget
+
+The document is an overview. A reader finishes it in one sitting and opens the code or a guide for the rest.
+
+| Piece | Budget |
+|---|---|
+| The whole document, before the appendix | 1,200 to 1,500 words |
+| Summary, between the scope paragraph and section 1 | A list of up to five lines: what it is, who uses it, what it talks to, where the data lives, the one rule that matters |
+| Any table | Up to seven rows; one sentence per cell, about 25 words |
+| "What it is not" and the goals table | Up to three each |
+| Runtime view | One walkthrough of up to seven steps; name a second one in a sentence |
+| Decisions table of section 7 | The five that weigh most, and a link to the folder for the rest |
+| Evidence appendix | Up to five citations per row |
+
+- Detail that does not fit moves to a guide, `docs/<topic>.md`, with a link from the sentence it left. It is never deleted.
+- A fixed limit, a timeout or an error code belongs in a guide unless a rule of section 3 depends on it.
+- `check` warns with `over-budget`, `long-table` and `no-summary`. A warning does not fail the check; it names what to move.
 
 ### Header
 
@@ -100,6 +118,8 @@ The last section has no number. It opens with one sentence that names the pinned
 - Any other text in the cell is ignored by `check`, so a short note is allowed.
 - Cite code or configuration only. A citation to `README.md`, `ARCHITECTURE.md` or anything under `docs/` is an error: those files change in the same commit that edits the document.
 - Cite the smallest range that proves the claim. A range that covers a whole file goes stale at every edit.
+- At most five citations per row: keep the ones that prove the section. `check` warns with `too-many-citations` above five.
+- Never cite a line that states a version or a revision: it changes at every release. `check` warns with `volatile-citation`.
 
 ## Decision records
 

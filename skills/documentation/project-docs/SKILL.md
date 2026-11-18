@@ -41,6 +41,7 @@ Read its answer before anything else:
 - `dirty: true`: show the pending changes and ask before editing.
 - `shallow: true`: say that the pinned commit may be missing and that `git fetch --unshallow` brings the history.
 - `private_terms: null`: say once that own domains and device names are not being checked, and where the example list goes.
+- `preferences`: when it names a file, read it before asking anything. An answer written there is the person's: use it, do not ask it again, and say at the handover which answers came from that file.
 - `archify: null` or `chrome: null`: say what is missing before any work. [references/diagrams.md](references/diagrams.md) says how to go on.
 
 ### `check <repo>`
@@ -76,7 +77,7 @@ Each has its own procedure. Read it whole before the first edit and follow its s
 - Each question stands alone: name the repository, the file and the thing asked about, because the person may see only the question.
 - Without that tool, ask with a labeled list of options.
 - `generate` asks one round of at most four questions, and only about what the code does not answer.
-- Never ask what the repository already answers.
+- Never ask what the repository or the preferences file already answers.
 
 ## Where to read next
 
@@ -85,3 +86,4 @@ Each has its own procedure. Read it whole before the first edit and follow its s
 - Before proposing a push, read [references/publishing.md](references/publishing.md): a push of documentation can start a build or a deployment.
 - Start each file from its template: [ARCHITECTURE.md](assets/ARCHITECTURE.md.template), [README.md](assets/README.md.template) and [a decision record](assets/decision.md.template).
 - To keep own domains and device names out of the published set, copy [the private terms example](assets/private-terms.example.txt) where its first lines say.
+- To stop answering the same questions in every repository, copy [the preferences example](assets/preferences.example.md) where its first lines say.

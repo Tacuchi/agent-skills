@@ -4,6 +4,14 @@ Reviewed on <YYYY-MM-DD> against version <x.y.z> (commit `<short hash>`).
 
 This document gives the overview: which parts exist, how they talk to each other and which rules never break. It does not describe <what it leaves out>. All values are defaults; nothing here was measured on a particular machine.
 
+In short:
+
+- <What it is, in one line.>
+- <Who uses it.>
+- <What it talks to.>
+- <Where its data lives.>
+- <The one rule that matters.>
+
 ## 1. Purpose and quality goals
 
 <One paragraph: what the project is for and who uses it.>

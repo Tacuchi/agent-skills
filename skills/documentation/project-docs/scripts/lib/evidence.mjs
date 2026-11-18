@@ -33,6 +33,9 @@ export function parsePin(markdown) {
   return date && commit ? { date, version, commit } : null;
 }
 
+const MAX_ROW_CITATIONS = 5;
+const VOLATILE_LINE = /^\s*(?:["']?(?:version|revision)["']?\s*[:=]|<version>)/i;
+
 export function appendixRegion(markdown) {
   const text = outsideFences(markdown);
   const headings = [...text.matchAll(/^## (.+)$/gm)];
@@ -83,9 +86,12 @@ export function inspectCitation(repo, commit, cited) {
   if (cited.start < 1 || cited.end < cited.start || cited.end > lines(oldText).length) {
     return { status: 'stale', code: 'out-of-range', detail: `Expected a range within 1-${lines(oldText).length}; received ${cited.start}-${cited.end}.` };
   }
+  // A line that states a version or a revision changes at every release: a range over it goes stale each time.
+  const offset = lines(oldText).slice(cited.start - 1, cited.end).findIndex((line) => VOLATILE_LINE.test(line));
+  const volatile = offset === -1 ? {} : { volatileLine: cited.start + offset };
   const result = classify(oldText, readWorking(repo, cited.path), cited.start, cited.end);
-  if (result.status === 'ok') return result;
-  return { ...result, code: result.status, detail: result.status === 'moved'
+  if (result.status === 'ok') return { ...result, ...volatile };
+  return { ...result, ...volatile, code: result.status, detail: result.status === 'moved'
     ? `Expected the block at its cited range; received one match at ${result.movedTo.join('-')}.`
     : 'Expected the same block at its range or one unique new range; received changed, missing or ambiguous content.' };
 }
@@ -103,12 +109,20 @@ export function evidenceEntries(repo, markdown) {
 }
 
 export function checkEvidence(repo, markdown) {
-  return evidenceEntries(repo, markdown).filter((entry) => entry.code).map((entry) => ({
-    group: 'evidence', level: entry.status === 'moved' ? 'warning' : 'error', code: entry.code,
-    file: 'ARCHITECTURE.md', section: entry.section, cited: entry.cited,
-    ...(entry.movedTo ? { moved_to: entry.movedTo } : {}),
-    message: `${citationLabel(entry.cited)} (${entry.section}): ${entry.detail}`,
-  }));
+  const entries = evidenceEntries(repo, markdown);
+  const warning = (code, section, message, extra = {}) => ({ group: 'evidence', level: 'warning', code, file: 'ARCHITECTURE.md', section, ...extra, message });
+  return [
+    ...entries.filter((entry) => entry.code).map((entry) => ({
+      group: 'evidence', level: entry.status === 'moved' ? 'warning' : 'error', code: entry.code,
+      file: 'ARCHITECTURE.md', section: entry.section, cited: entry.cited,
+      ...(entry.movedTo ? { moved_to: entry.movedTo } : {}),
+      message: `${citationLabel(entry.cited)} (${entry.section}): ${entry.detail}`,
+    })),
+    ...entries.filter((entry) => entry.volatileLine).map((entry) => warning('volatile-citation', entry.section,
+      `${citationLabel(entry.cited)} (${entry.section}): Expected a range without a version or revision line; received one at line ${entry.volatileLine}.`, { cited: entry.cited })),
+    ...(entries.length ? parseAppendix(markdown) : []).filter((row) => row.citations.length > MAX_ROW_CITATIONS).map((row) => warning('too-many-citations', row.section,
+      `${row.section}: Expected at most ${MAX_ROW_CITATIONS} citations in a row; received ${row.citations.length}.`)),
+  ];
 }
 
 export function repin(repo, markdown, { head, date, version }) {

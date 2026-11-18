@@ -13,6 +13,11 @@ const patterns = [
 ];
 
 // The list in use: the one given, else the person's own outside every repository, else none.
+export function preferencesPath() {
+  const file = join(process.env.HOME || homedir(), '.config/agent-skills/project-docs/preferences.md');
+  return existsSync(file) ? file : null;
+}
+
 export function privateTermsPath(explicit) {
   const defaultFile = join(process.env.HOME || homedir(), '.config/agent-skills/project-docs/private-terms.txt');
   return explicit ?? (existsSync(defaultFile) ? defaultFile : null);

@@ -18,6 +18,32 @@ function architectureFindings(markdown, declaredVersion) {
   if (actual.join(',') !== '1,2,3,4,5,6,7') findings.push(finding('bad-sections', file, `Expected sections 1 through 7 in order; received ${actual.join(', ') || 'none'}.`));
   const appendix = appendixRegion(markdown);
   if (!appendix || appendix.start < (numbered.at(-1)?.index ?? 0)) findings.push(finding('missing-appendix', file, 'Expected an unnumbered appendix after the seven sections; received no trailing appendix.'));
+  return [...findings, ...budgetFindings(outsideFences(markdown).slice(0, appendix?.start), numbered, file)];
+}
+
+const MAX_WORDS = 1500;
+const MAX_TABLE_ROWS = 7;
+
+// The budget keeps the document an overview. Each miss is a warning: the detail belongs in a guide.
+function budgetFindings(body, numbered, file) {
+  const findings = [];
+  const first = numbered[0]?.index ?? body.length;
+  if (!/^\s*(?:[-*]|\d+\.)\s+\S/m.test(body.slice(0, first))) findings.push(finding('no-summary', file, 'Expected a summary list of up to five lines before section 1; received none.', 'warning'));
+  const words = body.split(/\s+/).filter((token) => /[\p{L}\p{N}]/u.test(token)).length;
+  if (words > MAX_WORDS) findings.push(finding('over-budget', file, `Expected at most ${MAX_WORDS} words before the appendix; received ${words}.`, 'warning'));
+  numbered.forEach((heading, index) => {
+    const section = body.slice(heading.index, numbered[index + 1]?.index ?? body.length);
+    let rows = 0;
+    const close = () => {
+      if (rows - 2 > MAX_TABLE_ROWS) findings.push(finding('long-table', file, `${heading[1]}: Expected at most ${MAX_TABLE_ROWS} rows in a table; received ${rows - 2}.`, 'warning'));
+      rows = 0;
+    };
+    for (const line of section.split('\n')) {
+      if (/^\s*\|/.test(line)) rows += 1;
+      else close();
+    }
+    close();
+  });
   return findings;
 }
 

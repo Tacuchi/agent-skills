@@ -25,6 +25,8 @@ Read also the release notes or the changelog when the repository has them, and c
 |---|---|---|
 | `stale` | The cited lines changed or are gone | Compare `git show <pin>:<path>` with the file now. If the claim still holds, point the row at the lines that prove it today. If it changed, correct the section. If it is gone, remove or replace the claim |
 | `moved` | The same lines are elsewhere in the file | Nothing by hand: the re-pin of step 6 rewrites the range |
+| `too-many-citations` | A row cites more than five ranges | Keep the five that prove the section and drop the rest |
+| `volatile-citation` | A cited range covers a version or revision line | Narrow the range so that line stays out |
 | `self-citation` | The row cites the documentation itself | Replace it with code or configuration that proves the same claim. If nothing does, ask the person or reword the claim |
 | `missing-at-pin`, `out-of-range` | The row never matched | Fix the path or the range |
 | `version-behind` | The project moved to a newer version | Nothing by hand: the re-pin updates the header |
@@ -34,7 +36,9 @@ Read also the release notes or the changelog when the repository has them, and c
 | `diagram-missing-file` | A diagram lacks its page or its image | Generate or export it |
 | `broken-link`, `broken-anchor` | A relative link leads nowhere | Fix the link or the heading |
 | `local-path`, `secret-pattern`, `private-term` | Private data in the published set | Remove it and convert it with the table of [format.md](format.md). For a secret, tell the person at once: it may need to be revoked |
-| any `structure` code | A piece or a required shape is missing | Restore the shape of [format.md](format.md) |
+| `over-budget`, `long-table` | The document or a table grew past the budget | Move the detail to a guide, `docs/<topic>.md`, link it from the sentence it left, and keep every fact |
+| `no-summary` | The summary list before section 1 is missing | Write it: up to five lines |
+| any other `structure` code | A piece or a required shape is missing | Restore the shape of [format.md](format.md) |
 
 When you cannot tell whether a claim still holds, ask the person with a structured question that quotes the claim and names the file that changed.
 
