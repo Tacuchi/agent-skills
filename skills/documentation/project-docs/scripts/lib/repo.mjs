@@ -119,6 +119,8 @@ export function projectVersion(repo) {
       if (version) return version;
     }
   }
-  const tag = git(repo, ['describe', '--tags', '--abbrev=0'])?.trim();
-  return tag ? tag.replace(/^v/, '') : null;
+  // Only a tag that is a bare version names the whole project: `skill/x/v1.0.0`
+  // or `x@1.0.0` names one part of it.
+  const tag = git(repo, ['describe', '--tags', '--abbrev=0', '--match', 'v[0-9]*', '--match', '[0-9]*'])?.trim();
+  return tag && /^v?\d+(\.\d+)*([-+][0-9A-Za-z.-]+)?$/.test(tag) ? tag.replace(/^v/, '') : null;
 }

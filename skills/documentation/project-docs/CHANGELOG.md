@@ -1,5 +1,9 @@
 # project-docs changelog
 
+## [1.0.1] — 2026-11-18
+
+- Fix: a tag that names one part of a repository, such as `skill/demo/v1.0.0` or `demo@1.0.0`, is no longer read as the version of the project. Only a bare version tag counts, such as `v1.2.0`. `check` reported `bad-header` in a repository that releases each part with its own tag.
+
 ## [1.0.0] — 2026-11-18
 
 - First public version. Three commands, all on request and all taking the path of a repository: `generate` documents a repository that has no `ARCHITECTURE.md`, `update` fixes only what went stale, and `check` reads without editing.

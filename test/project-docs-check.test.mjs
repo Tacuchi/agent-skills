@@ -196,6 +196,20 @@ test('version: a header behind the project version warns and still exits 0', (t)
   assert.equal(result.json.project_version, '2.0.0');
 });
 
+test('version: a tag that names one part of the repository is not the project version', (t) => {
+  const repo = completeRepo(t);
+  repo.write('ARCHITECTURE.md', read(repo, 'ARCHITECTURE.md').replace(/ against version [^ ]+ \(/, ' ('));
+  rmSync(join(repo.dir, 'package.json'));
+  repo.git('tag', 'skill/demo/v3.0.0');
+  let result = runCheck(repo.dir);
+  assert.equal(result.json.project_version, null);
+  assert.equal(result.status, 0);
+  repo.git('tag', 'v1.2.0');
+  repo.git('tag', 'demo@9.9.9');
+  result = runCheck(repo.dir);
+  assert.equal(result.json.project_version, '1.2.0');
+});
+
 test('privacy: home paths, secret patterns and private terms are errors that never print the match', (t) => {
   const repo = completeRepo(t);
   const token = 'ghp_' + 'A'.repeat(36);

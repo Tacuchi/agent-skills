@@ -50,7 +50,7 @@ The first paragraph after the title is one line with the review date, the versio
 Reviewed on 2026-01-02 against version 1.4.0 (commit `abc1234`).
 ```
 
-`check` reads that paragraph by shape, in any language: the first date written as `YYYY-MM-DD`, the first version number, and the first commit hash inside a code span. A project without versions leaves the version out.
+`check` reads that paragraph by shape, in any language: the first date written as `YYYY-MM-DD`, the first version number, and the first commit hash inside a code span. A project without versions leaves the version out. The version comes from the manifest or, without one, from the latest bare version tag such as `v1.2.0`; a tag that names one part of the repository, such as `skill/demo/v1.0.0`, does not count.
 
 The next paragraph states the scope: what the document covers, what it leaves out, and that every value is a default.
 
