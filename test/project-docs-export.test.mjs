@@ -4,7 +4,7 @@ import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import test from 'node:test';
-import { findChrome } from '../skills/documentation/project-docs/scripts/lib/cdp.mjs';
+import { findChrome, removeTree } from '../skills/documentation/project-docs/scripts/lib/cdp.mjs';
 
 const root = resolve(import.meta.dirname, '..');
 const script = join(root, 'skills/documentation/project-docs/scripts/export-svg.mjs');
@@ -71,4 +71,16 @@ test('a missing page or a bad option exits 2 with the expected shape', (t) => {
   const bad = run([fixture, '--timeout', 'soon']);
   assert.equal(bad.status, 2);
   assert.match(bad.stderr, /positive integer.*"soon"/);
+});
+
+test('removeTree retries while the folder is still being written and never throws', async () => {
+  let calls = 0;
+  const busyTwice = () => {
+    calls += 1;
+    if (calls < 3) throw Object.assign(new Error('directory not empty'), { code: 'ENOTEMPTY' });
+  };
+  assert.equal(await removeTree('/nonexistent', { attempts: 5, delay: 1, remove: busyTwice }), true);
+  assert.equal(calls, 3);
+  const alwaysBusy = () => { throw Object.assign(new Error('directory not empty'), { code: 'ENOTEMPTY' }); };
+  assert.equal(await removeTree('/nonexistent', { attempts: 3, delay: 1, remove: alwaysBusy }), false);
 });

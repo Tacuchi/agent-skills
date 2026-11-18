@@ -63,7 +63,22 @@ function readDevToolsUrl(proc) {
   });
 }
 
-// Start a headless Chrome on a fresh temporary profile; close() stops it and removes the profile.
+// The browser's helper processes keep writing for a moment after it exits, so a first removal can find the
+// folder busy. Retry instead of failing: true when the folder is gone, false when it could not be removed.
+export async function removeTree(path, { attempts = 25, delay = 200, remove = (target) => rmSync(target, { recursive: true, force: true }) } = {}) {
+  for (let attempt = 1; attempt <= attempts; attempt += 1) {
+    try {
+      remove(path);
+      return true;
+    } catch {
+      if (attempt < attempts) await new Promise((done) => setTimeout(done, delay));
+    }
+  }
+  return false;
+}
+
+// Start a headless Chrome on a fresh temporary profile; close() stops it, removes the profile and returns
+// the profile path only when it could not be removed.
 export async function launch(chromePath) {
   const profile = mkdtempSync(join(tmpdir(), 'project-docs-chrome-'));
   const proc = spawn(chromePath, [
@@ -75,16 +90,25 @@ export async function launch(chromePath) {
 
   let socket = null;
   let closed = false;
+  let leftover = null;
   const close = async () => {
-    if (closed) return;
+    if (closed) return leftover;
     closed = true;
-    try { socket?.close(); } catch { /* the socket may already be gone */ }
-    proc.kill('SIGTERM');
+    // Ask the browser to end itself first: that also ends its helper processes, which a signal to the
+    // main process does not.
+    try {
+      if (socket?.readyState === WebSocket.OPEN) socket.send(JSON.stringify({ id: 0, method: 'Browser.close' }));
+    } catch { /* fall through to the signals */ }
     if (!(await waitForExit(proc, CLOSE_MS))) {
-      proc.kill('SIGKILL');
-      await waitForExit(proc, CLOSE_MS);
+      proc.kill('SIGTERM');
+      if (!(await waitForExit(proc, CLOSE_MS))) {
+        proc.kill('SIGKILL');
+        await waitForExit(proc, CLOSE_MS);
+      }
     }
-    rmSync(profile, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 });
+    try { socket?.close(); } catch { /* the socket may already be gone */ }
+    leftover = (await removeTree(profile)) ? null : profile;
+    return leftover;
   };
 
   try {

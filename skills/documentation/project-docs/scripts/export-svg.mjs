@@ -145,7 +145,8 @@ async function main() {
     }) + '\n');
     if (external.length) process.stderr.write(`warning: expected only file:, data: or blob: requests, got ${external.length} other: ${external.join(', ')}\n`);
   } finally {
-    await browser?.close();
+    const leftover = await browser?.close();
+    if (leftover) process.stderr.write(`warning: expected the temporary profile to be removed, got it left at ${leftover}\n`);
   }
 }
 
