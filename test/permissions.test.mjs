@@ -44,6 +44,19 @@ function sandbox(t, { git = true } = {}) {
 
 const ids = (list) => list.map((need) => (typeof need === 'string' ? need : need.id));
 
+test('validate refuses a prefix that would let the permission script write rules unasked', (t) => {
+  const box = sandbox(t);
+  const manifest = (prefix) => ({ skill: 'demo', needs: [{ id: 'self', type: 'command', tier: 'low', reason: 'x', prefixes: [prefix] }] });
+  for (const prefix of ['node {skill_dir}/scripts/permissions.mjs', 'node {skill_dir}/scripts/permissions.mjs apply', 'node scripts/permissions.mjs']) {
+    box.write(box.manifestPath, manifest(prefix));
+    const { status, json } = box.run('validate');
+    assert.equal(status, 2, prefix);
+    assert.match(json.error, /needs\[0\]\.prefixes\[0\]: the permission script may be allowed only as "permissions\.mjs check"/);
+  }
+  box.write(box.manifestPath, manifest('node {skill_dir}/scripts/permissions.mjs check'));
+  assert.equal(box.run('validate').status, 0);
+});
+
 test('validate accepts a manifest and names each problem of an invalid one', (t) => {
   const box = sandbox(t);
   assert.deepEqual(box.run('validate').json, { valid: true, skill: 'demo' });

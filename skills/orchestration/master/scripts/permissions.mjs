@@ -95,6 +95,9 @@ function validateManifest(manifest, source) {
           problems.push(`${at}.prefixes[${j}]: expected words separated by single spaces, got ${JSON.stringify(prefix)}`);
         } else if (SHELL_META.test(prefix.replaceAll('{skill_dir}', ''))) {
           problems.push(`${at}.prefixes[${j}]: shell operators, quotes and wildcards are not allowed, got ${JSON.stringify(prefix)}`);
+        } else if (/(^|[\/ ])permissions\.mjs( |$)/.test(prefix) && !/(^|[\/ ])permissions\.mjs check$/.test(prefix)) {
+          // A rule that covers `apply` would let the agent write allow rules the person never chose.
+          problems.push(`${at}.prefixes[${j}]: the permission script may be allowed only as "permissions.mjs check", got ${JSON.stringify(prefix)}`);
         }
       });
     } else if (need.type === 'web') {

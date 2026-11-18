@@ -7,7 +7,7 @@
       "tier": "low",
       "reason": "Run this permission check when the skill loads, without a prompt.",
       "prefixes": [
-        "node {skill_dir}/scripts/permissions.mjs"
+        "node {skill_dir}/scripts/permissions.mjs check"
       ]
     },
     {

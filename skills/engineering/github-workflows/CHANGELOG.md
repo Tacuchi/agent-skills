@@ -1,5 +1,9 @@
 # github-workflows changelog
 
+## [1.0.2] — 2026-11-18
+
+- Security: the low-risk permission rule now covers only `permissions.mjs check`. It covered the whole script, so an agent could also run `apply` and write allow rules the person never chose. `validate` refuses a manifest that allows the script any other way. Found by the Snyk audit on skills.sh. A broader rule saved earlier stays in the host settings until it is removed by hand.
+
 ## [1.0.1] — 2026-11-18
 
 - Fix: `scripts/ops.mjs` did nothing when it was reached through a symbolic link, which is how an installed skill is reached. `status`, `deploy` and `rollback` exited with code 0 and printed nothing. The script now compares real paths to know it is the one being run, and a test runs every script of the skill through a link.

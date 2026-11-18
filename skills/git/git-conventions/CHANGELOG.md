@@ -1,5 +1,9 @@
 # git-conventions changelog
 
+## [1.3.1] — 2026-11-18
+
+- Security: the low-risk permission rule now covers only `permissions.mjs check`. It covered the whole script, so an agent could also run `apply` and write allow rules the person never chose. `validate` refuses a manifest that allows the script any other way. Found by the Snyk audit on skills.sh. A broader rule saved earlier stays in the host settings until it is removed by hand.
+
 ## [1.3.0] — 2026-11-18
 
 - New section "What a push starts": before a requested push, read the workflows that push would start and say what would run, naming a deployment or a publication before pushing. For a change of documentation alone, offer the path filter. `[skip ci]` goes in the last commit of the push and only when the person chooses it. After the push, check what ran on the pushed commit.

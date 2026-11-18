@@ -298,7 +298,8 @@ test('each skill that runs commands ships an identical permission script and a v
       const claude = JSON.parse(checked.stdout).hosts.claude;
       assert.ok(claude.missing.some((need) => need.id === 'permission-check'), `${slug}: the check itself is declared`);
       const self = claude.missing.find((need) => need.id === 'permission-check');
-      assert.deepEqual(self.rules, [`Bash(node ${realpathSync(target)}/scripts/permissions.mjs:*)`]);
+      assert.deepEqual(self.rules, [`Bash(node ${realpathSync(target)}/scripts/permissions.mjs check:*)`]);
+      assert.deepEqual(prefixes(permissionsOf(domain, slug)).filter((p) => p.includes('permissions.mjs')), ['node {skill_dir}/scripts/permissions.mjs check'], `${slug}: only the check is allowed, never apply`);
     });
   }
 });
@@ -342,7 +343,7 @@ test('each skill declares the needs its steps use, with git read-only and unrest
   }
   assert.ok(prefixes(permissionsOf('orchestration', 'master'), 'low').includes('curl -s https://models.dev/api.json'));
   const tools = permissionsOf('agents', 'creating-tools');
-  assert.deepEqual(prefixes(tools, 'low'), ['node {skill_dir}/scripts/permissions.mjs', 'node {skill_dir}/scripts/scaffold-tool.mjs']);
+  assert.deepEqual(prefixes(tools, 'low'), ['node {skill_dir}/scripts/permissions.mjs check', 'node {skill_dir}/scripts/scaffold-tool.mjs']);
   assert.deepEqual(prefixes(tools, 'high'), ['node {skill_dir}/scripts/record-run.mjs']);
 });
 
@@ -372,7 +373,7 @@ test('git-conventions tells what a push starts before pushing and checks what ra
   const skill = readFileSync(join(dir, 'SKILL.md'), 'utf8');
   for (const piece of ['### What a push starts', '[skip ci]', 'gh run list', 'Never push to find out']) assert.ok(skill.includes(piece), piece);
   assert.ok(skill.indexOf('### What a push starts') < skill.indexOf('### Commands that mislead'), 'the rule comes before the list of traps');
-  assert.match(readFileSync(join(dir, 'CHANGELOG.md'), 'utf8'), /^# git-conventions changelog\n\n## \[1\.3\.0\]/);
+  assert.match(readFileSync(join(dir, 'CHANGELOG.md'), 'utf8'), /^# git-conventions changelog\n\n## \[1\.3\.1\]/);
   assert.ok(prefixes(permissionsOf('git', 'git-conventions'), 'low').includes('gh run list'));
 });
 
