@@ -90,6 +90,18 @@ Never assume the expected branch from the current one (the user may have switche
 - **Multi-repo**: check each source against its *own* declaration; the workspace checkout is not a proxy. Recheck branch and dirty state before a Git mutation in a shared clone.
 - **On an integration branch with edits already made** → stop and ask; never "edit now and move it later".
 
+### What a push starts
+
+A push can start tests, a build or a deployment. Before a requested push:
+
+1. Read the workflows that start on a push to that branch, in `.github/workflows/`.
+2. Say what the push would run. When it deploys or publishes, name it before pushing, even when the person already asked for the push.
+3. When the change is documentation alone and no path filter leaves it out, say that the push would still run those workflows, and offer the filter. Editing a pipeline needs its own explicit yes.
+4. `[skip ci]` in the message of the last commit of the push stops the workflows that push would start. Use it only when the person chooses it, and say that nothing will verify that push.
+5. After the push, check what ran on the pushed commit, with `gh run list` when it is available, and report a run nobody expected.
+
+Never push to find out: a deployment that restarts a service is not undone by a later commit. The `github-workflows` skill, if available, covers the path filter, the templates and the operations.
+
 ### Commands that mislead
 
 - **`git -C <path>` over `cd`** in a compound command: a `cd` that persists or fails sends the next commit to the wrong repository.

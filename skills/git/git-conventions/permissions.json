@@ -21,6 +21,15 @@
         "git log",
         "git branch --show-current"
       ]
+    },
+    {
+      "id": "gh-read",
+      "type": "command",
+      "tier": "low",
+      "reason": "See which workflow runs a push started.",
+      "prefixes": [
+        "gh run list"
+      ]
     }
   ]
 }

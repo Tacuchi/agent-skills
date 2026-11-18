@@ -1,0 +1,55 @@
+{
+  "skill": "github-workflows",
+  "needs": [
+    {
+      "id": "permission-check",
+      "type": "command",
+      "tier": "low",
+      "reason": "Run this permission check when the skill loads, without a prompt.",
+      "prefixes": [
+        "node {skill_dir}/scripts/permissions.mjs"
+      ]
+    },
+    {
+      "id": "workflows-check",
+      "type": "command",
+      "tier": "low",
+      "reason": "Read the workflows of a repository and report what each one starts on and where it leaves the pattern.",
+      "prefixes": [
+        "node {skill_dir}/scripts/check.mjs"
+      ]
+    },
+    {
+      "id": "git-read",
+      "type": "command",
+      "tier": "low",
+      "reason": "Read the state, changes, history and current branch of the repository.",
+      "prefixes": [
+        "git status",
+        "git diff",
+        "git log",
+        "git branch --show-current"
+      ]
+    },
+    {
+      "id": "gh-read",
+      "type": "command",
+      "tier": "low",
+      "reason": "List and read workflow runs.",
+      "prefixes": [
+        "gh run list",
+        "gh run view",
+        "gh workflow list"
+      ]
+    },
+    {
+      "id": "ops",
+      "type": "command",
+      "tier": "high",
+      "reason": "Start a deployment or run an earlier one again. The script still refuses to act without a confirmation token.",
+      "prefixes": [
+        "node {skill_dir}/scripts/ops.mjs"
+      ]
+    }
+  ]
+}

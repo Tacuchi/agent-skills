@@ -1,0 +1,42 @@
+name: deploy
+on:
+  push:
+    branches: [main]
+    paths-ignore: [docs/**, README.md, ARCHITECTURE.md]
+  workflow_dispatch:
+permissions:
+  contents: read
+  packages: write
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: false
+env:
+  IMAGE: ghcr.io/example/service
+  SERVICE_URL: https://service.example.invalid
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - run: npm test
+  build-deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    env:
+      HAS_TARGET: ${{ secrets.TARGET_TOKEN != '' && secrets.TARGET_APP != '' }}
+    steps:
+      - uses: docker/build-push-action@v6
+        with:
+          push: true
+          tags: ${{ env.IMAGE }}:${{ github.sha }}
+      - name: Deploy service
+        if: env.HAS_TARGET == 'true'
+        env:
+          TARGET_TOKEN: ${{ secrets.TARGET_TOKEN }}
+          TARGET_APP: ${{ secrets.TARGET_APP }}
+        run: |
+          curl -fsS -X POST "$SERVICE_URL/api/v1/deploy" \
+            -H "Authorization: Bearer $TARGET_TOKEN" \
+            -d "app=$TARGET_APP"
+      - name: Check health
+        if: env.HAS_TARGET == 'true'
+        run: curl -fsS "$SERVICE_URL/health"

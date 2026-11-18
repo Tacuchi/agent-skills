@@ -1,5 +1,10 @@
 # git-conventions changelog
 
+## [1.3.0] — 2026-11-18
+
+- New section "What a push starts": before a requested push, read the workflows that push would start and say what would run, naming a deployment or a publication before pushing. For a change of documentation alone, offer the path filter. `[skip ci]` goes in the last commit of the push and only when the person chooses it. After the push, check what ran on the pushed commit.
+- Declared needs gain one, low risk: `gh run list`, to see what a push started.
+
 ## [1.2.0] — 2026-11-17
 
 - Step 0, "Permissions this skill uses": when the skill loads, `scripts/permissions.mjs check` compares the needs declared in `permissions.json` with the project and global configuration of Claude Code, Codex and Antigravity. Missing low-risk needs go in one structured question (only for me in this repo, recommended; shared in this repo; skip for now; don't ask again in this repo) and high-risk needs in another, where "Ask every time" is recommended. `apply` writes only what the person chose: in Claude Code to `.claude/settings.local.json` at the git root or `.claude/settings.json` of the session folder; in Codex to `.codex/rules/agent-skills.rules`, only when Codex trusts the project; nothing for Antigravity, which has no per-project permissions. It never writes the global configuration. "Don't ask again" is kept in `.agent-skills/permissions-state.json`, in a folder that ignores itself in git. If the check cannot run, the skill says so and goes on.

@@ -1,0 +1,37 @@
+# Runs the tests on every change of code. Fill every <placeholder> and remove this line.
+name: ci
+
+on:
+  push:
+    branches: [<default branch>]
+    # A change of documentation alone does not run the suite.
+    paths-ignore:
+      - "docs/**"
+      - "README.md"
+      - "ARCHITECTURE.md"
+  pull_request:
+    paths-ignore:
+      - "docs/**"
+      - "README.md"
+      - "ARCHITECTURE.md"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: test (${{ matrix.os }})
+    strategy:
+      # Without fail-fast, one system failing still shows how the others did.
+      fail-fast: false
+      matrix:
+        os: [<operating systems, such as ubuntu-latest>]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: <setup action for the runtime>
+        with:
+          <version input of that action>: <runtime version>
+      - run: <command that installs the dependencies>
+      - run: <command that runs the tests>

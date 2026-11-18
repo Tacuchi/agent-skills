@@ -1,0 +1,24 @@
+# Publishes the package when a release is created. Fill every <placeholder> and remove this line.
+name: publish
+
+on:
+  release:
+    types: [published]
+  # To run a failed publication again without another release.
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: <setup action for the runtime>
+        with:
+          <version input of that action>: <runtime version>
+      - run: <command that installs the dependencies>
+      - run: <command that runs the tests>
+      - run: <command that publishes the package>

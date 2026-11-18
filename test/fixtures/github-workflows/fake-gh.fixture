@@ -1,0 +1,59 @@
+#!/usr/bin/env node
+import { appendFileSync, existsSync, readFileSync, writeFileSync } from 'node:fs';
+
+const args = process.argv.slice(2);
+const config = JSON.parse(process.env.FAKE_GH_CONFIG);
+appendFileSync(process.env.FAKE_GH_LOG, JSON.stringify(args) + '\n');
+const command = args.slice(0, 2).join(' ');
+const flag = (name) => args[args.indexOf(name) + 1];
+const changed = existsSync(process.env.FAKE_GH_STATE);
+function reply(value) {
+  process.stdout.write(typeof value === 'string' ? value : JSON.stringify(value));
+}
+if (config.error && (!config.errorCommand || command === config.errorCommand)) {
+  process.stderr.write(config.error);
+  process.exit(config.errorCode ?? 1);
+}
+if (Object.hasOwn(config.responses ?? {}, command)) {
+  reply(config.responses[command]);
+  process.exit(0);
+}
+switch (command) {
+  case 'repo view': reply(config.repository); break;
+  case 'workflow list': reply(config.workflows); break;
+  case 'api repos/' + config.repository.nameWithOwner + '/commits/' + encodeURIComponent(config.ref):
+    {
+      const reads = readFileSync(process.env.FAKE_GH_LOG, 'utf8').trim().split('\n').map(JSON.parse)
+        .filter((call) => call[0] === 'api' && call[1].includes('/commits/')).length;
+      reply(config.shaSequence?.[reads - 1] ?? config.sha);
+      break;
+    }
+  case 'workflow run':
+    writeFileSync(process.env.FAKE_GH_STATE, 'dispatched');
+    reply(config.dispatchOutput ?? config.newRun.url);
+    break;
+  case 'run rerun':
+    writeFileSync(process.env.FAKE_GH_STATE, 'rerun');
+    break;
+  case 'run list': reply(changed ? [...(config.additionalRuns ?? []), config.newRun, ...config.runs] : config.runs); break;
+  case 'run watch': reply('Run finished.'); break;
+  case 'run view':
+    if (args.includes('--log-failed')) reply(config.log);
+    else if (flag('--json') === 'jobs') reply(config.jobs);
+    else {
+      const run = config.runs.find((item) => String(item.databaseId) === args[2]) ?? config.newRun;
+      const calls = readFileSync(process.env.FAKE_GH_LOG, 'utf8').trim().split('\n').map(JSON.parse);
+      const start = calls.findLastIndex((call) => call[0] === 'run' && call[1] === 'rerun');
+      const reads = calls.slice(start + 1).filter((call) => call[0] === 'run' && call[1] === 'view').length;
+      if (changed && start >= 0 && reads <= (config.rerunReadsBeforeNew ?? 0)) { reply(run); break; }
+      reply({ ...run, status: 'completed', conclusion: config.conclusion ?? run.conclusion,
+        attempt: run.attempt + (changed && config.runs.includes(run) ? 1 : 0) });
+    }
+    break;
+  default:
+    if (args[0] === 'api' && args[1].includes('/contents/')) reply(Buffer.from(config.workflow).toString('base64'));
+    else {
+      process.stderr.write(`expected a configured fake command, got ${JSON.stringify(args)}`);
+      process.exitCode = 1;
+    }
+}

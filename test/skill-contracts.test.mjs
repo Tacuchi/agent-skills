@@ -271,6 +271,7 @@ const PERMISSION_SKILLS = [
   ['git', 'git-conventions'],
   ['git', 'resolving-merge-conflicts'],
   ['documentation', 'project-docs'],
+  ['engineering', 'github-workflows'],
 ];
 const GIT_READ = ['git status', 'git diff', 'git log', 'git branch --show-current'];
 const permissionsOf = (domain, slug) => JSON.parse(readFileSync(join(root, 'skills', domain, slug, 'permissions.json'), 'utf8'));
@@ -364,4 +365,33 @@ test('project-docs names its three commands, its fixed rules and every file it s
     assert.doesNotMatch(content, /installation sheet/i, relative(dir, file));
     assert.doesNotMatch(content, /`instance\b/, relative(dir, file));
   }
+});
+
+test('git-conventions tells what a push starts before pushing and checks what ran after', () => {
+  const dir = join(root, 'skills', 'git', 'git-conventions');
+  const skill = readFileSync(join(dir, 'SKILL.md'), 'utf8');
+  for (const piece of ['### What a push starts', '[skip ci]', 'gh run list', 'Never push to find out']) assert.ok(skill.includes(piece), piece);
+  assert.ok(skill.indexOf('### What a push starts') < skill.indexOf('### Commands that mislead'), 'the rule comes before the list of traps');
+  assert.match(readFileSync(join(dir, 'CHANGELOG.md'), 'utf8'), /^# git-conventions changelog\n\n## \[1\.3\.0\]/);
+  assert.ok(prefixes(permissionsOf('git', 'git-conventions'), 'low').includes('gh run list'));
+});
+
+test('github-workflows names its six commands, its fixed rules and every file it ships', () => {
+  const dir = join(root, 'skills', 'engineering', 'github-workflows');
+  const skill = readFileSync(join(dir, 'SKILL.md'), 'utf8');
+  for (const command of ['check', 'generate', 'update', 'status', 'deploy', 'rollback']) assert.ok(skill.includes(`\`${command} <repo>\``), command);
+  assert.ok(skill.includes('Nothing that reaches production runs without the person\'s explicit yes'));
+  assert.ok(skill.includes('reported as unreadable, never as clean'));
+  assert.match(skill, /structured question tool/);
+  assert.ok(skill.split('\n').length < 200, 'SKILL.md stays short');
+  const docs = ['SKILL.md', ...readdirSync(join(dir, 'references')).map((name) => `references/${name}`)];
+  const linked = new Set(docs.flatMap((doc) => [...readFileSync(join(dir, doc), 'utf8').matchAll(/\]\(([^)#]+)\)/g)]
+    .map(([, href]) => relative(dir, resolve(dir, doc, '..', href)))));
+  for (const folder of ['references', 'assets']) {
+    for (const name of readdirSync(join(dir, folder))) assert.ok(linked.has(`${folder}/${name}`), `${folder}/${name} is linked from the skill`);
+  }
+  // The operations script is the only high-risk need, and reading runs is low risk.
+  const manifest = permissionsOf('engineering', 'github-workflows');
+  assert.deepEqual(prefixes(manifest, 'high'), ['node {skill_dir}/scripts/ops.mjs']);
+  for (const read of ['gh run list', 'gh run view']) assert.ok(prefixes(manifest, 'low').includes(read), read);
 });
