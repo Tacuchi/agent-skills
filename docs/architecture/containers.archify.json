@@ -1,0 +1,294 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "agent-skills \u00b7 containers",
+    "locale": "en",
+    "output": "docs/architecture/containers.html",
+    "quality_profile": "showcase",
+    "repository": {
+      "url": "https://github.com/Tacuchi/agent-skills.git",
+      "provider": "github",
+      "link_mode": "web",
+      "revision": "af92ba0e8582da1e21cd9285bd754622eb9567b3"
+    }
+  },
+  "components": [
+    {
+      "id": "index",
+      "type": "database",
+      "label": "Catalog index",
+      "sublabel": "JSON offer metadata",
+      "pos": [
+        40,
+        50
+      ],
+      "size": [
+        180,
+        80
+      ],
+      "sources": [
+        {
+          "path": "catalog/index.json",
+          "line": 1,
+          "end_line": 18
+        }
+      ]
+    },
+    {
+      "id": "checker",
+      "type": "backend",
+      "label": "Catalog command",
+      "sublabel": "Validate or regenerate",
+      "pos": [
+        400,
+        50
+      ],
+      "size": [
+        190,
+        80
+      ],
+      "sources": [
+        {
+          "path": "scripts/catalog.mjs",
+          "line": 154,
+          "end_line": 187
+        }
+      ]
+    },
+    {
+      "id": "readme",
+      "type": "database",
+      "label": "README table",
+      "sublabel": "One generated block",
+      "pos": [
+        780,
+        50
+      ],
+      "size": [
+        190,
+        80
+      ],
+      "sources": [
+        {
+          "path": "scripts/catalog.mjs",
+          "line": 137,
+          "end_line": 151
+        },
+        {
+          "path": "scripts/catalog.mjs",
+          "line": 172,
+          "end_line": 178
+        }
+      ]
+    },
+    {
+      "id": "files",
+      "type": "database",
+      "label": "Skill files and tags",
+      "sublabel": "Instructions and release files",
+      "pos": [
+        400,
+        260
+      ],
+      "size": [
+        190,
+        80
+      ],
+      "sources": [
+        {
+          "path": "scripts/catalog.mjs",
+          "line": 103,
+          "end_line": 130
+        }
+      ]
+    },
+    {
+      "id": "tests",
+      "type": "backend",
+      "label": "Tests and CI",
+      "sublabel": "Node checks on GitHub",
+      "pos": [
+        780,
+        260
+      ],
+      "size": [
+        190,
+        80
+      ],
+      "sources": [
+        {
+          "path": ".github/workflows/catalog.yml",
+          "line": 8,
+          "end_line": 19
+        }
+      ]
+    },
+    {
+      "id": "person",
+      "type": "external",
+      "label": "Person",
+      "sublabel": "Chooses permission option",
+      "pos": [
+        40,
+        500
+      ],
+      "size": [
+        180,
+        80
+      ],
+      "sources": [
+        {
+          "path": "skills/git/git-conventions/SKILL.md",
+          "line": 8,
+          "end_line": 18
+        }
+      ]
+    },
+    {
+      "id": "permissions",
+      "type": "security",
+      "label": "Permission script",
+      "sublabel": "Check; apply only if chosen",
+      "pos": [
+        400,
+        500
+      ],
+      "size": [
+        190,
+        80
+      ],
+      "sources": [
+        {
+          "path": "skills/git/git-conventions/scripts/permissions.mjs",
+          "line": 348,
+          "end_line": 380
+        },
+        {
+          "path": "skills/git/git-conventions/scripts/permissions.mjs",
+          "line": 443,
+          "end_line": 465
+        }
+      ]
+    },
+    {
+      "id": "settings",
+      "type": "database",
+      "label": "Host rules and state",
+      "sublabel": "Project files; no global writes",
+      "pos": [
+        780,
+        500
+      ],
+      "size": [
+        190,
+        80
+      ],
+      "sources": [
+        {
+          "path": "skills/git/git-conventions/scripts/permissions.mjs",
+          "line": 139,
+          "end_line": 167
+        },
+        {
+          "path": "skills/git/git-conventions/scripts/permissions.mjs",
+          "line": 278,
+          "end_line": 288
+        },
+        {
+          "path": "skills/git/git-conventions/scripts/permissions.mjs",
+          "line": 409,
+          "end_line": 439
+        }
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "id": "edge-0",
+      "from": "checker",
+      "to": "index",
+      "label": "Read index"
+    },
+    {
+      "id": "edge-1",
+      "from": "checker",
+      "to": "readme",
+      "label": "Check or replace block"
+    },
+    {
+      "id": "edge-2",
+      "from": "checker",
+      "to": "files",
+      "label": "Inspect local Git tags"
+    },
+    {
+      "id": "edge-3",
+      "from": "tests",
+      "to": "checker",
+      "label": "Run --check"
+    },
+    {
+      "id": "edge-4",
+      "from": "files",
+      "to": "permissions",
+      "label": "Host runs Step 0"
+    },
+    {
+      "id": "edge-5",
+      "from": "person",
+      "to": "permissions",
+      "label": "Approve selected needs",
+      "variant": "security"
+    },
+    {
+      "id": "edge-6",
+      "from": "permissions",
+      "to": "settings",
+      "label": "Read; approved writes",
+      "variant": "security"
+    }
+  ],
+  "boundaries": [
+    {
+      "kind": "region",
+      "label": "Repository checkout / CI workspace",
+      "wraps": [
+        "index",
+        "checker",
+        "readme",
+        "files",
+        "tests"
+      ],
+      "pad": 22
+    },
+    {
+      "kind": "region",
+      "label": "Consuming project \u00b7 skills with a permission manifest",
+      "wraps": [
+        "permissions",
+        "settings"
+      ],
+      "pad": 22
+    }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "Catalog process",
+      "items": [
+        "Node runs the checker on demand; no catalog server stays running.",
+        "Generation changes only the marked README block."
+      ]
+    },
+    {
+      "dot": "rose",
+      "title": "Host control",
+      "items": [
+        "Permission checks report needs without applying them.",
+        "Only a chosen apply command writes project rules or local skip state.",
+        "Antigravity reports needs; Codex requires project trust for writes."
+      ]
+    }
+  ]
+}

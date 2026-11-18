@@ -1,0 +1,151 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "agent-skills \u00b7 context",
+    "locale": "en",
+    "output": "docs/architecture/context.html",
+    "quality_profile": "showcase",
+    "repository": {
+      "url": "https://github.com/Tacuchi/agent-skills.git",
+      "provider": "github",
+      "link_mode": "web",
+      "revision": "af92ba0e8582da1e21cd9285bd754622eb9567b3"
+    }
+  },
+  "components": [
+    {
+      "id": "maintainer",
+      "type": "external",
+      "label": "Maintainer",
+      "sublabel": "Edits individual offers",
+      "pos": [
+        40,
+        70
+      ],
+      "size": [
+        170,
+        80
+      ],
+      "sources": [
+        {
+          "path": "scripts/catalog.mjs",
+          "line": 154,
+          "end_line": 179
+        }
+      ]
+    },
+    {
+      "id": "repository",
+      "type": "backend",
+      "label": "agent-skills",
+      "sublabel": "Independent skill catalog",
+      "pos": [
+        415,
+        40
+      ],
+      "size": [
+        220,
+        140
+      ],
+      "sources": [
+        {
+          "path": "scripts/catalog.mjs",
+          "line": 69,
+          "end_line": 130
+        },
+        {
+          "path": "catalog/index.json",
+          "line": 1,
+          "end_line": 18
+        }
+      ]
+    },
+    {
+      "id": "host",
+      "type": "external",
+      "label": "Agent host",
+      "sublabel": "Person selects path and ref",
+      "pos": [
+        840,
+        70
+      ],
+      "size": [
+        190,
+        80
+      ],
+      "sources": [
+        {
+          "path": "catalog/index.json",
+          "line": 6,
+          "end_line": 18
+        },
+        {
+          "path": "skills/git/git-conventions/SKILL.md",
+          "line": 8,
+          "end_line": 18
+        }
+      ]
+    },
+    {
+      "id": "ci",
+      "type": "cloud",
+      "label": "GitHub Actions",
+      "sublabel": "Push or pull request",
+      "pos": [
+        415,
+        290
+      ],
+      "size": [
+        220,
+        80
+      ],
+      "sources": [
+        {
+          "path": ".github/workflows/catalog.yml",
+          "line": 1,
+          "end_line": 19
+        }
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "id": "edge-0",
+      "from": "maintainer",
+      "to": "repository",
+      "label": "Edit and validate"
+    },
+    {
+      "id": "edge-1",
+      "from": "repository",
+      "to": "host",
+      "label": "Selected skill files"
+    },
+    {
+      "id": "edge-2",
+      "from": "repository",
+      "to": "ci",
+      "label": "Run catalog checks"
+    }
+  ],
+  "boundaries": [],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "Independent offers",
+      "items": [
+        "Each own offer selects one skill path and one version tag.",
+        "The index also supports fixed upstream references."
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "Explicit operation",
+      "items": [
+        "The catalog checker reads local files and Git tags.",
+        "Acquisition and permission choices belong to the person and host."
+      ]
+    }
+  ]
+}
