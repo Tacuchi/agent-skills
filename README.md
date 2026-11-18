@@ -7,7 +7,7 @@ Check the source, the ref and the data/permissions of each offer before deciding
 ## Catalog
 
 <!-- catalog:start -->
-Index revision: **17** (schema 1).
+Index revision: **18** (schema 1).
 
 ### Active offers
 
@@ -26,12 +26,13 @@ Index revision: **17** (schema 1).
 | Security practices | engineering | own | https://github.com/Tacuchi/agent-skills | skills/engineering/security-practices/SKILL.md | skill/security-practices/v1.1.0 | Tacuchi | not verified |
 | Version evolution | engineering | own | https://github.com/Tacuchi/agent-skills | skills/engineering/version-evolution/SKILL.md | skill/version-evolution/v1.0.0 | Tacuchi | not verified |
 | Critical thinking | engineering | own | https://github.com/Tacuchi/agent-skills | skills/engineering/critical-thinking/SKILL.md | skill/critical-thinking/v1.1.0 | Tacuchi | not verified |
-| Git conventions | git | own | https://github.com/Tacuchi/agent-skills | skills/git/git-conventions/SKILL.md | skill/git-conventions/v1.2.0 | Tacuchi | not verified |
+| Git conventions | git | own | https://github.com/Tacuchi/agent-skills | skills/git/git-conventions/SKILL.md | skill/git-conventions/v1.3.0 | Tacuchi | not verified |
 | Resolving merge conflicts | git | own | https://github.com/Tacuchi/agent-skills | skills/git/resolving-merge-conflicts/SKILL.md | skill/resolving-merge-conflicts/v1.2.0 | Tacuchi | not verified |
 | Java Spring standards | backend | own | https://github.com/Tacuchi/agent-skills | skills/backend/java-spring-standards/SKILL.md | skill/java-spring-standards/v1.1.0 | Tacuchi | not verified |
 | Angular standards | frontend | own | https://github.com/Tacuchi/agent-skills | skills/frontend/angular-standards/SKILL.md | skill/angular-standards/v1.1.0 | Tacuchi | not verified |
 | Technical writing | documentation | own | https://github.com/Tacuchi/agent-skills | skills/documentation/technical-writing/SKILL.md | skill/technical-writing/v1.1.0 | Tacuchi | not verified |
 | Project docs | documentation | own | https://github.com/Tacuchi/agent-skills | skills/documentation/project-docs/SKILL.md | skill/project-docs/v1.0.0 | Tacuchi | not verified |
+| GitHub workflows | engineering | own | https://github.com/Tacuchi/agent-skills | skills/engineering/github-workflows/SKILL.md | skill/github-workflows/v1.0.0 | Tacuchi | not verified |
 
 ### Retired offers
 
@@ -66,6 +67,7 @@ Choose **a single** path of the repository `https://github.com/Tacuchi/agent-ski
 - [angular-standards](skills/frontend/angular-standards/SKILL.md): `skills/frontend/angular-standards/SKILL.md`; Angular and TypeScript code. [Release notes](skills/frontend/angular-standards/RELEASE_NOTES.md).
 - [technical-writing](skills/documentation/technical-writing/SKILL.md): `skills/documentation/technical-writing/SKILL.md`; clear technical prose: commits, PRs, docs and notes. [Release notes](skills/documentation/technical-writing/RELEASE_NOTES.md).
 - [project-docs](skills/documentation/project-docs/SKILL.md): `skills/documentation/project-docs/SKILL.md`; documenting a repository in a fixed, publishable format and keeping it current. [Release notes](skills/documentation/project-docs/RELEASE_NOTES.md).
+- [github-workflows](skills/engineering/github-workflows/SKILL.md): `skills/engineering/github-workflows/SKILL.md`; reviewing, writing and standardizing GitHub Actions workflows, and operating deployments with confirmation. [Release notes](skills/engineering/github-workflows/RELEASE_NOTES.md).
 
 These paths share a repository, but each offer is acquired separately and declares its own license and history. The person creates the tags; after each tagged tree is validated, a GitHub Release is prepared **per tag** with its own notes. The local catalog only credits refs that exist in this checkout: checking the remote publication and acquiring from a compatible host are later operational steps.
 

@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "revision": 17,
+  "revision": 18,
   "entries": [
     {
       "id": "ui-authoring",
@@ -204,7 +204,7 @@
       "type": "own",
       "source_url": "https://github.com/Tacuchi/agent-skills",
       "path": "skills/git/git-conventions/SKILL.md",
-      "ref": "skill/git-conventions/v1.2.0",
+      "ref": "skill/git-conventions/v1.3.0",
       "lifecycle_owner": "Tacuchi",
       "status": "active",
       "data_permissions": { "status": "unverified", "summary": "not verified" },
@@ -286,6 +286,21 @@
       "license": "skills/documentation/project-docs/LICENSE",
       "changelog": "skills/documentation/project-docs/CHANGELOG.md",
       "release_notes": "skills/documentation/project-docs/RELEASE_NOTES.md"
+    },
+    {
+      "id": "github-workflows",
+      "name": "GitHub workflows",
+      "domain": "engineering",
+      "type": "own",
+      "source_url": "https://github.com/Tacuchi/agent-skills",
+      "path": "skills/engineering/github-workflows/SKILL.md",
+      "ref": "skill/github-workflows/v1.0.0",
+      "lifecycle_owner": "Tacuchi",
+      "status": "active",
+      "data_permissions": { "status": "unverified", "summary": "not verified" },
+      "license": "skills/engineering/github-workflows/LICENSE",
+      "changelog": "skills/engineering/github-workflows/CHANGELOG.md",
+      "release_notes": "skills/engineering/github-workflows/RELEASE_NOTES.md"
     },
     {
       "id": "herdr-coordination",
