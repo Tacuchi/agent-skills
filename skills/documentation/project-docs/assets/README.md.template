@@ -1,0 +1,51 @@
+# <project>
+
+> <One line that says what it is, under 120 characters.>
+
+<One or two paragraphs: what it is and what sets it apart.>
+
+## Table of Contents
+
+<Only when this file is longer than 100 lines.>
+
+## Install
+
+### Requirements
+
+### Install the package
+
+### <Own setup steps: configure, connect>
+
+### Update
+
+### Uninstall
+
+### Platforms
+
+## Usage
+
+### <What the reader gets>
+
+### CLI
+
+<The daily commands, and how to list them all.>
+
+### <A long topic>
+
+<One paragraph and the link to its guide in docs/.>
+
+## How it works
+
+<One paragraph.>
+
+![Context diagram of <project>](docs/architecture/context.svg)
+
+The full picture is in [ARCHITECTURE.md](ARCHITECTURE.md).
+
+## Contributing
+
+<One line is enough.>
+
+## License
+
+<License name and the link to the LICENSE file.>

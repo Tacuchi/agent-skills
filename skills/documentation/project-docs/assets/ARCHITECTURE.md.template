@@ -1,0 +1,98 @@
+# Architecture of <project>
+
+Reviewed on <YYYY-MM-DD> against version <x.y.z> (commit `<short hash>`).
+
+This document gives the overview: which parts exist, how they talk to each other and which rules never break. It does not describe <what it leaves out>. All values are defaults; nothing here was measured on a particular machine.
+
+## 1. Purpose and quality goals
+
+<One paragraph: what the project is for and who uses it.>
+
+What it is not:
+
+- <A thing a reader could wrongly expect.>
+
+| Goal | Scenario |
+|---|---|
+| <A quality that matters> | <What happens, with the default value that proves it.> |
+
+## 2. Context and scope
+
+![Context diagram of <project>](docs/architecture/context.svg)
+
+[Interactive version](docs/architecture/context.html): download the file and open it in a browser.
+
+| External interface | Direction | When it happens |
+|---|---|---|
+| <Outside system or person> | <Inbound, outbound or local> | <The condition that triggers it.> |
+
+## 3. Building blocks
+
+![Container diagram of <project>](docs/architecture/containers.svg)
+
+[Interactive version](docs/architecture/containers.html): download the file and open it in a browser.
+
+| Block | Responsibility | Code |
+|---|---|---|
+| <Block> | <One sentence.> | `<folder or file>` |
+
+Rules that never break:
+
+- <A statement with no exception. If there is one, name it.>
+
+## 4. Runtime view
+
+<Name of the walkthrough>:
+
+1. <First step.>
+2. <Next step.>
+
+## 5. Deployment view
+
+| What | Default | When it applies | How to change it |
+|---|---|---|---|
+| <Port, path or process> | <Default value> | <Condition> | <Variable, flag or file> |
+
+Requirements: <runtime and version, operating systems>.
+
+## 6. Cross-cutting concepts
+
+Data and privacy:
+
+| Question | Answer |
+|---|---|
+| What leaves the machine, and where does it go? | |
+| What never leaves it? | |
+| When does it happen? | |
+| Where is it stored, and for how long? | |
+| How can you see exactly what was sent? | |
+| How is it turned off? | |
+
+Security: <who can reach what, and how each entry point is protected>.
+
+Persistence: <what is stored, in which format, and how it is migrated>.
+
+## 7. Decisions
+
+| Decision | Record |
+|---|---|
+| <Title> | [0001](docs/decisions/0001-<title-with-dashes>.md) |
+
+Not recorded yet:
+
+- <A decision visible in the code whose reason nobody stated.>
+
+## Appendix: evidence
+
+Line numbers refer to commit `<short hash>`. The text above does not link to the code on purpose.
+
+| Section | Evidence |
+|---|---|
+| 1. Goals | `<path>:<start>-<end>` |
+| 2. Context | `<path>:<start>-<end>` |
+| 3. Blocks | `<path>:<start>-<end>` |
+| 3. Rules | `<path>:<start>-<end>` |
+| 4. Runtime | `<path>:<start>-<end>` |
+| 5. Deployment | `<path>:<start>-<end>` |
+| 6. Privacy | `<path>:<start>-<end>` |
+| 7. Decisions | `<path>:<start>-<end>` |

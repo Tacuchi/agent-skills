@@ -270,6 +270,7 @@ const PERMISSION_SKILLS = [
   ['engineering', 'software-testing'],
   ['git', 'git-conventions'],
   ['git', 'resolving-merge-conflicts'],
+  ['documentation', 'project-docs'],
 ];
 const GIT_READ = ['git status', 'git diff', 'git log', 'git branch --show-current'];
 const permissionsOf = (domain, slug) => JSON.parse(readFileSync(join(root, 'skills', domain, slug, 'permissions.json'), 'utf8'));
@@ -342,4 +343,25 @@ test('each skill declares the needs its steps use, with git read-only and unrest
   const tools = permissionsOf('agents', 'creating-tools');
   assert.deepEqual(prefixes(tools, 'low'), ['node {skill_dir}/scripts/permissions.mjs', 'node {skill_dir}/scripts/scaffold-tool.mjs']);
   assert.deepEqual(prefixes(tools, 'high'), ['node {skill_dir}/scripts/record-run.mjs']);
+});
+
+test('project-docs names its three commands, its fixed rules and every file it ships', () => {
+  const dir = join(root, 'skills', 'documentation', 'project-docs');
+  const skill = readFileSync(join(dir, 'SKILL.md'), 'utf8');
+  for (const command of ['`generate <repo>`', '`update <repo>`', '`check <repo>`']) assert.ok(skill.includes(command), command);
+  assert.ok(skill.includes('The documentation set is never its own evidence'));
+  assert.ok(skill.includes('"Not recorded yet"'));
+  assert.match(skill, /structured question tool/);
+  assert.ok(skill.split('\n').length < 200, 'SKILL.md stays short');
+  const docs = ['SKILL.md', ...readdirSync(join(dir, 'references')).map((name) => `references/${name}`)];
+  const linked = new Set(docs.flatMap((doc) => [...readFileSync(join(dir, doc), 'utf8').matchAll(/\]\(([^)#]+)\)/g)]
+    .map(([, href]) => relative(dir, resolve(dir, doc, '..', href)))));
+  for (const folder of ['references', 'assets']) {
+    for (const name of readdirSync(join(dir, folder))) assert.ok(linked.has(`${folder}/${name}`), `${folder}/${name} is linked from the skill`);
+  }
+  for (const file of filesOf(dir)) {
+    const content = readFileSync(file, 'utf8');
+    assert.doesNotMatch(content, /installation sheet/i, relative(dir, file));
+    assert.doesNotMatch(content, /`instance\b/, relative(dir, file));
+  }
 });

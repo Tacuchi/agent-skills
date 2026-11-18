@@ -1,0 +1,44 @@
+{
+  "skill": "project-docs",
+  "needs": [
+    {
+      "id": "permission-check",
+      "type": "command",
+      "tier": "low",
+      "reason": "Run this permission check when the skill loads, without a prompt.",
+      "prefixes": [
+        "node {skill_dir}/scripts/permissions.mjs"
+      ]
+    },
+    {
+      "id": "docs-check",
+      "type": "command",
+      "tier": "low",
+      "reason": "Read a repository and report stale evidence, broken links and private data in its documentation.",
+      "prefixes": [
+        "node {skill_dir}/scripts/check.mjs"
+      ]
+    },
+    {
+      "id": "svg-export",
+      "type": "command",
+      "tier": "low",
+      "reason": "Export the SVG of a diagram page with a headless Chrome and a temporary profile.",
+      "prefixes": [
+        "node {skill_dir}/scripts/export-svg.mjs"
+      ]
+    },
+    {
+      "id": "git-read",
+      "type": "command",
+      "tier": "low",
+      "reason": "Read the state, changes, history and current branch of the repository.",
+      "prefixes": [
+        "git status",
+        "git diff",
+        "git log",
+        "git branch --show-current"
+      ]
+    }
+  ]
+}

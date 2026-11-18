@@ -1,0 +1,25 @@
+---
+status: accepted
+date: <YYYY-MM-DD>
+---
+
+# <Title: the decision, as a short statement>
+
+<Where the reason comes from: a comment in a named file, a commit, or the person.>
+
+## Context and Problem Statement
+
+<Two or three sentences: what had to be decided and why it mattered.>
+
+## Considered Options
+
+- <Option>
+- <Option>
+
+## Decision Outcome
+
+Chosen option: <option>. <The reason, as it was stated.>
+
+### Consequences
+
+- <What follows from it.>

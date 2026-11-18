@@ -1,0 +1,12 @@
+# Private terms for the project-docs check.
+#
+# Copy this file to ~/.config/agent-skills/project-docs/private-terms.txt
+# and replace the examples. Keep it out of every repository: the list itself
+# is private. The check reads it from there, or from --private-terms <file>.
+#
+# One term per line. Case does not matter. A line that starts with # is a comment.
+# A finding names the file, the line and the line number of the term here,
+# never the term.
+
+relay.example-home.net
+kitchen-mac-mini

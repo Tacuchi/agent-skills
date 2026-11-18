@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="fixture viewer 1.0.0">
+  <title>Fixture viewer</title>
+</head>
+<body>
+  <button id="btn-export" type="button">Export</button>
+  <div id="export-menu" hidden><button data-format="svg" type="button">SVG</button></div>
+  <script>
+    document.getElementById('btn-export').addEventListener('click', () => { document.getElementById('export-menu').hidden = false; });
+    document.querySelector('#export-menu [data-format="svg"]').addEventListener('click', () => {
+      const svg = '<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10"><rect width="10" height="10"/></svg>';
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(new Blob([svg], { type: 'image/svg+xml' }));
+      a.download = 'fixture.svg';
+      a.click();
+    });
+  </script>
+</body>
+</html>
