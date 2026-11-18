@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "revision": 21,
+  "revision": 22,
   "entries": [
     {
       "id": "ui-authoring",
@@ -279,7 +279,7 @@
       "type": "own",
       "source_url": "https://github.com/Tacuchi/agent-skills",
       "path": "skills/documentation/project-docs/SKILL.md",
-      "ref": "skill/project-docs/v1.1.0",
+      "ref": "skill/project-docs/v1.1.1",
       "lifecycle_owner": "Tacuchi",
       "status": "active",
       "data_permissions": { "status": "unverified", "summary": "not verified" },
