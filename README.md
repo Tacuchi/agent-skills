@@ -7,7 +7,7 @@ Check the source, the ref and the data/permissions of each offer before deciding
 ## Catalog
 
 <!-- catalog:start -->
-Index revision: **16** (schema 1).
+Index revision: **17** (schema 1).
 
 ### Active offers
 
@@ -31,6 +31,7 @@ Index revision: **16** (schema 1).
 | Java Spring standards | backend | own | https://github.com/Tacuchi/agent-skills | skills/backend/java-spring-standards/SKILL.md | skill/java-spring-standards/v1.1.0 | Tacuchi | not verified |
 | Angular standards | frontend | own | https://github.com/Tacuchi/agent-skills | skills/frontend/angular-standards/SKILL.md | skill/angular-standards/v1.1.0 | Tacuchi | not verified |
 | Technical writing | documentation | own | https://github.com/Tacuchi/agent-skills | skills/documentation/technical-writing/SKILL.md | skill/technical-writing/v1.1.0 | Tacuchi | not verified |
+| Project docs | documentation | own | https://github.com/Tacuchi/agent-skills | skills/documentation/project-docs/SKILL.md | skill/project-docs/v1.0.0 | Tacuchi | not verified |
 
 ### Retired offers
 
@@ -64,6 +65,7 @@ Choose **a single** path of the repository `https://github.com/Tacuchi/agent-ski
 - [java-spring-standards](skills/backend/java-spring-standards/SKILL.md): `skills/backend/java-spring-standards/SKILL.md`; Java and Spring Boot code. [Release notes](skills/backend/java-spring-standards/RELEASE_NOTES.md).
 - [angular-standards](skills/frontend/angular-standards/SKILL.md): `skills/frontend/angular-standards/SKILL.md`; Angular and TypeScript code. [Release notes](skills/frontend/angular-standards/RELEASE_NOTES.md).
 - [technical-writing](skills/documentation/technical-writing/SKILL.md): `skills/documentation/technical-writing/SKILL.md`; clear technical prose: commits, PRs, docs and notes. [Release notes](skills/documentation/technical-writing/RELEASE_NOTES.md).
+- [project-docs](skills/documentation/project-docs/SKILL.md): `skills/documentation/project-docs/SKILL.md`; documenting a repository in a fixed, publishable format and keeping it current. [Release notes](skills/documentation/project-docs/RELEASE_NOTES.md).
 
 These paths share a repository, but each offer is acquired separately and declares its own license and history. The person creates the tags; after each tagged tree is validated, a GitHub Release is prepared **per tag** with its own notes. The local catalog only credits refs that exist in this checkout: checking the remote publication and acquiring from a compatible host are later operational steps.
 
