@@ -1,6 +1,6 @@
 # Architecture of agent-skills
 
-Reviewed on 2026-11-18 (commit `af92ba0`).
+Reviewed on 2026-11-18 (commit `c1f75e2`).
 
 This document gives the overview: which parts exist, how they talk to each other and which rules never break. It covers the catalog, repository scripts, permission step, per-skill releases and CI. It does not describe each skill's subject or every host's acquisition mechanism. All values are defaults; nothing here was measured on a particular machine. There is no repository-wide version: each own skill has its own version tag.
 
@@ -170,13 +170,13 @@ Not recorded yet:
 
 ## Appendix: evidence
 
-Line numbers refer to commit `af92ba0`. Every row cites code or configuration; the text above does not link to the code on purpose.
+Line numbers refer to commit `c1f75e2`. Every row cites code or configuration; the text above does not link to the code on purpose.
 
 | Section | Evidence |
 |---|---|
-| 1. Goals | `catalog/index.json:1-18`, `scripts/catalog.mjs:69-114`, `scripts/catalog.mjs:125-130`, `scripts/catalog.mjs:172-178` |
+| 1. Goals | `catalog/index.json:2`, `catalog/index.json:6-18`, `scripts/catalog.mjs:69-114`, `scripts/catalog.mjs:125-130`, `scripts/catalog.mjs:172-178` |
 | 2. Context | `scripts/catalog.mjs:28-33`, `scripts/catalog.mjs:96-100`, `scripts/catalog.mjs:154-178`, `.github/workflows/catalog.yml:3-19`, `skills/git/git-conventions/SKILL.md:8-18` |
-| 3. Blocks | `catalog/index.json:1-18`, `scripts/catalog.mjs:103-130`, `scripts/catalog.mjs:137-151`, `skills/git/git-conventions/permissions.json:1-34`, `.github/workflows/catalog.yml:8-19` |
+| 3. Blocks | `catalog/index.json:2`, `catalog/index.json:6-18`, `scripts/catalog.mjs:103-130`, `scripts/catalog.mjs:137-151`, `skills/git/git-conventions/permissions.json:1-34`, `.github/workflows/catalog.yml:8-19` |
 | 3. Rules | `scripts/catalog.mjs:36-40`, `scripts/catalog.mjs:48-56`, `scripts/catalog.mjs:103-130`, `scripts/catalog.mjs:162-178`, `skills/git/git-conventions/scripts/permissions.mjs:443-465` |
 | 4. Runtime | `scripts/catalog.mjs:154-187`, `skills/git/git-conventions/scripts/permissions.mjs:317-339`, `skills/git/git-conventions/scripts/permissions.mjs:348-396`, `skills/git/git-conventions/scripts/permissions.mjs:443-465` |
 | 5. Deployment | `.github/workflows/catalog.yml:3-19`, `scripts/catalog.mjs:103-130`, `scripts/catalog.mjs:172-187`, `skills/git/git-conventions/scripts/permissions.mjs:139-167`, `skills/git/git-conventions/scripts/permissions.mjs:278-303` |

@@ -10,7 +10,7 @@
       "url": "https://github.com/Tacuchi/agent-skills.git",
       "provider": "github",
       "link_mode": "web",
-      "revision": "af92ba0e8582da1e21cd9285bd754622eb9567b3"
+      "revision": "c1f75e2f83fe121539e59ff85df19629999251b9"
     }
   },
   "components": [
@@ -30,7 +30,12 @@
       "sources": [
         {
           "path": "catalog/index.json",
-          "line": 1,
+          "line": 2,
+          "end_line": 2
+        },
+        {
+          "path": "catalog/index.json",
+          "line": 6,
           "end_line": 18
         }
       ]
