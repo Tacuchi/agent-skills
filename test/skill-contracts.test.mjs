@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
-import { copyFileSync, cpSync, existsSync, mkdtempSync, mkdirSync, readFileSync, readdirSync, realpathSync, rmSync } from 'node:fs';
+import { copyFileSync, cpSync, existsSync, mkdtempSync, mkdirSync, readFileSync, readdirSync, realpathSync, rmSync, symlinkSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { isAbsolute, join, relative, resolve } from 'node:path';
 import test from 'node:test';
@@ -394,4 +394,20 @@ test('github-workflows names its six commands, its fixed rules and every file it
   const manifest = permissionsOf('engineering', 'github-workflows');
   assert.deepEqual(prefixes(manifest, 'high'), ['node {skill_dir}/scripts/ops.mjs']);
   for (const read of ['gh run list', 'gh run view']) assert.ok(prefixes(manifest, 'low').includes(read), read);
+});
+
+test('every script of the two documentation and workflow skills runs when reached through a symbolic link, as an installed skill is', (t) => {
+  const base = mkdtempSync(join(tmpdir(), 'linked-skills-'));
+  t.after(() => rmSync(base, { recursive: true, force: true }));
+  for (const [domain, slug, scripts] of [
+    ['documentation', 'project-docs', ['check.mjs', 'export-svg.mjs']],
+    ['engineering', 'github-workflows', ['check.mjs', 'ops.mjs']],
+  ]) {
+    const link = join(base, slug);
+    symlinkSync(join(root, 'skills', domain, slug), link, 'dir');
+    for (const name of scripts) {
+      const result = spawnSync(process.execPath, [join(link, 'scripts', name)], { cwd: base, encoding: 'utf8', timeout: 20000 });
+      assert.ok((result.stdout + result.stderr).trim().length > 0, `${slug}/${name}: says something instead of exiting in silence`);
+    }
+  }
 });

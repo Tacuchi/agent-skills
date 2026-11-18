@@ -36,3 +36,4 @@ Read this to understand a finding of `check` or to review a workflow by hand.
 - Whether a probe reaches the service. A request to a public address that sits behind a login or an access proxy is answered by that proxy: it proves the proxy, and passes while the service is down.
 - Whether a secret is really a secret. It matches common shapes.
 - Whether the tests are enough. It only sees that they run first.
+- Whether a `docs-trigger` warning is a real gap. When the tests of that workflow check the documentation itself, such as a README generated from data, the push of documentation must run them and the warning stays.

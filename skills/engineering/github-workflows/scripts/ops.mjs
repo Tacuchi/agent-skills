@@ -1,7 +1,7 @@
 #!/usr/bin/env node
-import { statSync } from 'node:fs';
+import { realpathSync, statSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { pathToFileURL } from 'node:url';
+import { fileURLToPath } from 'node:url';
 import { setTimeout as delay } from 'node:timers/promises';
 import { gh, lastGoodBefore, confirmToken } from './lib/gh.mjs';
 import { parseYaml } from './lib/yaml.mjs';
@@ -240,9 +240,19 @@ export async function main(argv = process.argv.slice(2)) {
   return result.conclusion === 'success' ? 0 : 1;
 }
 
-if (process.argv[1] && pathToFileURL(resolve(process.argv[1])).href === import.meta.url) {
+// An installed skill is reached through a symbolic link, so compare real paths: the module URL is
+// already the real one, and the path the script was called with may not be.
+if (process.argv[1] && isThisScript(process.argv[1])) {
   main().then((code) => { process.exitCode = code; }).catch((error) => {
     process.stderr.write(`ops: ${error instanceof ExitError ? error.message : `expected a successful operation, got ${error.message}`}\n`);
     process.exitCode = error instanceof ExitError ? error.code : 2;
   });
+}
+
+function isThisScript(invoked) {
+  try {
+    return realpathSync(resolve(invoked)) === realpathSync(fileURLToPath(import.meta.url));
+  } catch {
+    return false;
+  }
 }
