@@ -58,6 +58,7 @@ The document is an overview. A reader finishes it in one sitting and opens the c
 
 - Detail that does not fit moves to a guide, `docs/<topic>.md`, with a link from the sentence it left. It is never deleted.
 - A fixed limit, a timeout or an error code belongs in a guide unless a rule of section 3 depends on it.
+- A guide holds only the detail that left the document. It repeats nothing the document still says and carries no line citation: evidence lives in the appendix, the only place `check` verifies. Dropping a citation loses no fact. `check` warns with `guide-citation`.
 - `check` warns with `over-budget`, `long-table` and `no-summary`. A warning does not fail the check; it names what to move.
 
 ### Header

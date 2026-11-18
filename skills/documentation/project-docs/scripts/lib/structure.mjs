@@ -71,5 +71,10 @@ export function checkStructure(repo) {
     const front = content?.match(/^---\r?\n([\s\S]*?)\r?\n---(?:\r?\n|$)/)?.[1];
     if (!front || !/^status:\s*\S.+$/m.test(front) || !/^date:\s*['"]?\d{4}-\d{2}-\d{2}['"]?\s*$/m.test(front)) findings.push(finding('bad-decision-front-matter', file, 'Expected YAML front matter with nonempty status and YYYY-MM-DD date; received missing or malformed fields.'));
   }
+  // Evidence is verified only in the appendix: a citation copied into a guide would go stale unseen.
+  for (const file of listFiles(repo, 'docs').filter((path) => path.endsWith('.md') && !/^docs\/(decisions|architecture)\//.test(path))) {
+    const count = [...outsideFences(readWorking(repo, file) ?? '').matchAll(/`[^`\s:]*\.[A-Za-z][A-Za-z0-9]*:\d+(?:-\d+)?`/g)].length;
+    if (count) findings.push(finding('guide-citation', file, `Expected no line citations in a guide; received ${count}.`, 'warning'));
+  }
   return findings;
 }

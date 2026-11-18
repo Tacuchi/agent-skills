@@ -37,6 +37,7 @@ Read also the release notes or the changelog when the repository has them, and c
 | `broken-link`, `broken-anchor` | A relative link leads nowhere | Fix the link or the heading |
 | `local-path`, `secret-pattern`, `private-term` | Private data in the published set | Remove it and convert it with the table of [format.md](format.md). For a secret, tell the person at once: it may need to be revoked |
 | `over-budget`, `long-table` | The document or a table grew past the budget | Move the detail to a guide, `docs/<topic>.md`, link it from the sentence it left, and keep every fact |
+| `guide-citation` | A guide cites lines of code | Remove the citation from the guide; keep evidence in the appendix only |
 | `no-summary` | The summary list before section 1 is missing | Write it: up to five lines |
 | any other `structure` code | A piece or a required shape is missing | Restore the shape of [format.md](format.md) |
 

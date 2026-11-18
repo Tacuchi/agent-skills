@@ -1,5 +1,9 @@
 # project-docs changelog
 
+## [1.1.1] — 2026-11-18
+
+- A guide holds only the detail that left `ARCHITECTURE.md`: it repeats nothing the document still says and carries no line citation. `check` warns with `guide-citation`. In the first runs with the budget, two agents copied the whole old document and its citations into a guide, so the published text grew instead of shrinking.
+
 ## [1.1.0] — 2026-11-18
 
 - Budget: `ARCHITECTURE.md` is now an overview of 1,200 to 1,500 words before the appendix, with a summary list of up to five lines, tables of up to seven rows and the five decisions that weigh most. Detail that does not fit moves to a guide and is never deleted. `check` warns with `over-budget`, `long-table` and `no-summary`. A trial on a real repository went from 2,713 to 1,437 words with no fact lost.

@@ -490,3 +490,17 @@ test('budget: a long document, a long table and a missing summary warn and still
   assert.equal(over.level, 'warning');
   assert.match(over.message, /Expected at most 1500 words before the appendix; received 15\d\d\./);
 });
+
+test('guides: a line citation inside a guide warns, because only the appendix is verified', (t) => {
+  const repo = completeRepo(t);
+  repo.write('docs/setup.md', '# Setup\n\nThe port is `127.0.0.1:8080` and the file is `src/a.js`.\n');
+  assert.deepEqual(runCheck(repo.dir).json.findings, []);
+  repo.write('docs/setup.md', '# Setup\n\nSee `src/a.js:1-3` and `src/a.js:5`.\n');
+  const result = runCheck(repo.dir);
+  assert.equal(result.status, 0);
+  const found = result.json.findings.filter((f) => f.code === 'guide-citation');
+  assert.equal(found.length, 1);
+  assert.equal(found[0].level, 'warning');
+  assert.equal(found[0].file, 'docs/setup.md');
+  assert.match(found[0].message, /Expected no line citations in a guide; received 2\./);
+});
