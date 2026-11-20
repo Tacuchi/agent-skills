@@ -1,6 +1,6 @@
 ---
 name: security-practices
-description: "Use whenever security or sensitive data is in play — handling secrets, credentials, API keys or tokens; auditing a repo for committed secrets; writing or reviewing SQL; configuring CORS or auth; or touching PII (national ID, email, phone). Mandates: never commit or log secrets (alert the caller if found, never silence — externalize via ${ENV} / secret manager); always parametrize SQL; validate and sanitize external input; handle PII aggregated/anonymized, never raw in artifacts; database access through an agent is READ-ONLY (mutations ship as versioned scripts). Actively flags recurring anti-patterns: plaintext secrets in application*.yml / .npmrc / service-account key files and permissive CORS (a wildcard `allowedOrigins` + allowCredentials). Never triggers external state mutations (publish/deploy/push/PR) on its own. The `sql-authoring` skill, if available, covers SQL authoring; the `coding-standards` skill, if available, covers error handling."
+description: "Protects secrets and sensitive data. Use when making a repository public, handling secrets, credentials, API keys or tokens, auditing a repo for committed secrets; writing or reviewing SQL; configuring CORS or auth; or touching PII (national ID, email, phone). Mandates: never commit or log secrets (alert the caller if found, never silence — externalize via ${ENV} / secret manager); always parametrize SQL; validate and sanitize external input; handle PII aggregated/anonymized, never raw in artifacts; database access through an agent is READ-ONLY (mutations ship as versioned scripts). Actively flags recurring anti-patterns: plaintext secrets in application*.yml / .npmrc / service-account key files and permissive CORS (a wildcard `allowedOrigins` + allowCredentials). Never triggers external state mutations (publish/deploy/push/PR) on its own. The `sql-authoring` skill, if available, covers SQL authoring; the `coding-standards` skill, if available, covers error handling."
 ---
 
 # security-practices — Security practices and sensitive-data handling
@@ -109,6 +109,16 @@ feign:
 - **Block** (high precision, near-zero false positives): PEM/OpenSSH/PGP private keys, AWS `AKIA…`, Google `AIza…`, Slack/GitHub/GitLab tokens, npm `_authToken` with a real value, GCP service-account JSON. Never write them to disk; flag them where found.
 - **Ask the person** (prone to false positives → confirm, do not block): JWT, and generic `key = value` secrets (a quoted literal in any file, or bare in config files). Placeholders (`${ENV}`, `<...>`, `changeme`, `example`) do **not** count.
 - These patterns do not distinguish dev from prod: a UAT cred hardcoded in dev (allowed above) may match an **ask** pattern (never a **block** one) — expected; the person confirms. The dev/prod judgment stays with the rules above.
+
+### Before making a repository public
+
+1. Review a full clone with the branches and tags intended for publication. Set `scanner` to the installed [scan-sensitive.py](scripts/scan-sensitive.py) path. Run `git log --all --full-history -m -p --no-color | "$scanner"` to include removed lines and merge diffs. Inspect binary assets and purportedly anonymized exports for profile links, identifiers and emails.
+2. Review retained GitHub Actions logs across runs and attempts. Pipe each log directly to the scanner, for example `gh run view "$run" --log | "$scanner"`. Record which logs were available and whether each input command succeeded. To group concatenated logs, precede each with a `FILE:<path>` line.
+3. Triage the tab-separated type, file and count rows. Use `--show-context` locally to mask detected spans before displaying excerpts. Keep excerpts local because adjacent text can contain unrecognized data. Eight-digit numbers can be byte sizes or video IDs, phone-like numbers can be SVG coordinates, and `/home/runner` is a common CI path.
+4. Review historical author and committer addresses with the owner. Set the repository-local `user.email` to the owner's GitHub noreply address for future commits. Existing commits retain their recorded addresses.
+5. Review READMEs, comments and checks for promises that the repository is private or links must stay internal. Distinguish those promises from wording about app-private storage.
+6. Give the owner the findings, proposed fixes and any gaps in coverage. The owner decides whether to accept the remaining exposure and change visibility. Never change visibility on the agent's own initiative.
+7. If the owner also requests GitHub Pages, review the exact publishing source and generated site for public exposure before enabling Pages. Verify the intended page after deployment.
 
 ## Output
 

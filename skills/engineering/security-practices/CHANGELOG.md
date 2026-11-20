@@ -1,5 +1,10 @@
 # security-practices changelog
 
+## [1.2.0] — 2026-11-20
+
+- Added a review before making a repository public covering Git history, Actions logs, commit emails, privacy assumptions and the owner's visibility and Pages decisions.
+- Added a local scanner for patches, logs and marked files. It reports counts by type and file and can show masked excerpts for triage.
+
 ## [1.1.0] — 2026-11-14
 
 - New section "Logs — mask before you truncate": URLs without query string, no serialized entities, masking before truncating, and a probe written before the pattern.
