@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "revision": 22,
+  "revision": 23,
   "entries": [
     {
       "id": "ui-authoring",
@@ -159,7 +159,7 @@
       "type": "own",
       "source_url": "https://github.com/Tacuchi/agent-skills",
       "path": "skills/engineering/security-practices/SKILL.md",
-      "ref": "skill/security-practices/v1.1.0",
+      "ref": "skill/security-practices/v1.2.0",
       "lifecycle_owner": "Tacuchi",
       "status": "active",
       "data_permissions": { "status": "unverified", "summary": "not verified" },
@@ -317,6 +317,36 @@
       "license": "skills/orchestration/herdr-coordination/LICENSE",
       "changelog": "skills/orchestration/herdr-coordination/CHANGELOG.md",
       "release_notes": "skills/orchestration/herdr-coordination/RELEASE_NOTES.md"
+    },
+    {
+      "id": "exploring-designs-with-agents",
+      "name": "Exploring designs with agents",
+      "domain": "design",
+      "type": "own",
+      "source_url": "https://github.com/Tacuchi/agent-skills",
+      "path": "skills/design/exploring-designs-with-agents/SKILL.md",
+      "ref": "skill/exploring-designs-with-agents/v1.0.0",
+      "lifecycle_owner": "Tacuchi",
+      "status": "active",
+      "data_permissions": { "status": "unverified", "summary": "not verified" },
+      "license": "skills/design/exploring-designs-with-agents/LICENSE",
+      "changelog": "skills/design/exploring-designs-with-agents/CHANGELOG.md",
+      "release_notes": "skills/design/exploring-designs-with-agents/RELEASE_NOTES.md"
+    },
+    {
+      "id": "releasing-android-apps",
+      "name": "Releasing Android apps",
+      "domain": "mobile",
+      "type": "own",
+      "source_url": "https://github.com/Tacuchi/agent-skills",
+      "path": "skills/mobile/releasing-android-apps/SKILL.md",
+      "ref": "skill/releasing-android-apps/v1.0.0",
+      "lifecycle_owner": "Tacuchi",
+      "status": "active",
+      "data_permissions": { "status": "unverified", "summary": "not verified" },
+      "license": "skills/mobile/releasing-android-apps/LICENSE",
+      "changelog": "skills/mobile/releasing-android-apps/CHANGELOG.md",
+      "release_notes": "skills/mobile/releasing-android-apps/RELEASE_NOTES.md"
     }
   ]
 }

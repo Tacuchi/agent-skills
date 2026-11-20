@@ -73,7 +73,7 @@ The catalog validation workflow runs on Linux with Node.js 22.
 ### Catalog
 
 <!-- catalog:start -->
-Index revision: **22** (schema 1).
+Index revision: **23** (schema 1).
 
 ### Active offers
 
@@ -89,7 +89,7 @@ Index revision: **22** (schema 1).
 | Coding standards | engineering | own | https://github.com/Tacuchi/agent-skills | skills/engineering/coding-standards/SKILL.md | skill/coding-standards/v1.1.0 | Tacuchi | not verified |
 | Reviewing code | engineering | own | https://github.com/Tacuchi/agent-skills | skills/engineering/reviewing-code/SKILL.md | skill/reviewing-code/v2.0.0 | Tacuchi | not verified |
 | Software testing | engineering | own | https://github.com/Tacuchi/agent-skills | skills/engineering/software-testing/SKILL.md | skill/software-testing/v1.2.1 | Tacuchi | not verified |
-| Security practices | engineering | own | https://github.com/Tacuchi/agent-skills | skills/engineering/security-practices/SKILL.md | skill/security-practices/v1.1.0 | Tacuchi | not verified |
+| Security practices | engineering | own | https://github.com/Tacuchi/agent-skills | skills/engineering/security-practices/SKILL.md | skill/security-practices/v1.2.0 | Tacuchi | not verified |
 | Version evolution | engineering | own | https://github.com/Tacuchi/agent-skills | skills/engineering/version-evolution/SKILL.md | skill/version-evolution/v1.0.0 | Tacuchi | not verified |
 | Critical thinking | engineering | own | https://github.com/Tacuchi/agent-skills | skills/engineering/critical-thinking/SKILL.md | skill/critical-thinking/v1.1.0 | Tacuchi | not verified |
 | Git conventions | git | own | https://github.com/Tacuchi/agent-skills | skills/git/git-conventions/SKILL.md | skill/git-conventions/v1.3.1 | Tacuchi | not verified |
@@ -99,6 +99,8 @@ Index revision: **22** (schema 1).
 | Technical writing | documentation | own | https://github.com/Tacuchi/agent-skills | skills/documentation/technical-writing/SKILL.md | skill/technical-writing/v1.1.0 | Tacuchi | not verified |
 | Project docs | documentation | own | https://github.com/Tacuchi/agent-skills | skills/documentation/project-docs/SKILL.md | skill/project-docs/v1.1.1 | Tacuchi | not verified |
 | GitHub workflows | engineering | own | https://github.com/Tacuchi/agent-skills | skills/engineering/github-workflows/SKILL.md | skill/github-workflows/v1.0.2 | Tacuchi | not verified |
+| Exploring designs with agents | design | own | https://github.com/Tacuchi/agent-skills | skills/design/exploring-designs-with-agents/SKILL.md | skill/exploring-designs-with-agents/v1.0.0 | Tacuchi | not verified |
+| Releasing Android apps | mobile | own | https://github.com/Tacuchi/agent-skills | skills/mobile/releasing-android-apps/SKILL.md | skill/releasing-android-apps/v1.0.0 | Tacuchi | not verified |
 
 ### Retired offers
 
