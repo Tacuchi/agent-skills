@@ -1,0 +1,23 @@
+{
+  "title": "Brand Mark Exploration",
+  "default_round": "1",
+  "rounds": {
+    "1": {
+      "prefix": "",
+      "label": "Initial concepts",
+      "agents": [
+        "claude",
+        "codex",
+        "gemini"
+      ]
+    },
+    "2": {
+      "prefix": "round-2/",
+      "label": "Converging round",
+      "agents": [
+        "claude",
+        "codex"
+      ]
+    }
+  }
+}

@@ -1,0 +1,391 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Design Exploration Comparator</title>
+<style>
+:root {
+  --page: #121211;
+  --card: #1c1c1a;
+  --txt: #e6e6e2;
+  --mut: #a3a39b;
+  --line: #2b2b28;
+  --accent-ui: #6ee7b7;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--page);
+  color: var(--txt);
+  font: 15px/1.5 system-ui, -apple-system, sans-serif;
+  padding: 16px;
+}
+header {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 12px;
+  align-items: center;
+  margin-bottom: 14px;
+}
+h1 { font-size: 18px; margin: 0 8px 0 0; }
+nav.rounds { display: flex; flex-wrap: wrap; gap: 6px; }
+button, a.round-btn {
+  font: inherit;
+  font-size: 13px;
+  color: var(--txt);
+  background: transparent;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 4px 12px;
+  cursor: pointer;
+  text-decoration: none;
+}
+button[aria-pressed="true"], a.round-btn[aria-current="page"] {
+  background: var(--accent-ui);
+  color: #111111;
+  border-color: var(--accent-ui);
+  font-weight: 600;
+}
+.status { color: var(--mut); font-size: 13px; }
+.selection-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+.selection-bar p { color: var(--mut); font-size: 13px; margin: 0; }
+textarea {
+  width: 100%;
+  min-height: 64px;
+  background: var(--card);
+  color: var(--txt);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  font: inherit;
+  font-size: 13px;
+  padding: 8px;
+  margin-bottom: 16px;
+}
+.card {
+  background: var(--card);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+.meta { display: flex; gap: 8px; align-items: baseline; flex-wrap: wrap; }
+.meta h2 { font-size: 16px; margin: 0; }
+.tag {
+  font-size: 12px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 1px 8px;
+  color: var(--mut);
+}
+.tag.rec {
+  background: var(--accent-ui);
+  color: #111111;
+  border-color: var(--accent-ui);
+  font-weight: 700;
+}
+.concept { color: var(--mut); font-size: 14px; margin: 6px 0 12px; }
+.row { display: flex; flex-wrap: wrap; gap: 16px; align-items: flex-end; }
+.theme {
+  padding: 12px;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
+}
+.theme small { font-size: 11px; opacity: 0.72; }
+.dark {
+  background: #111111;
+  color: #e6e6e2;
+  --bg: #111111;
+  --accent: #6ee7b7;
+  --ink-inverse: #111111;
+}
+.light {
+  background: #f3f3ef;
+  color: #111111;
+  --bg: #f3f3ef;
+  --accent: #0f766e;
+  --ink-inverse: #f3f3ef;
+}
+.ink-black {
+  background: #ffffff;
+  color: #000000;
+  --bg: #ffffff;
+  --accent: #000000;
+  --ink-inverse: #ffffff;
+}
+.ink-white {
+  background: #000000;
+  color: #ffffff;
+  --bg: #000000;
+  --accent: #ffffff;
+  --ink-inverse: #000000;
+}
+.sizes { display: flex; gap: 10px; align-items: flex-end; }
+.ico svg { display: block; width: 100%; height: 100%; }
+.layered { position: relative; width: 100%; height: 100%; }
+.layered > div { position: absolute; inset: 0; }
+.mask {
+  background: #111111;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  place-content: center;
+}
+.mask.circle { border-radius: 50%; }
+.mask.squircle { border-radius: 30%; }
+.mask .ico { width: 150%; height: 150%; flex: none; }
+.logo { height: 56px; }
+.logo svg { height: 100%; width: auto; display: block; }
+.themed-mono {
+  background: #23362f;
+  color: #b7f2dc;
+  border-radius: 50%;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  place-content: center;
+}
+.tab-strip {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.browser-tab {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border-radius: 8px 8px 0 0;
+  min-width: 150px;
+  font-size: 12px;
+  border-bottom: 1px solid rgba(128, 128, 128, 0.25);
+}
+.star {
+  font-size: 20px;
+  background: none;
+  border: none;
+  color: var(--mut);
+  padding: 0 4px;
+}
+.star[aria-pressed="true"] { color: var(--accent-ui); background: none; }
+.missing { font-size: 11px; opacity: 0.6; font-style: italic; }
+@media (max-width: 600px) { .row { gap: 10px; } }
+</style>
+</head>
+<body>
+<header>
+  <h1 id="heading">Design Exploration</h1>
+  <nav id="rounds-nav" class="rounds" aria-label="Rounds"></nav>
+  <span id="status" class="status">Loading…</span>
+</header>
+<div class="selection-bar">
+  <p>Star (★) your favorites, then copy the selection below back into the conversation:</p>
+  <button id="copy-btn" type="button">Copy selection</button>
+</div>
+<textarea id="selection" readonly aria-label="Selected variants"></textarea>
+<main id="list"></main>
+<script>
+const params = new URLSearchParams(location.search);
+const selected = new Set();
+let activeRoundId = "";
+
+function escapeHtml(value) {
+  return String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
+async function loadSvg(path) {
+  try {
+    const res = await fetch(path, { cache: "no-store" });
+    return res.ok ? await res.text() : `<em class="missing">missing ${escapeHtml(path)}</em>`;
+  } catch {
+    return `<em class="missing">missing ${escapeHtml(path)}</em>`;
+  }
+}
+
+function iconBox(html, px, extraClass = "") {
+  return `<div class="ico ${extraClass}" style="width:${px}px;height:${px}px">${html}</div>`;
+}
+
+function updateSelection() {
+  const box = document.getElementById("selection");
+  box.value = selected.size
+    ? `Selected (round ${activeRoundId}): ${[...selected].join(", ")}.`
+    : "";
+}
+
+document.getElementById("copy-btn").addEventListener("click", async () => {
+  const box = document.getElementById("selection");
+  if (!box.value) return;
+  try {
+    await navigator.clipboard.writeText(box.value);
+  } catch {
+    box.select();
+  }
+});
+
+async function renderVariant(prefix, agent, variant) {
+  const base = `${prefix}${agent}/${variant.id}`;
+  const [isoRaw, logo, mono, bg] = await Promise.all([
+    loadSvg(`${base}-iso.svg`),
+    loadSvg(`${base}-logo.svg`),
+    loadSvg(`${base}-mono.svg`),
+    loadSvg(`${base}-bg.svg`),
+  ]);
+
+  const hasBg = !bg.startsWith("<em");
+  const iso = hasBg
+    ? `<div class="layered"><div>${bg}</div><div>${isoRaw}</div></div>`
+    : isoRaw;
+
+  const themes = [
+    ["dark", "Dark"],
+    ["light", "Light"],
+    ["ink-black", "Single-ink black"],
+    ["ink-white", "Single-ink white"],
+  ];
+
+  const themeRow = themes.map(([cls, label]) =>
+    `<div class="theme ${cls}">
+      <div class="sizes">${[16, 32, 48, 128].map(px => iconBox(iso, px)).join("")}</div>
+      <div class="logo">${logo}</div>
+      <small>${label}</small>
+    </div>`
+  ).join("");
+
+  const masks = [["circle", "Circle"], ["squircle", "Squircle"]].map(([cls, label]) =>
+    `<div class="theme dark">
+      <div class="sizes">${[48, 96].map(px =>
+        `<div class="mask ${cls}" style="width:${px}px;height:${px}px">${iconBox(iso, px * 1.5)}</div>`
+      ).join("")}</div>
+      <small>${label} mask</small>
+    </div>`
+  ).join("");
+
+  const themedMono = `<div class="theme dark">
+    <div class="sizes">${[48, 96].map(px =>
+      `<div class="themed-mono" style="width:${px}px;height:${px}px">${iconBox(mono, px * 1.5)}</div>`
+    ).join("")}</div>
+    <small>Themed icon (mono)</small>
+  </div>`;
+
+  const tabPreview = `<div class="theme dark">
+    <div class="tab-strip">
+      <div class="browser-tab dark">${iconBox(iso, 16)}<span>${escapeHtml(variant.name || variant.id)}</span></div>
+      <div class="browser-tab light">${iconBox(iso, 16)}<span>${escapeHtml(variant.name || variant.id)}</span></div>
+    </div>
+    <small>Browser tab (16 px)</small>
+  </div>`;
+
+  const fullId = `${agent}/${variant.id}`;
+  const card = document.createElement("section");
+  card.className = "card";
+  card.innerHTML = `<div class="meta">
+      <button class="star" type="button" aria-pressed="false" title="Star favorite">★</button>
+      <h2>${escapeHtml(variant.name || variant.id)}</h2>
+      ${variant.idea ? `<span class="tag">${escapeHtml(variant.idea)}</span>` : ""}
+      ${variant.recommended ? '<span class="tag rec">recommended</span>' : ""}
+      <span class="tag">${escapeHtml(fullId)}</span>
+    </div>
+    <p class="concept">${escapeHtml(variant.concept || "")}</p>
+    <div class="row">${themeRow}${masks}${themedMono}${tabPreview}</div>`;
+
+  card.querySelector(".star").addEventListener("click", (event) => {
+    const btn = event.currentTarget;
+    const on = btn.getAttribute("aria-pressed") !== "true";
+    btn.setAttribute("aria-pressed", String(on));
+    if (on) selected.add(fullId);
+    else selected.delete(fullId);
+    updateSelection();
+  });
+
+  return card;
+}
+
+(async () => {
+  const list = document.getElementById("list");
+  const statusEl = document.getElementById("status");
+  const headingEl = document.getElementById("heading");
+  const navEl = document.getElementById("rounds-nav");
+
+  let config;
+  try {
+    const res = await fetch("rounds.json", { cache: "no-store" });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    config = await res.json();
+  } catch (err) {
+    statusEl.textContent = "Configuration error";
+    list.innerHTML = `<p class="card">Could not load <code>rounds.json</code> next to this page (${escapeHtml(err.message)}). Copy <code>rounds.example.json</code> to <code>rounds.json</code> and serve this folder with <code>python3 -m http.server --bind 127.0.0.1</code>.</p>`;
+    return;
+  }
+
+  const rounds = config && typeof config.rounds === "object" ? config.rounds : null;
+  const roundIds = rounds ? Object.keys(rounds) : [];
+  if (!roundIds.length) {
+    statusEl.textContent = "No rounds configured";
+    list.innerHTML = `<p class="card"><code>rounds.json</code> defines no entries under <code>rounds</code>.</p>`;
+    return;
+  }
+
+  const requested = params.get("round");
+  activeRoundId = requested && rounds[requested]
+    ? requested
+    : (config.default_round && rounds[config.default_round] ? config.default_round : roundIds[0]);
+
+  const round = rounds[activeRoundId];
+  const prefix = typeof round.prefix === "string" ? round.prefix : "";
+  const agents = Array.isArray(round.agents) ? round.agents : [];
+  const title = config.title || "Design Exploration";
+  const labelSuffix = round.label ? ` — ${round.label}` : "";
+
+  document.title = `${title} · Round ${activeRoundId}`;
+  headingEl.textContent = `${title} · Round ${activeRoundId}${labelSuffix}`;
+
+  navEl.innerHTML = roundIds.map((id) => {
+    const current = id === activeRoundId ? ' aria-current="page"' : "";
+    return `<a class="round-btn" href="?round=${encodeURIComponent(id)}"${current}>Round ${escapeHtml(id)}</a>`;
+  }).join("");
+
+  let total = 0;
+  const models = [];
+  for (const agent of agents) {
+    let manifest = null;
+    try {
+      const res = await fetch(`${prefix}${agent}/manifest.json`, { cache: "no-store" });
+      manifest = res.ok ? await res.json() : null;
+    } catch {}
+
+    if (!manifest || !Array.isArray(manifest.variants)) {
+      list.insertAdjacentHTML(
+        "beforeend",
+        `<p class="card">${escapeHtml(agent)}: no valid <code>manifest.json</code> found yet at <code>${escapeHtml(prefix + agent)}/manifest.json</code>.</p>`
+      );
+      continue;
+    }
+
+    models.push(manifest.model || agent);
+    for (const variant of manifest.variants) {
+      list.appendChild(await renderVariant(prefix, agent, variant));
+      total++;
+    }
+  }
+
+  statusEl.textContent = total
+    ? `${total} variant${total === 1 ? "" : "s"} · ${models.join(" / ")}`
+    : "0 variants loaded";
+})();
+</script>
+</body>
+</html>
