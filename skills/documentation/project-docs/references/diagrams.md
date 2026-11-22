@@ -4,7 +4,7 @@ Read this before creating or changing a diagram. Diagrams are drawn with Archify
 
 ## What is needed
 
-- **Archify.** The preflight prints the path of its command file in `archify`. When it is `null`, tell the person that the diagrams need Archify (`tt-a1i/archify`) and ask whether to stop or to go on and leave the diagrams pending. `ARCHIFY_HOME` points the preflight at a folder it did not find.
+- **Archify 3.3 or newer.** The preflight prints the path of its command file in `archify` and its version in `archify_version`. When `archify` is `null`, tell the person that the diagrams need Archify (`tt-a1i/archify`) and ask whether to stop or to go on and leave the diagrams pending. `ARCHIFY_HOME` points the preflight at a folder it did not find. An older version ignores the page options below: say so and suggest updating it.
 - **Chrome.** The export uses the Chrome already installed. When `chrome` is `null`, the person can export by hand: open the page, choose Export, then "SVG · Auto", and save it next to the page.
 
 ## Two diagrams per repository
@@ -24,6 +24,15 @@ Rules for both:
 - Put connected boxes on the same row or the same column, so the arrows run straight.
 - In the context diagram, make the central box large enough for every arrow to reach it without a bend.
 - Name the central box after the repository. In a system of several repositories, each one does the same.
+- Set `meta.feedback_links` to `false`. Otherwise the page footer carries Archify's feedback email and a link to star its repository, and `check` warns with `diagram-feedback-links`.
+- The page always shows a "Code Analysis" button when `meta.repository` is set. No option turns it off; leave it.
+
+## The two pages link to each other
+
+- In the context diagram, give the central box `"href": "containers.html"`. A click on it opens the containers page.
+- In the containers diagram, set `meta.parentHref` to `"context.html"`. The page then shows a Back control.
+- `check` warns with `diagram-unlinked` when either link is missing.
+- The image shows a small link mark on the central box. It does nothing inside a document; it is expected.
 
 ## Three files per diagram
 
@@ -82,3 +91,5 @@ Regenerate a diagram when a box, an arrow or a label is wrong, or when `check` r
 1. Edit the source and set `meta.repository.revision` to the current commit.
 2. Generate the page and export the image again.
 3. Run `check`.
+
+A change that only sets the page options of this file (`feedback_links`, the two links) keeps `meta.repository.revision`: no box, arrow or label changed, so the evidence still holds at the pinned commit. Generate the page and export the image again all the same.

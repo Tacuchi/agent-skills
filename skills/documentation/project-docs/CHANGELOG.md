@@ -1,5 +1,13 @@
 # project-docs changelog
 
+## [1.2.0] — 2026-11-22
+
+- The two diagram pages link to each other: the central box of the context opens the containers page, and the containers page shows a Back control. `check` warns with `diagram-unlinked` when either link is missing.
+- Diagram sources set `meta.feedback_links` to `false`. Since Archify 3.3 the page footer carries Archify's feedback email and a link to star its repository, so every published page showed them. `check` warns with `diagram-feedback-links`.
+- `--preflight` reports `archify_version`, read from the package next to the Archify command. The page options need Archify 3.3 or newer.
+- A change that only sets those page options keeps the pinned revision of the diagram: no box, arrow or label changed.
+- Tried on all twelve documented repositories with Archify 3.3.0: every diagram made with 3.2.0 passed `finalize` with only the page options added, and the exported image no longer shows the background grid.
+
 ## [1.1.1] — 2026-11-18
 
 - A guide holds only the detail that left `ARCHITECTURE.md`: it repeats nothing the document still says and carries no line citation. `check` warns with `guide-citation`. In the first runs with the budget, two agents copied the whole old document and its citations into a guide, so the published text grew instead of shrinking.

@@ -42,7 +42,7 @@ Read its answer before anything else:
 - `shallow: true`: say that the pinned commit may be missing and that `git fetch --unshallow` brings the history.
 - `private_terms: null`: say once that own domains and device names are not being checked, and where the example list goes.
 - `preferences`: when it names a file, read it before asking anything. An answer written there is the person's: use it, do not ask it again, and say at the handover which answers came from that file.
-- `archify: null` or `chrome: null`: say what is missing before any work. [references/diagrams.md](references/diagrams.md) says how to go on.
+- `archify: null` or `chrome: null`: say what is missing before any work. [references/diagrams.md](references/diagrams.md) says how to go on. The same file says what an `archify_version` older than 3.3 means.
 
 ### `check <repo>`
 

@@ -34,6 +34,8 @@ Read also the release notes or the changelog when the repository has them, and c
 | `diagram-source-moved` | Cited code moved inside its file | Nothing: the links of the page point at the diagram's own commit |
 | `diagram-self-citation` | A diagram box cites the documentation itself | Cite the code or the manifest that proves the box, then regenerate that diagram |
 | `diagram-missing-file` | A diagram lacks its page or its image | Generate or export it |
+| `diagram-feedback-links` | The page keeps Archify's feedback footer | Set `meta.feedback_links` to `false`, then regenerate that diagram |
+| `diagram-unlinked` | Context and containers do not link to each other | Add the link that [diagrams.md](diagrams.md) names, then regenerate both diagrams |
 | `broken-link`, `broken-anchor` | A relative link leads nowhere | Fix the link or the heading |
 | `local-path`, `secret-pattern`, `private-term` | Private data in the published set | Remove it and convert it with the table of [format.md](format.md). For a secret, tell the person at once: it may need to be revoked |
 | `over-budget`, `long-table` | The document or a table grew past the budget | Move the detail to a guide, `docs/<topic>.md`, link it from the sentence it left, and keep every fact |

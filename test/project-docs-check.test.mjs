@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { existsSync, mkdirSync, readFileSync, rmSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import test from 'node:test';
 import { architecture, completeRepo, makeRepo, runCheck, source } from './project-docs-helpers.mjs';
@@ -8,13 +8,13 @@ const codes = (result) => result.json.findings.map((finding) => finding.code);
 const read = (repo, path = 'ARCHITECTURE.md') => readFileSync(join(repo.dir, path), 'utf8');
 const setRows = (repo, rows) => repo.write('ARCHITECTURE.md', architecture({ commit: repo.pin, rows }));
 
-function addDiagram(repo, revision = repo.pin) {
-  repo.write('docs/architecture/context.archify.json', JSON.stringify({
-    meta: { repository: { revision } },
-    components: [{ id: 'service', sources: [{ path: 'src/a.js', line: 1, end_line: 3 }] }],
+function addDiagram(repo, revision = repo.pin, { name = 'context', meta = {}, component = {} } = {}) {
+  repo.write(`docs/architecture/${name}.archify.json`, JSON.stringify({
+    meta: { repository: { revision }, feedback_links: false, ...meta },
+    components: [{ id: 'service', sources: [{ path: 'src/a.js', line: 1, end_line: 3 }], ...component }],
   }));
-  repo.write('docs/architecture/context.svg', '<svg/>');
-  repo.write('docs/architecture/context.html', '<html></html>');
+  repo.write(`docs/architecture/${name}.svg`, '<svg/>');
+  repo.write(`docs/architecture/${name}.html`, '<html></html>');
 }
 
 test('unchanged citations are ok and the exit code is 0', (t) => {
@@ -257,6 +257,42 @@ test('diagrams: sources are classified against the diagram revision', (t) => {
   assert.deepEqual(moved.moved_to, [2, 4]);
 });
 
+test('diagrams: a source that keeps the Archify footer is a diagram-feedback-links warning', (t) => {
+  const repo = completeRepo(t);
+  addDiagram(repo, repo.pin, { meta: { feedback_links: undefined } });
+  let result = runCheck(repo.dir);
+  assert.equal(result.status, 0, result.stdout);
+  const finding = result.json.findings.find((f) => f.code === 'diagram-feedback-links');
+  assert.equal(finding.level, 'warning');
+  assert.equal(finding.file, 'docs/architecture/context.archify.json');
+  addDiagram(repo, repo.pin, { meta: { feedback_links: true } });
+  assert.ok(codes(runCheck(repo.dir)).includes('diagram-feedback-links'));
+  addDiagram(repo);
+  result = runCheck(repo.dir);
+  assert.equal(codes(result).includes('diagram-feedback-links'), false);
+});
+
+test('diagrams: context and containers that do not link to each other are diagram-unlinked warnings', (t) => {
+  const repo = completeRepo(t);
+  addDiagram(repo);
+  assert.equal(codes(runCheck(repo.dir)).includes('diagram-unlinked'), false, 'one diagram alone needs no link');
+  addDiagram(repo, repo.pin, { name: 'containers' });
+  let result = runCheck(repo.dir);
+  assert.equal(result.status, 0, result.stdout);
+  const unlinked = result.json.findings.filter((f) => f.code === 'diagram-unlinked');
+  assert.deepEqual(unlinked.map((f) => [f.file, f.level]), [
+    ['docs/architecture/context.archify.json', 'warning'],
+    ['docs/architecture/containers.archify.json', 'warning'],
+  ]);
+  addDiagram(repo, repo.pin, { component: { href: 'containers.html#top' } });
+  addDiagram(repo, repo.pin, { name: 'containers', meta: { parentHref: 'context.html?from=containers' } });
+  assert.equal(codes(runCheck(repo.dir)).includes('diagram-unlinked'), false);
+  addDiagram(repo, repo.pin, { component: { drilldowns: [{ href: 'containers.html', label: 'Containers' }] } });
+  assert.equal(codes(runCheck(repo.dir)).includes('diagram-unlinked'), false, 'drilldowns count as a link');
+  addDiagram(repo, repo.pin, { component: { href: 'other.html' } });
+  assert.deepEqual(runCheck(repo.dir).json.findings.filter((f) => f.code === 'diagram-unlinked').map((f) => f.file), ['docs/architecture/context.archify.json']);
+});
+
 test('diagrams: invalid JSON or an unknown revision is reported, not thrown', (t) => {
   const repo = completeRepo(t);
   addDiagram(repo);
@@ -340,12 +376,26 @@ test('--preflight reports the facts the commands branch on', (t) => {
   assert.equal(result.json.shallow, false);
   assert.ok(typeof result.json.chrome === 'string' || result.json.chrome === null);
   assert.ok(typeof result.json.archify === 'string' || result.json.archify === null);
+  assert.ok(typeof result.json.archify_version === 'string' || result.json.archify_version === null);
   assert.equal(result.json.node, process.versions.node);
   assert.ok('branch' in result.json && 'project_version' in result.json);
   rmSync(join(repo.dir, '.git'), { recursive: true });
   result = runCheck(repo.dir, '--preflight');
   assert.equal(result.status, 0);
   assert.equal(result.json.git, false);
+});
+
+test('--preflight reads the Archify version from the package next to its command', (t) => {
+  const repo = makeRepo(t);
+  const home = join(repo.dir, '.fixture-home', '.agents', 'skills', 'archify');
+  mkdirSync(join(home, 'bin'), { recursive: true });
+  writeFileSync(join(home, 'bin', 'archify.mjs'), '');
+  let result = runCheck(repo.dir, '--preflight');
+  assert.equal(result.json.archify, join(home, 'bin', 'archify.mjs'));
+  assert.equal(result.json.archify_version, null, 'no package.json gives no version');
+  writeFileSync(join(home, 'package.json'), JSON.stringify({ name: 'archify', version: '3.3.0' }));
+  result = runCheck(repo.dir, '--preflight');
+  assert.equal(result.json.archify_version, '3.3.0');
 });
 
 test('invalid flags and a non-directory repository have structured usage errors', (t) => {
@@ -365,7 +415,7 @@ test('diagrams: documentation sources are diagram-self-citation errors even when
   const repo = completeRepo(t);
   addDiagram(repo);
   repo.write('docs/architecture/context.archify.json', JSON.stringify({
-    meta: { repository: { revision: repo.pin } },
+    meta: { repository: { revision: repo.pin }, feedback_links: false },
     components: [{ id: 'overview', sources: [{ path: 'README.md', line: 1, end_line: 3 }] }],
   }));
   const result = runCheck(repo.dir);

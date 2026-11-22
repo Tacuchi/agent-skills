@@ -1,4 +1,4 @@
-# project-docs 1.1.1
+# project-docs 1.2.0
 
 Documents a repository in a fixed, publishable format and keeps it current. `generate <repo>` builds a standard-order README, an `ARCHITECTURE.md` with an evidence appendix pinned to a commit, two diagrams and the decision records. `update <repo>` finds what went stale after a release or a code change and proposes only those edits. `check <repo>` is read-only: it reports stale evidence, broken links and private data.
 
@@ -8,8 +8,10 @@ Version 1.1.0 makes the published document shorter: `ARCHITECTURE.md` has a budg
 
 Version 1.1.1 keeps guides small: a guide holds only the detail that left the document, with no line citations, and `check` warns when one has them.
 
+Version 1.2.0 links the two diagram pages to each other and drops the feedback footer that Archify 3.3 adds to every page. `check` warns with `diagram-unlinked` and `diagram-feedback-links` until a repository's diagrams are regenerated, and `--preflight` reports the Archify version. It needs Archify 3.3 or newer.
+
 It needs Node 22 or newer and git. Diagrams are drawn with Archify, a separate tool, and exported with the Chrome already installed; without them the skill says what is missing before it starts. It needs no other skill; the skills it mentions are optional.
 
-Acquire the whole `project-docs` directory from `Tacuchi/agent-skills` once the ref `skill/project-docs/v1.1.1` exists.
+Acquire the whole `project-docs` directory from `Tacuchi/agent-skills` once the ref `skill/project-docs/v1.2.0` exists.
 
 Owner: Tacuchi. License: MIT, in the `LICENSE` file of this directory. The ref and its remote publication are created after this change.

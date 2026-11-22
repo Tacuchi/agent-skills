@@ -2,7 +2,7 @@
 import { existsSync, statSync, writeFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { findChrome } from './lib/cdp.mjs';
-import { checkDiagrams, findArchify } from './lib/diagrams.mjs';
+import { archifyVersion, checkDiagrams, findArchify } from './lib/diagrams.mjs';
 import { checkEvidence, citationLabel, evidenceEntries, lines, parsePin, repin } from './lib/evidence.mjs';
 import { checkLinks } from './lib/links.mjs';
 import { checkPrivacy, preferencesPath, privateTermsPath } from './lib/privacy.mjs';
@@ -72,13 +72,14 @@ function inspect(repo, privateTermsFile) {
 }
 
 function preflight(repo, inGit, privateTermsFile) {
+  const archify = findArchify(resolve(import.meta.dirname, '..'), process.env);
   return {
     git: inGit, branch: inGit ? git(repo, ['branch', '--show-current'])?.trim() || null : null,
     dirty: inGit && Boolean(git(repo, ['status', '--porcelain'])?.trim()),
     shallow: inGit && isShallow(repo), readme: readWorking(repo, 'README.md') !== null,
     architecture: readWorking(repo, 'ARCHITECTURE.md') !== null, project_version: projectVersion(repo),
     chrome: findChrome({ env: process.env, platform: process.platform }).path,
-    archify: findArchify(resolve(import.meta.dirname, '..'), process.env), node: process.versions.node,
+    archify, archify_version: archifyVersion(archify), node: process.versions.node,
     private_terms: privateTermsPath(privateTermsFile),
     preferences: preferencesPath(),
   };
