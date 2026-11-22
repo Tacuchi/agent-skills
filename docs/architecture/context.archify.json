@@ -2,6 +2,7 @@
   "schema_version": 1,
   "diagram_type": "architecture",
   "meta": {
+    "feedback_links": false,
     "title": "agent-skills \u00b7 context",
     "locale": "en",
     "output": "docs/architecture/context.html",
@@ -37,6 +38,7 @@
     },
     {
       "id": "repository",
+      "href": "containers.html",
       "type": "backend",
       "label": "agent-skills",
       "sublabel": "Independent skill catalog",

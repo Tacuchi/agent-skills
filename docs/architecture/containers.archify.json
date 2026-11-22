@@ -2,6 +2,8 @@
   "schema_version": 1,
   "diagram_type": "architecture",
   "meta": {
+    "parentHref": "context.html",
+    "feedback_links": false,
     "title": "agent-skills \u00b7 containers",
     "locale": "en",
     "output": "docs/architecture/containers.html",
