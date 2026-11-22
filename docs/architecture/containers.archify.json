@@ -12,7 +12,7 @@
       "url": "https://github.com/Tacuchi/agent-skills.git",
       "provider": "github",
       "link_mode": "web",
-      "revision": "c1f75e2f83fe121539e59ff85df19629999251b9"
+      "revision": "680f55fcccdfd4aa2d37f51b3a52179aeb2bd194"
     }
   },
   "components": [
@@ -168,13 +168,13 @@
       "sources": [
         {
           "path": "skills/git/git-conventions/scripts/permissions.mjs",
-          "line": 348,
-          "end_line": 380
+          "line": 351,
+          "end_line": 383
         },
         {
           "path": "skills/git/git-conventions/scripts/permissions.mjs",
-          "line": 443,
-          "end_line": 465
+          "line": 446,
+          "end_line": 468
         }
       ]
     },
@@ -194,18 +194,18 @@
       "sources": [
         {
           "path": "skills/git/git-conventions/scripts/permissions.mjs",
-          "line": 139,
-          "end_line": 167
+          "line": 142,
+          "end_line": 170
         },
         {
           "path": "skills/git/git-conventions/scripts/permissions.mjs",
-          "line": 278,
-          "end_line": 288
+          "line": 281,
+          "end_line": 291
         },
         {
           "path": "skills/git/git-conventions/scripts/permissions.mjs",
-          "line": 409,
-          "end_line": 439
+          "line": 412,
+          "end_line": 442
         }
       ]
     }
